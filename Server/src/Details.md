@@ -29,10 +29,6 @@ Client, connects to Game Server
 Accessibility Internal
 
 
-
-
-
-
 ## Ideas
 ### Synchronizing player movements
 Since we are using a pathfinding, click to move kind of system. We can interpolate between the start (previous destination), destination, (length, which is minimum dest-start) 

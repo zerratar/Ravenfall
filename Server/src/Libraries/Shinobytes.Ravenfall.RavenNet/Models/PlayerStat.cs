@@ -1,4 +1,4 @@
-﻿using Shinobytes.Ravenfall.RavenNet.Utilities;
+﻿using Shinobytes.Ravenfall.Core;
 using System;
 
 namespace Shinobytes.Ravenfall.RavenNet.Models

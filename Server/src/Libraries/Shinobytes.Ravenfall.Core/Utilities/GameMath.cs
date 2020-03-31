@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Shinobytes.Ravenfall.RavenNet.Utilities
+namespace Shinobytes.Ravenfall.Core
 {
     public static class GameMath
     {
