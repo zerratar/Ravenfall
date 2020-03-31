@@ -5,7 +5,7 @@ using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.FrontServer.PacketHandlers
+namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
 {
     public class PlayerObjectActionRequestHandler : PlayerPacketHandler<PlayerObjectActionRequest>
     {

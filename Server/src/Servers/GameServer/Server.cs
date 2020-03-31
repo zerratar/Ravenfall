@@ -2,7 +2,7 @@
 using Shinobytes.Ravenfall.RavenNet.Server;
 using System.Net;
 
-namespace Shinobytes.Ravenfall.FrontServer
+namespace Shinobytes.Ravenfall.GameServer
 {
     internal class Server : IRavenServer
     {
@@ -16,7 +16,7 @@ namespace Shinobytes.Ravenfall.FrontServer
             IRavenConnectionProvider connectionProvider)
         {
             this.logger = logger;
-            logger.Write("@whi@Server ");
+            logger.Write("@whi@GameServer ");
             server = new RavenNetworkServer(logger, connectionProvider);
         }
 

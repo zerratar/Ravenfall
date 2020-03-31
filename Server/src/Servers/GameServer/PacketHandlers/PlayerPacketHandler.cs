@@ -2,7 +2,7 @@
 using Shinobytes.Ravenfall.RavenNet.Packets;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.FrontServer.PacketHandlers
+namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
 {
     public abstract class PlayerPacketHandler<T> : INetworkPacketHandler<T>
     {

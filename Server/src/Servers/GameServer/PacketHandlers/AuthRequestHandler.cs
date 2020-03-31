@@ -4,7 +4,7 @@ using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Packets.Client;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.FrontServer.PacketHandlers
+namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
 {
     public class AuthRequestHandler : PlayerPacketHandler<AuthRequest>
     {

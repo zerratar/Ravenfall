@@ -9,7 +9,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Shinobytes.Ravenfall.FrontServer
+namespace Shinobytes.Ravenfall.GameServer
 {
     class Program
     {
@@ -40,17 +40,6 @@ namespace Shinobytes.Ravenfall.FrontServer
             return ioc;
         }
 
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //private static INetworkPacketController GetClientPacketHandlers(INetworkPacketController controller)
-        //{
-        //    return controller
-        //        .Register<PlayerAdd>(PlayerAdd.OpCode)
-        //        .Register<PlayerMoveRequest, PlayerMoveRequestHandler>(PlayerMoveRequest.OpCode)
-        //        .Register<PlayerPositionUpdate, PlayerPositionUpdateHandler>(PlayerPositionUpdate.OpCode)
-        //        .Register<PlayerObjectActionRequest, PlayerObjectActionRequestHandler>(PlayerObjectActionRequest.OpCode)
-        //        .Register<AuthRequest, AuthRequestHandler>(AuthRequest.OpCode);
-        //}
-
         private static INetworkPacketController RegisterPacketHandlers(INetworkPacketController controller)
         {
             var packetHandlers = Assembly.GetExecutingAssembly()
@@ -69,7 +58,7 @@ namespace Shinobytes.Ravenfall.FrontServer
 
         static void Main(string[] args)
         {
-            Console.Title = "Ravenfall Online Server";
+            Console.Title = "Ravenfall GameServer";
 
             var ioc = RegisterServices();
             using (var server = ioc.Resolve<IRavenServer>().Start())
