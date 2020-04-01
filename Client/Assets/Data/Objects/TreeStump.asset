@@ -18,4 +18,4 @@ MonoBehaviour:
   Actions:
   - {fileID: 11400000, guid: 6e4f0b016e673194c94e2612a0ac905a, type: 2}
   InteractionRange: 0
-  Model: {fileID: 5623274669639754019, guid: 712995b137fc4844698cf051887f6b16, type: 3}
+  Model: {fileID: -927199367670048503, guid: 6d473e2ea439d50429f4fcc934b6952b, type: 3}
