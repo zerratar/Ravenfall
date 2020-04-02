@@ -9,8 +9,8 @@ using UnityEngine;
 
 public class NetworkClient : MonoBehaviour
 {
-    [SerializeField] private int serverPort = 8000;
-    [SerializeField] private string serverAddress = "127.0.0.1";
+    [SerializeField] private int serverPort = 8133;
+    [SerializeField] private string serverAddress = "51.89.117.205";
     [SerializeField] private Shinobytes.Ravenfall.RavenNet.Core.ILogger logger;
     [SerializeField] private PlayerManager playerManager;
     [SerializeField] private ObjectManager objectManager;

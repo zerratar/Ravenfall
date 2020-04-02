@@ -6,7 +6,7 @@ namespace Shinobytes.Ravenfall.GameServer
 {
     internal class Server : IRavenServer
     {
-        const int gameServerPort = 8000;
+        const int gameServerPort = 8133;
 
         private readonly ILogger logger;
         private readonly RavenNetworkServer server;

@@ -20,7 +20,7 @@ namespace Assets.Scripts.PacketHandlers
 
         public void Handle(MyPlayerAdd data, IRavenNetworkConnection connection, SendOption sendOption)
         {
-            UnityEngine.Debug.Log("Player: " + data.Name + ", received from server.");
+            UnityEngine.Debug.Log("Player: " + data.Name + ", received from server. POS: " + data.Position);
 
             var playerHandler = moduleManager.GetModule<PlayerHandler>();
             var player = new Player()

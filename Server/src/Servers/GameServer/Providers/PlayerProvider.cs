@@ -42,7 +42,7 @@ namespace RavenfallServer.Providers
 
                 var id = Interlocked.Increment(ref userIndex);
                 var random = new Random();
-                var pos = new Vector3((float)random.NextDouble() * 2f, 0, (float)random.NextDouble() * 2f);
+                var pos = new Vector3((float)random.NextDouble() * 2f, 5, (float)random.NextDouble() * 2f);
                 var addedPlayer = new Player()
                 {
                     Id = id,

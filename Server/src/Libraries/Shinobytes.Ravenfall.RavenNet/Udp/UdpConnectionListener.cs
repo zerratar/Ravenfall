@@ -28,6 +28,8 @@ namespace Shinobytes.Ravenfall.RavenNet.Udp
 
         private Timer reliablePacketTimer;
 
+        private bool disposed = false;
+
         private readonly ManualResetEventSlim newMessageEvent = new ManualResetEventSlim(false);
         private readonly ConcurrentQueue<ReceivedMessage> receiveQueue = new ConcurrentQueue<ReceivedMessage>();
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -368,7 +370,6 @@ namespace Shinobytes.Ravenfall.RavenNet.Udp
 #if DEBUG
         public int TestDropRate = -1;
         private int dropCounter = 0;
-        private bool disposed;
 #endif
 
         /// <summary>
