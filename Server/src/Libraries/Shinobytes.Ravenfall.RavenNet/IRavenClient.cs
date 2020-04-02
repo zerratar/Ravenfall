@@ -8,6 +8,7 @@ namespace Shinobytes.Ravenfall.RavenNet
     public interface IRavenClient : IDisposable
     {
         void Connect(IPAddress address, int port);
+        void SendReliable<T>(T packet);
         IModuleManager Modules { get; }
     }
 }

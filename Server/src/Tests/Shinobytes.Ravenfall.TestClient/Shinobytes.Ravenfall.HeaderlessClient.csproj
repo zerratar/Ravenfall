@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Shinobytes.Ravenfall.RavenNet\Shinobytes.Ravenfall.RavenNet.csproj" />
+    <ProjectReference Include="..\..\Servers\GameServer\GameServer.csproj" />
   </ItemGroup>
 
 </Project>

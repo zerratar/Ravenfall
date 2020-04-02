@@ -36,6 +36,12 @@ namespace Shinobytes.Ravenfall.RavenNet
             this.connection.Connect();
         }
 
+        public void Disconnect()
+        {
+            this.connecting = true;
+            this.connection.Disconnect("");
+        }
+
         private void Connection_Disconnected(object sender, DisconnectedEventArgs e)
         {
             logger.Debug("Client disconnected.");

@@ -104,7 +104,10 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets
         public void HandlePacketData(IRavenNetworkConnection connection, MessageReader message, SendOption sendOption)
         {
             NetworkPacket packet = packetSerializer.Deserialize(message);
-            Handle(connection, packet, sendOption);
+            if (packet != null)
+            {
+                Handle(connection, packet, sendOption);
+            }
         }
 
         public void Send<T>(Connection connection, short packetId, T packet, SendOption sendOption)

@@ -2,6 +2,7 @@
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Modules;
 using Shinobytes.Ravenfall.RavenNet.Packets;
+using Shinobytes.Ravenfall.RavenNet.Packets.Client;
 using Shinobytes.Ravenfall.RavenNet.Serializers;
 using System;
 using System.Collections.Concurrent;
@@ -31,7 +32,7 @@ namespace Shinobytes.Ravenfall.TestClient
 
         static void Main(string[] args)
         {
-            const int frontServerPort = 8000;
+            const int frontServerPort = 8133;
 
             Console.Title = "Ravenfall - Headerless Client";
 
@@ -40,8 +41,23 @@ namespace Shinobytes.Ravenfall.TestClient
             using (var client = ioc.Resolve<IRavenClient>())
             {
 
-                client.Connect(IPAddress.Loopback, frontServerPort);
+                // IPAddress.Loopback
+                client.Connect(IPAddress.Parse("51.89.117.205"), frontServerPort);
                 var auth = client.Modules.GetModule<Authentication>();
+
+
+                var count = 10_000;
+                var sw = new Stopwatch();
+                sw.Start();
+                for (var i = 0; i < count; ++i)
+                {
+                    client.SendReliable(new AuthRequest() { ClientVersion = "TEST", Password = "LUL", Username = "User123" });
+
+                    System.Threading.Thread.SpinWait(2);
+                }
+
+                sw.Stop();
+                logger.WriteLine("@yel@" + count + " packets sent in @whi@" + sw.Elapsed.TotalSeconds + "@yel@ seconds. Avg: @whi@" + (count / sw.Elapsed.TotalSeconds) + " @yel@per second");
 
                 while (true)
                 {

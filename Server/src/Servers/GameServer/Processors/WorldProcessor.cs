@@ -39,35 +39,42 @@ public class WorldProcessor : IWorldProcessor
 
     public void AddPlayer(PlayerConnection myConnection)
     {
-        var connections = connectionProvider.GetAll().OfType<PlayerConnection>();
-        var allPlayers = playerProvider.GetAll();
-        var objects = objectProvider.GetAll();
-
-        foreach (var connection in connections)
+        try
         {
-            var isMe = connection.InstanceID == myConnection.InstanceID;
-            if (isMe)
+            var connections = connectionProvider.GetAll().OfType<PlayerConnection>();
+            var allPlayers = playerProvider.GetAll();
+            var objects = objectProvider.GetAll();
+
+            foreach (var connection in connections)
             {
-                var stats = statsProvider.GetStats(myConnection.Player.Id);
-                connection.Send(MyPlayerAdd.Create(myConnection.Player, stats), SendOption.Reliable);
+                var isMe = connection.InstanceID == myConnection.InstanceID;
+                if (isMe)
+                {
+                    var stats = statsProvider.GetStats(myConnection.Player.Id);
+                    connection.Send(MyPlayerAdd.Create(myConnection.Player, stats), SendOption.Reliable);
+                }
+                else
+                {
+                    var combatLevel = statsProvider.GetCombatLevel(connection.Player.Id);
+                    connection.Send(PlayerAdd.Create(myConnection.Player, combatLevel), SendOption.Reliable);
+                }
             }
-            else
+
+            foreach (var player in allPlayers)
             {
-                var combatLevel = statsProvider.GetCombatLevel(connection.Player.Id);
-                connection.Send(PlayerAdd.Create(myConnection.Player, combatLevel), SendOption.Reliable);
+                if (player.Id == myConnection.Player.Id) continue;
+                var combatLevel = statsProvider.GetCombatLevel(myConnection.Player.Id);
+                myConnection.Send(PlayerAdd.Create(player, combatLevel), SendOption.Reliable);
+            }
+
+            foreach (var obj in objects)
+            {
+                myConnection.Send(ObjectAdd.Create(obj), SendOption.Reliable);
             }
         }
-
-        foreach (var player in allPlayers)
+        catch (Exception exc)
         {
-            if (player.Id == myConnection.Player.Id) continue;
-            var combatLevel = statsProvider.GetCombatLevel(myConnection.Player.Id);
-            myConnection.Send(PlayerAdd.Create(player, combatLevel), SendOption.Reliable);
-        }
-
-        foreach (var obj in objects)
-        {
-            myConnection.Send(ObjectAdd.Create(obj), SendOption.Reliable);
+            logger.Error(exc.ToString());
         }
     }
 

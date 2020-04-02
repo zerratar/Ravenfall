@@ -1,4 +1,5 @@
-﻿using Shinobytes.Ravenfall.RavenNet.Serializers;
+﻿using Shinobytes.Ravenfall.RavenNet.Core;
+using Shinobytes.Ravenfall.RavenNet.Serializers;
 using System;
 using System.IO;
 
@@ -6,11 +7,13 @@ namespace Shinobytes.Ravenfall.RavenNet
 {
     public class NetworkPacketSerializer : INetworkPacketSerializer
     {
+        private readonly ILogger logger;
         private readonly INetworkPacketTypeRegistry packetLookup;
         private readonly IBinarySerializer binarySerializer;
         private const int HeaderSize = sizeof(short);
-        public NetworkPacketSerializer(INetworkPacketTypeRegistry packetLookup, IBinarySerializer binarySerializer)
+        public NetworkPacketSerializer(ILogger logger, INetworkPacketTypeRegistry packetLookup, IBinarySerializer binarySerializer)
         {
+            this.logger = logger;
             this.packetLookup = packetLookup;
             this.binarySerializer = binarySerializer;
         }
@@ -27,10 +30,13 @@ namespace Shinobytes.Ravenfall.RavenNet
                 return packet;
             }
 
-            throw new Exception($"Unable to deserialize packet. No type lookups registered for packet ID ({packet.Id}).");
+            if (logger != null)
+            {
+                logger.Error($"Unable to deserialize packet. No type lookups registered for packet ID ({packet.Id}).");
+            }
 
-            //packet.Data = payload;
-            //return packet;
+            return null;
+            //throw new Exception($"Unable to deserialize packet. No type lookups registered for packet ID ({packet.Id}).");
         }
 
         public void Serialize(NetworkPacket packet, MessageWriter writer)

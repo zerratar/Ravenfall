@@ -34,7 +34,7 @@ namespace RavenNet.Tests
             var lookup = new NetworkPacketTypeRegistry();
             lookup.Register<Test>(1);
 
-            var packetSerializer = new NetworkPacketSerializer(lookup, serializer);
+            var packetSerializer = new NetworkPacketSerializer(null, lookup, serializer);
 
             var packet = new NetworkPacket();
             packet.Id = 1;
