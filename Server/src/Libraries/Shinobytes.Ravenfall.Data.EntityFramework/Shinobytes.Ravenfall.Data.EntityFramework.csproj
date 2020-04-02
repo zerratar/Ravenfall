@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-preview.2.20120.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shinobytes.Ravenfall.Core\Shinobytes.Ravenfall.Core.csproj" />
+    <ProjectReference Include="..\Shinobytes.Ravenfall.Data.Entities\Shinobytes.Ravenfall.Data.Entities.csproj" />
+    <ProjectReference Include="..\Shinobytes.Ravenfall.DataModels\Shinobytes.Ravenfall.DataModels.csproj" />
+    <ProjectReference Include="..\Shinobytes.Ravenfall.Data\Shinobytes.Ravenfall.Data.csproj" />
+  </ItemGroup>
+
+</Project>

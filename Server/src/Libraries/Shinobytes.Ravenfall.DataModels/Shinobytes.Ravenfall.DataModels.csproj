@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shinobytes.Ravenfall.Data.Entities\Shinobytes.Ravenfall.Data.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
