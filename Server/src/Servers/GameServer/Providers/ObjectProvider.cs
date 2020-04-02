@@ -1,4 +1,5 @@
-﻿using RavenfallServer.Objects;
+﻿using GameServer.ObjectActions;
+using RavenfallServer.Objects;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using System;
@@ -31,7 +32,11 @@ namespace RavenfallServer.Providers
             entities.Add(TreeObject.Create(ref index, new Vector3(2.5f, 0, 13.55f)));
             entities.Add(TreeObject.Create(ref index, new Vector3(7.35f, 0, 20.3f)));
 
+            entities.Add(CopperRockObject.Create(ref index, new Vector3(-11.57f, 0, -12.39f)));
+            entities.Add(CopperRockObject.Create(ref index, new Vector3(-15.43f, 0, -8.64f)));
+
             RegisterObjectActions(0, typeof(TreeChopAction), typeof(ExamineAction));
+            RegisterObjectActions(2, typeof(RockPickAction), typeof(ExamineAction));
         }
 
         public bool AcquireObjectLock(SceneObject obj, Player player)

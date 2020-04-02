@@ -27,5 +27,5 @@ namespace RavenfallServer.Objects
                 HitChance = hitChance
             };
         }
-    }
+    }    
 }

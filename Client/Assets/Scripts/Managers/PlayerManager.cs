@@ -7,6 +7,7 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private NametagManager nametagManager;
 
     private readonly List<NetworkPlayer> players = new List<NetworkPlayer>();
     public NetworkPlayer Me { get; private set; }
@@ -39,6 +40,9 @@ public class PlayerManager : MonoBehaviour
             networkPlayer.Navigation.MoveTo(player.Destination, false);
 
         players.Add(networkPlayer);
+
+        nametagManager.AddNameTag(networkPlayer);
+
     }
 
     public void OnPlayerRemoved(Player player)
@@ -51,6 +55,8 @@ public class PlayerManager : MonoBehaviour
             Debug.LogError("Trying to remove a player that does not exist. ID: " + player.Id);
             return;
         }
+
+        nametagManager.RemoveNameTag(targetPlayer);
 
         if (players.Remove(targetPlayer))
         {

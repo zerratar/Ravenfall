@@ -62,21 +62,24 @@ public class NetworkClient : MonoBehaviour
         PlayerHandler = gameClient.Modules.GetModule<PlayerHandler>();
         ObjectHandler = gameClient.Modules.GetModule<ObjectHandler>();
 
-        Connect();
+        //Connect();
     }
+
+    public bool IsConnected => gameClient.IsConnected;
+    public bool IsAuthenticated => Auth.Authenticated;
 
     // Update is called once per frame
     private void Update()
     {
         if (!gameClient.IsConnected)
         {
-            Connect();
+            //Connect();
             return;
         }
 
         if (!Auth.Authenticated)
         {
-            Authenticate();
+            //Authenticate();
             return;
         }
 
@@ -155,26 +158,28 @@ public class NetworkClient : MonoBehaviour
         }
     }
 
-    private void Authenticate()
+    public void Authenticate(string username, string password)
     {
         if (Auth.Authenticating || !canAuthenticate) return;
-        StartCoroutine(AuthenticateWithServer());
+        StartCoroutine(AuthenticateWithServer(username, password));
     }
 
-    private void Connect()
+    public void Connect()
     {
         if (gameClient.IsConnecting || gameClient.IsConnected || !canConnect) return;
         StartCoroutine(ConnectToServer());
     }
 
-    private IEnumerator AuthenticateWithServer()
+    private IEnumerator AuthenticateWithServer(string username, string password)
     {
         canAuthenticate = false;
         try
         {
             Log("Authenticating with server...");
 
-            Auth.Authenticate("player" + UnityEngine.Random.Range(1, 9999).ToString("0000"), "wowowow");
+            //Auth.Authenticate("player" + UnityEngine.Random.Range(1, 9999).ToString("0000"), "wowowow");
+
+            Auth.Authenticate(username, password);
 
             while (Auth.Authenticating)
             {

@@ -12,6 +12,7 @@ namespace RavenfallServer.Providers
         public ItemProvider()
         {
             entities.Add(new BronzeHatchet());
+            entities.Add(new BronzePickaxe());
         }
 
         public Item GetItemById(int itemId)

@@ -79,9 +79,12 @@ namespace Shinobytes.Ravenfall.RavenNet
         public void Dispose()
         {
             if (this.disposed) return;
-            this.connection.DataReceived -= Connection_DataReceived;
-            this.connection.Disconnected -= Connection_Disconnected;
-            this.connection.Dispose();
+            if (this.connection != null)
+            {
+                this.connection.DataReceived -= Connection_DataReceived;
+                this.connection.Disconnected -= Connection_Disconnected;
+                this.connection.Dispose();
+            }
             this.disposed = true;
         }
     }

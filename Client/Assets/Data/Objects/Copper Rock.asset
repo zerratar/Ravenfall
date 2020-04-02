@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c503a0ceb43f9e45bbac3fa922eefc6, type: 3}
+  m_Name: Copper Rock
+  m_EditorClassIdentifier: 
+  Id: 2
+  Name: Copper Rock
+  Description: Good ol' Copper Rock
+  Actions:
+  - {fileID: 11400000, guid: 3118e9ffb4c03224e9f773f19b89272d, type: 2}
+  - {fileID: 11400000, guid: 6e4f0b016e673194c94e2612a0ac905a, type: 2}
+  InteractionRange: 1.5
+  Model: {fileID: 8115710663430141207, guid: a0f8975a41aaadd4e938132397e22fd3, type: 3}
