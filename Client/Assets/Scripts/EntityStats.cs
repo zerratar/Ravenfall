@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
-
 public class EntityStats : MonoBehaviour
 {
     [SerializeField] private GameObject levelUpEffectPrefab;
@@ -16,6 +15,8 @@ public class EntityStats : MonoBehaviour
         PlayerStat.Create("Magic"),
         PlayerStat.Create("Woodcutting"),
         PlayerStat.Create("Mining"),
+        PlayerStat.Create("Fishing"),
+        PlayerStat.Create("Cooking"),
     };
 
     internal void PlayLevelUpAnimation(int skill, int gainedLevels)

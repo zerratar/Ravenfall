@@ -16,6 +16,7 @@ public class ObjectManager : MonoBehaviour
     void Awake()
     {
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        spawnableObjects = Resources.LoadAll<ServerObject>("Data/Objects");
     }
 
     internal void OnObjectAdded(SceneObject entity)

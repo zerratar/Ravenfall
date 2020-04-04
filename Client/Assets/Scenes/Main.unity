@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -97,7 +97,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 1fcebb57bcedcf24e9590e1280307ec6,
+    type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
@@ -305,9 +306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab04868974cb4c341a3f710fed50af70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items:
-  - {fileID: 11400000, guid: 3482de73551cea74dac3a1e05e0ff7c7, type: 2}
-  - {fileID: 11400000, guid: bb90f897e5aa66e44ae96b521cb729e9, type: 2}
+  items: []
 --- !u!4 &310398762
 Transform:
   m_ObjectHideFlags: 0
@@ -583,10 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc60e9e73619b06438fffed11675411f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnableObjects:
-  - {fileID: 11400000, guid: ed68bb742925ba74b93c89d63b1ef7d5, type: 2}
-  - {fileID: 11400000, guid: 2e6ef4bd6e9939244818697095827d9b, type: 2}
-  - {fileID: 11400000, guid: cabea8cd39d2d3f4a8008a78958ffc67, type: 2}
+  spawnableObjects: []
   objectPrefab: {fileID: 6782635913181414577, guid: 61900980dc6bb394f8dde8ef42952ab4,
     type: 3}
   objectContainer: {fileID: 2068724911}
@@ -1484,7 +1480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverPort: 8133
-  serverAddress: 51.89.117.205
+  serverAddress: 127.0.0.1
   playerManager: {fileID: 1146090013}
   objectManager: {fileID: 620156637}
 --- !u!4 &1155974996

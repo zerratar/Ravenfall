@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Packets;
 
@@ -30,6 +31,11 @@ namespace Shinobytes.Ravenfall.RavenNet.Server
         public IReadOnlyList<RavenNetworkConnection> GetConnected()
         {
             throw new System.NotImplementedException();
+        }
+
+        public T GetConnection<T>(Func<T, bool> p)
+        {
+            throw new NotImplementedException();
         }
     }
 }

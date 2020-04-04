@@ -14,7 +14,7 @@ namespace RavenfallServer.Packets
             return new ObjectUpdate
             {
                 ObjectServerId = obj.Id,
-                ObjectId = obj.ObjectId,
+                ObjectId = obj.DisplayObjectId,
                 Position = obj.Position
             };
         }

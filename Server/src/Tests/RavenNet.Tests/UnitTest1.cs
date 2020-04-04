@@ -2,9 +2,35 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Serializers;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace RavenNet.Tests
 {
+
+    [TestClass]
+    public class PacketTests
+    {
+        [TestMethod]
+        public void CheckForPacketOpCodeCollisions()
+        {
+            var opcodes = new HashSet<short>();
+            var assembly = Assembly.GetAssembly(typeof(RavenfallServer.Packets.MyPlayerAdd));
+            var packetTypes = assembly.GetTypes().Where(x => x.FullName.Contains("RavenfallServer.Packets"));
+            foreach (var packetType in packetTypes)
+            {
+                var opCodeField = packetType.GetField("OpCode");
+                if (opCodeField == null) continue;
+                var opCodeValue = (short)opCodeField.GetValue(null);
+                if (!opcodes.Add(opCodeValue))
+                {
+                    Assert.Fail($"Duplicate opcode {opCodeValue} found in {packetType.FullName}");
+                }
+            }
+        }
+    }
+
     [TestClass]
     public class SerializerTests
     {

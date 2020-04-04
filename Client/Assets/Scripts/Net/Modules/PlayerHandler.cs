@@ -1,4 +1,5 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -35,6 +36,25 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             if (targetPlayer != null)
             {
                 Changes.Enqueue(new PlayerStatsUpdated(targetPlayer, experience, effectiveLevel));
+                return;
+            }
+        }
+
+        internal void PlayerItemAdd(int playerId, int itemId, int amount)
+        {
+            var targetPlayer = GetPlayer(playerId);
+            if (targetPlayer != null)
+            {
+                Changes.Enqueue(new PlayerItemAdded(targetPlayer, itemId, amount));
+                return;
+            }
+        }
+        internal void PlayerItemRemove(int playerId, int itemId, int amount)
+        {
+            var targetPlayer = GetPlayer(playerId);
+            if (targetPlayer != null)
+            {
+                Changes.Enqueue(new PlayerItemRemoved(targetPlayer, itemId, amount));
                 return;
             }
         }

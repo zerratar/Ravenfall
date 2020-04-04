@@ -112,7 +112,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Core
                         }
                     }
                 }
-                catch
+                catch (Exception exc)
                 {
                     // ignored, we can't have the kernel die due to an exception
                 }

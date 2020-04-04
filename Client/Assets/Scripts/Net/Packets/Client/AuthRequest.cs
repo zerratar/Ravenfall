@@ -140,4 +140,20 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public int[] EffectiveLevel { get; set; }
         public decimal[] Experience { get; set; }
     }
+
+    public class PlayerItemAdd
+    {
+        public const short OpCode = 17;
+        public int PlayerId { get; set; }
+        public int ItemId { get; set; }
+        public int Amount { get; set; }
+    }
+
+    public class PlayerItemRemove
+    {
+        public const short OpCode = 18;
+        public int PlayerId { get; set; }
+        public int ItemId { get; set; }
+        public int Amount { get; set; }
+    }
 }

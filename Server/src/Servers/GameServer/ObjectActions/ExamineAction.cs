@@ -7,7 +7,10 @@ public class ExamineAction : SceneObjectAction
     {
     }
 
-    public override bool Invoke(Player player, SceneObject obj, int parameterId)
+    public override bool Invoke(
+        Player player, 
+        SceneObject obj, 
+        int parameterId)
     {
         return false;
     }

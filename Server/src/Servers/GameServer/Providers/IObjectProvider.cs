@@ -10,6 +10,7 @@ namespace RavenfallServer.Providers
         SceneObject Replace(int serverObjectId, int newObjectId);
         SceneObject Get(int objectServerId);
         SceneObjectAction GetAction(SceneObject serverObject, int actionId);
+        ObjectItemDrop[] GetItemDrops(SceneObject obj);
         void ReleaseObjectLocks(Player player);
         bool AcquireObjectLock(SceneObject obj, Player player);
         bool HasAcquiredObjectLock(SceneObject obj, Player player);

@@ -30,6 +30,7 @@ namespace Shinobytes.Ravenfall.GameServer
             ioc.RegisterShared<IObjectProvider, ObjectProvider>();
             ioc.RegisterShared<IItemProvider, ItemProvider>();
             ioc.RegisterShared<IPlayerStatsProvider, PlayerStatsProvider>();
+            ioc.RegisterShared<IPlayerInventoryProvider, PlayerInventoryProvider>();
             ioc.RegisterShared<IWorldProcessor, WorldProcessor>();
 
             var logger = ioc.Resolve<ILogger>();

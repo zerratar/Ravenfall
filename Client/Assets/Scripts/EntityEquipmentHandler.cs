@@ -15,14 +15,14 @@ public class EntityEquipmentHandler : MonoBehaviour
 
     private void Start()
     {
-        var hips = transform.Find("PlayerModel/Root/Hips/");
+        var hips = transform.Find("Root");
         if (hips)
         {
             equipmentTransformLookup[EquipmentSlot.None] = null;
-            equipmentTransformLookup[EquipmentSlot.Head] = hips.Find("Spine_01/Spine_02/Spine_03/Neck/Head");
-            equipmentTransformLookup[EquipmentSlot.Chest] = hips.Find("Spine_01/Spine_02/Spine_03/");
-            equipmentTransformLookup[EquipmentSlot.MainHand] = hips.Find("Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R");
-            equipmentTransformLookup[EquipmentSlot.OffHand] = hips.Find("Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L");
+            //equipmentTransformLookup[EquipmentSlot.Head] = hips.Find("Spine_01/Spine_02/Spine_03/Neck/Head");
+            //equipmentTransformLookup[EquipmentSlot.Chest] = hips.Find("Spine_01/Spine_02/Spine_03/");
+            equipmentTransformLookup[EquipmentSlot.MainHand] = hips.Find("RightArm/RightHand");
+            //equipmentTransformLookup[EquipmentSlot.OffHand] = hips.Find("Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L");
         }
 
         if (!itemManager)

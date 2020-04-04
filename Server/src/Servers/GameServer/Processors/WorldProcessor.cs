@@ -15,6 +15,7 @@ public class WorldProcessor : IWorldProcessor
     private readonly IPlayerStatsProvider statsProvider;
     private readonly IRavenConnectionProvider connectionProvider;
     private readonly IPlayerProvider playerProvider;
+    private readonly IPlayerInventoryProvider playerInventoryProvider;
     private readonly IObjectProvider objectProvider;
 
     private readonly object mutex = new object();
@@ -24,6 +25,7 @@ public class WorldProcessor : IWorldProcessor
         ILogger logger,
         IKernel kernel,
         IPlayerStatsProvider statsProvider,
+        IPlayerInventoryProvider playerInventoryProvider,
         IRavenConnectionProvider connectionProvider,
         IPlayerProvider playerProvider,
         IObjectProvider objectProvider)
@@ -31,6 +33,7 @@ public class WorldProcessor : IWorldProcessor
         this.logger = logger;
         this.kernel = kernel;
         this.statsProvider = statsProvider;
+        this.playerInventoryProvider = playerInventoryProvider;
         this.connectionProvider = connectionProvider;
         this.playerProvider = playerProvider;
         this.objectProvider = objectProvider;
@@ -101,13 +104,49 @@ public class WorldProcessor : IWorldProcessor
     public void UpdatePlayerStat(Player player, PlayerStat skill)
     {
         var playerConnection = connectionProvider
-            .GetAll()
-            .OfType<PlayerConnection>()
-            .FirstOrDefault(x => x != null && x.Player.Id == player.Id);
+            .GetConnection<PlayerConnection>(x =>
+                x != null &&
+                x.Player.Id == player.Id);
 
         if (playerConnection != null)
         {
             playerConnection.Send(PlayerStatUpdate.Create(player, skill), SendOption.Reliable);
+        }
+    }
+    public void AddPlayerItem(Player player, Item item, int amount = 1)
+    {
+        var playerConnection = connectionProvider
+            .GetConnection<PlayerConnection>(x =>
+               x != null &&
+               x.Player.Id == player.Id);
+
+        var inventory = playerInventoryProvider.GetInventory(player.Id);
+        if (inventory != null)
+        {
+            inventory.AddItem(item, amount);
+        }
+
+        if (playerConnection != null)
+        {
+            playerConnection.Send(PlayerItemAdd.Create(player, item, amount), SendOption.Reliable);
+        }
+    }
+    public void RemovePlayerItem(Player player, Item item, int amount = 1)
+    {
+        var playerConnection = connectionProvider
+            .GetConnection<PlayerConnection>(x =>
+               x != null &&
+               x.Player.Id == player.Id);
+
+        var inventory = playerInventoryProvider.GetInventory(player.Id);
+        if (inventory != null)
+        {
+            inventory.RemoveItem(item, amount);
+        }
+
+        if (playerConnection != null)
+        {
+            playerConnection.Send(PlayerItemRemove.Create(player, item, amount), SendOption.Reliable);
         }
     }
 
@@ -122,6 +161,12 @@ public class WorldProcessor : IWorldProcessor
 
     public void SetItemEquipState(Player player, Item item, bool state)
     {
+        var inventory = playerInventoryProvider.GetInventory(player.Id);
+        if (state) 
+            inventory.EquipItem(item);
+        else 
+            inventory.UnEquipItem(item);
+
         var connections = connectionProvider.GetConnected();
         foreach (var connection in connections)
         {
@@ -192,5 +237,4 @@ public class WorldProcessor : IWorldProcessor
             }
         }
     }
-
 }

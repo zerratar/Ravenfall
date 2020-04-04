@@ -155,6 +155,14 @@ public class NetworkClient : MonoBehaviour
             case PlayerLeveledUp levelUp:
                 playerManager.OnPlayerLevelUp(levelUp.Entity, levelUp.Skill, levelUp.GainedLevels);
                 break;
+
+            case PlayerItemAdded itemAdded:
+                playerManager.OnPlayerItemAdded(itemAdded.Entity, itemAdded.ItemId, itemAdded.Amount);
+                break;
+
+            case PlayerItemRemoved itemRemoved:
+                playerManager.OnPlayerItemRemoved(itemRemoved.Entity, itemRemoved.ItemId, itemRemoved.Amount);
+                break;
         }
     }
 

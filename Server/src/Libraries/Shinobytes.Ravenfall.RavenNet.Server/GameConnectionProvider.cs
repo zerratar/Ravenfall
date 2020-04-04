@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Packets;
@@ -34,6 +35,11 @@ namespace Shinobytes.Ravenfall.RavenNet.Server
         public IReadOnlyList<RavenNetworkConnection> GetConnected()
         {
             lock (mutex) return connections.Where(x => x.State == ConnectionState.Connected).ToList();
+        }
+
+        public T GetConnection<T>(Func<T, bool> p)
+        {
+            lock (mutex) return connections.OfType<T>().FirstOrDefault(p);
         }
 
         protected abstract RavenNetworkConnection CreateConnection(ILogger logger, Connection connection, INetworkPacketController packetHandlers);

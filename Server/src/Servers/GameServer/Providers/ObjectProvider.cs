@@ -14,6 +14,9 @@ namespace RavenfallServer.Providers
         private readonly ConcurrentDictionary<int, Lazy<SceneObjectAction>[]> objectActions
             = new ConcurrentDictionary<int, Lazy<SceneObjectAction>[]>();
 
+        private readonly ConcurrentDictionary<int, ObjectItemDrop[]> objectItemDrops
+            = new ConcurrentDictionary<int, ObjectItemDrop[]>();
+
         // Both objectPlayerLocks and playerObjectLocks are used for bidirectional lookups
         // objectPlayerLocks: Key: objectId, Value: player
         private readonly ConcurrentDictionary<int, Player> objectPlayerLocks = new ConcurrentDictionary<int, Player>();
@@ -32,11 +35,21 @@ namespace RavenfallServer.Providers
             entities.Add(TreeObject.Create(ref index, new Vector3(2.5f, 0, 13.55f)));
             entities.Add(TreeObject.Create(ref index, new Vector3(7.35f, 0, 20.3f)));
 
-            entities.Add(CopperRockObject.Create(ref index, new Vector3(-11.57f, 0, -12.39f)));
-            entities.Add(CopperRockObject.Create(ref index, new Vector3(-15.43f, 0, -8.64f)));
+            entities.Add(Chair.Create(ref index, new Vector3(-2.96f, 0, 9.83f)));
 
+            entities.Add(RockObject.Create(ref index, new Vector3(-11.57f, 0, -12.39f)));
+            entities.Add(RockObject.Create(ref index, new Vector3(-15.43f, 0, -8.64f)));
+
+            entities.Add(FishingSpotObject.Create(ref index, new Vector3(-4.8f, 0, -10.3f)));
+
+            RegisterObjectItemDrop(0, new ObjectItemDrop { DropChance = 1f, ItemId = 2 });
             RegisterObjectActions(0, typeof(TreeChopAction), typeof(ExamineAction));
+
+            RegisterObjectItemDrop(2, new ObjectItemDrop { DropChance = 1f, ItemId = 3 });
             RegisterObjectActions(2, typeof(RockPickAction), typeof(ExamineAction));
+
+            RegisterObjectItemDrop(3, new ObjectItemDrop { DropChance = 1f, ItemId = 4 });
+            RegisterObjectActions(3, typeof(FishAction), typeof(ExamineAction));
         }
 
         public bool AcquireObjectLock(SceneObject obj, Player player)
@@ -59,6 +72,16 @@ namespace RavenfallServer.Providers
             }
 
             return false;
+        }
+
+        public ObjectItemDrop[] GetItemDrops(SceneObject obj)
+        {
+            if (objectItemDrops.TryGetValue(obj.ObjectId, out var drops))
+            {
+                return drops;
+            }
+
+            return new ObjectItemDrop[0];
         }
 
         public SceneObject Get(int objectServerId)
@@ -106,6 +129,11 @@ namespace RavenfallServer.Providers
             }
         }
 
+        private void RegisterObjectItemDrop(int objectId, params ObjectItemDrop[] items)
+        {
+            objectItemDrops[objectId] = items;
+        }
+
         private void RegisterObjectActions(int objectId, params Type[] actionTypes)
         {
             var actions = new List<Lazy<SceneObjectAction>>();
@@ -117,5 +145,11 @@ namespace RavenfallServer.Providers
 
             objectActions[objectId] = actions.ToArray();
         }
+    }
+
+    public class ObjectItemDrop
+    {
+        public int ItemId { get; set; }
+        public float DropChance { get; set; }
     }
 }

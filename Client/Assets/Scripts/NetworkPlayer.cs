@@ -7,6 +7,7 @@ public class NetworkPlayer : MonoBehaviour
     [SerializeField] private EntityAnimationHandler animationHandler;
     [SerializeField] private EntityEquipmentHandler equipmentHandler;
     [SerializeField] private EntityStats entityStats;
+    [SerializeField] private EntityInventory inventory;
 
     [SerializeField] private float positionUpdateInterval = 0.2f;
     [SerializeField] private float objectInteractionRange = 1.5f;
@@ -70,6 +71,7 @@ public class NetworkPlayer : MonoBehaviour
         {
             var direction = (transform.position - obj.transform.position).normalized;
             var targetMoveToPosition = obj.transform.position + ((interactionRange / 2.1f) * direction);
+            //var targetMoveToPosition = obj.transform.position;
             networkClient.MoveTo(targetMoveToPosition);
         }
     }
@@ -114,5 +116,15 @@ public class NetworkPlayer : MonoBehaviour
         distance = Vector3.Distance(obj.transform.position, transform.position);
         action = data.Actions[0];
         interactionRange = action.Range > 0 ? action.Range : data.InteractionRange > 0 ? data.InteractionRange : objectInteractionRange;
+    }
+
+    internal void AddInventoryItem(int itemId, int amount)
+    {
+        inventory.AddItem(itemId, amount);
+    }
+
+    internal void RemoveInventoryItem(int itemId, int amount)
+    {
+        inventory.RemoveItem(itemId, amount);
     }
 }

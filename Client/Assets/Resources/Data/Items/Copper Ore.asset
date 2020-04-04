@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfb1a77c9ae4eda44afcda79d7bb1ef9, type: 3}
+  m_Name: Copper Ore
+  m_EditorClassIdentifier: 
+  Id: 3
+  Name: Copper Ore
+  Description: Copper ore
+  Actions: []
+  InteractionRange: 0
+  Model: {fileID: 5589132880061157761, guid: 9af1666b2420a294eb7ae6b62680d303, type: 3}
+  Equippable: 0
+  EquipmentSlot: 3

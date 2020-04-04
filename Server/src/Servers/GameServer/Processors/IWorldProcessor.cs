@@ -15,6 +15,8 @@ public interface IWorldProcessor
     void SetItemEquipState(Player player, Item item, bool v);
     void UpdatePlayerStat(Player player, PlayerStat skill);
     void PlayerStatLevelUp(Player player, PlayerStat skill, int levelsGaiend);
+    void AddPlayerItem(Player player, Item item, int amount = 1);
+    void RemovePlayerItem(Player player, Item item, int amount = 1);
 
     void RegisterObjectTickUpdate<TObject>(
         Player player,

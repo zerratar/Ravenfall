@@ -129,6 +129,32 @@ public class PlayerManager : MonoBehaviour
         targetPlayer.SetEquipmentState(itemId, equipped);
     }
 
+    internal void OnPlayerItemAdded(Player entity, int itemId, int amount)
+    {
+        Debug.Log("OnPlayerItemAdded");
+        var targetPlayer = players.FirstOrDefault(x => x.Id == entity.Id);
+        if (!targetPlayer)
+        {
+            Debug.LogError("Trying to add an item to a player that does not exist. ID: " + entity.Id);
+            return;
+        }
+
+        targetPlayer.AddInventoryItem(itemId, amount);
+    }
+
+    internal void OnPlayerItemRemoved(Player entity, int itemId, int amount)
+    {
+        Debug.Log("OnPlayerItemRemoved");
+        var targetPlayer = players.FirstOrDefault(x => x.Id == entity.Id);
+        if (!targetPlayer)
+        {
+            Debug.LogError("Trying to remove an item from player that does not exist. ID: " + entity.Id);
+            return;
+        }
+
+        targetPlayer.RemoveInventoryItem(itemId, amount);
+    }
+    
     internal void ResetState()
     {
         foreach (var player in players)
@@ -154,4 +180,5 @@ public class PlayerManager : MonoBehaviour
             return;
         }
     }
+
 }

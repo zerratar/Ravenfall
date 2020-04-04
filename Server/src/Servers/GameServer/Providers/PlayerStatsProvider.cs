@@ -72,6 +72,8 @@ namespace RavenfallServer.Providers
                 PlayerStat.Create("Magic"),
                 PlayerStat.Create("Woodcutting"),
                 PlayerStat.Create("Mining"),
+                PlayerStat.Create("Fishing"),
+                PlayerStat.Create("Cooking"),
             };
         }
     }

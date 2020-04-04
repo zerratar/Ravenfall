@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\EntityAction.cs" />
     <Compile Include="Assets\Scripts\EntityAnimationHandler.cs" />
     <Compile Include="Assets\Scripts\EntityEquipmentHandler.cs" />
+    <Compile Include="Assets\Scripts\EntityInventory.cs" />
     <Compile Include="Assets\Scripts\EntityNavigation.cs" />
     <Compile Include="Assets\Scripts\EntityStats.cs" />
     <Compile Include="Assets\Scripts\GameUILog.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Assets\Scripts\Net\IRecyclable.cs" />
     <Compile Include="Assets\Scripts\Net\MessageReader.cs" />
     <Compile Include="Assets\Scripts\Net\MessageWriter.cs" />
+    <Compile Include="Assets\Scripts\Net\Models\InventoryItem.cs" />
     <Compile Include="Assets\Scripts\Net\Models\Npc.cs" />
     <Compile Include="Assets\Scripts\Net\Models\Player.cs" />
     <Compile Include="Assets\Scripts\Net\Models\SceneObject.cs" />
@@ -133,6 +135,8 @@
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\IEntityStateChange.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerAnimationStateUpdated.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerEquipmentStateUpdated.cs" />
+    <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerItemAdded.cs" />
+    <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerItemRemoved.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerLeveledUp.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerObjectAction.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerStatUpdated.cs" />
@@ -176,6 +180,8 @@
     <Compile Include="Assets\Scripts\PacketHandlers\PlayerAddHandler.cs" />
     <Compile Include="Assets\Scripts\PacketHandlers\PlayerAnimationStateUpdateHandler.cs" />
     <Compile Include="Assets\Scripts\PacketHandlers\PlayerEquipmentStateUpdateHandler.cs" />
+    <Compile Include="Assets\Scripts\PacketHandlers\PlayerItemAddHandler.cs" />
+    <Compile Include="Assets\Scripts\PacketHandlers\PlayerItemRemoveHandler.cs" />
     <Compile Include="Assets\Scripts\PacketHandlers\PlayerLevelUpHandler.cs" />
     <Compile Include="Assets\Scripts\PacketHandlers\PlayerMoveResponseHandler.cs" />
     <Compile Include="Assets\Scripts\PacketHandlers\PlayerObjectActionResponseHandler.cs" />

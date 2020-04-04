@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Shinobytes.Ravenfall.RavenNet.Server
 {
@@ -8,6 +9,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Server
 
         IReadOnlyList<RavenNetworkConnection> GetAll();
         IReadOnlyList<RavenNetworkConnection> GetConnected();
+        T GetConnection<T>(Func<T, bool> p);
     }
 
 }
