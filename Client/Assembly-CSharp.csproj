@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{12F44184-A422-5F27-22E6-507969043F15}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -77,6 +76,17 @@
     <Compile Include="Assets\3rd Party\Fantasy Adventure Environment\Scripts\VegetationStudioPro\FAETreeShaderController.cs" />
     <Compile Include="Assets\3rd Party\Fantasy Adventure Environment\Scripts\WindController.cs" />
     <Compile Include="Assets\3rd Party\Fantasy Adventure Environment\_DemoScenes\Source\FAE_DemoOrbitCamera.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo magic circles Vol 1\CameraHolder.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo projectiles\DemoShooting.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo track markers\RaycastInstance.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\AutoDestroyPS.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\EGA_EffectSound.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\Hovl_DemoLasers.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\Hovl_Laser.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\Hovl_Laser2.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\ParticleCollisionInstance.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\ProjectileMover.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\Rotator.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Easy Mesh Combiner\Scripts\CombinedMeshesManager.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\DemoSceneFiles\Scripts\ExampleAPI.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Scripts\RendererOfCombinedAnima2D.cs" />
@@ -108,55 +118,38 @@
     <Compile Include="Assets\3rd Party\Stylized Grass Shader\_Demo\DemoAssets\Scripts\FreeCamera.cs" />
     <Compile Include="Assets\3rd Party\Stylized Grass Shader\_Demo\DemoAssets\Scripts\MoveInCircle.cs" />
     <Compile Include="Assets\3rd Party\Stylized Grass Shader\_Demo\DemoAssets\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\AppearanceSlider.cs" />
-    <Compile Include="Assets\CharacterCreation.cs" />
-    <Compile Include="Assets\CharacterDeleteConfirmationDialog.cs" />
-    <Compile Include="Assets\CharacterSelectRow.cs" />
-    <Compile Include="Assets\ChatBubble.cs" />
-    <Compile Include="Assets\ChatBubbleManager.cs" />
-    <Compile Include="Assets\ChatMessageRow.cs" />
-    <Compile Include="Assets\ChatPanel.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo magic circles Vol 1\CameraHolder.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo projectiles\DemoShooting.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo track markers\RaycastInstance.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Scripts\AutoDestroyPS.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Scripts\EGA_EffectSound.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Scripts\Hovl_DemoLasers.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Scripts\Hovl_Laser.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Scripts\Hovl_Laser2.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Scripts\ParticleCollisionInstance.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Scripts\ProjectileMover.cs" />
-    <Compile Include="Assets\Hovl Studio\RPG VFX pack\Scripts\Rotator.cs" />
-    <Compile Include="Assets\Scripts\AnimationEventHandler.cs" />
     <Compile Include="Assets\Scripts\Cameras\OrbitCamera.cs" />
     <Compile Include="Assets\Scripts\Cameras\PlayerCamera.cs" />
-    <Compile Include="Assets\Scripts\CharacterSelectionPanelUI.cs" />
     <Compile Include="Assets\Scripts\ClickMarker.cs" />
+    <Compile Include="Assets\Scripts\ContextMenu.cs" />
+    <Compile Include="Assets\Scripts\ContextMenuButton.cs" />
+    <Compile Include="Assets\Scripts\ContextMenuItem.cs" />
     <Compile Include="Assets\Scripts\Data\EquipmentSlot.cs" />
     <Compile Include="Assets\Scripts\Data\PlayerStat.cs" />
     <Compile Include="Assets\Scripts\Data\ServerAction.cs" />
     <Compile Include="Assets\Scripts\Data\ServerItem.cs" />
     <Compile Include="Assets\Scripts\Data\ServerObject.cs" />
-    <Compile Include="Assets\Scripts\EntityAction.cs" />
-    <Compile Include="Assets\Scripts\EntityAnimationHandler.cs" />
-    <Compile Include="Assets\Scripts\EntityAppearanceHandler.cs" />
-    <Compile Include="Assets\Scripts\EntityEquipmentHandler.cs" />
-    <Compile Include="Assets\Scripts\EntityInventory.cs" />
-    <Compile Include="Assets\Scripts\EntityNavigation.cs" />
-    <Compile Include="Assets\Scripts\EntityStats.cs" />
+    <Compile Include="Assets\Scripts\Entity\EntityAction.cs" />
+    <Compile Include="Assets\Scripts\Entity\EntityAnimationHandler.cs" />
+    <Compile Include="Assets\Scripts\Entity\EntityAppearanceHandler.cs" />
+    <Compile Include="Assets\Scripts\Entity\EntityEquipmentHandler.cs" />
+    <Compile Include="Assets\Scripts\Entity\EntityInventory.cs" />
+    <Compile Include="Assets\Scripts\Entity\EntityNavigation.cs" />
+    <Compile Include="Assets\Scripts\Entity\EntityStats.cs" />
     <Compile Include="Assets\Scripts\Extensions\GameObjectExtensions.cs" />
-    <Compile Include="Assets\Scripts\GameUILog.cs" />
+    <Compile Include="Assets\Scripts\Handlers\AnimationEventHandler.cs" />
     <Compile Include="Assets\Scripts\IEnumerableExtensions.cs" />
     <Compile Include="Assets\Scripts\IngameBottomBarUI.cs" />
     <Compile Include="Assets\Scripts\IoCContainer.cs" />
-    <Compile Include="Assets\Scripts\ItemManager.cs" />
-    <Compile Include="Assets\Scripts\LoginPanelUI.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\ItemManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\NametagManager.cs" />
     <Compile Include="Assets\Scripts\Managers\ObjectManager.cs" />
     <Compile Include="Assets\Scripts\Managers\PlayerManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\SubSceneManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
     <Compile Include="Assets\Scripts\MouseClickEventArgs.cs" />
     <Compile Include="Assets\Scripts\Nametag.cs" />
-    <Compile Include="Assets\Scripts\NametagManager.cs" />
     <Compile Include="Assets\Scripts\Net\Client.cs" />
     <Compile Include="Assets\Scripts\Net\Connection.cs" />
     <Compile Include="Assets\Scripts\Net\ConnectionListener.cs" />
@@ -269,9 +262,18 @@
     <Compile Include="Assets\Scripts\SimpleCameraController.cs" />
     <Compile Include="Assets\Scripts\StaticObject.cs" />
     <Compile Include="Assets\Scripts\SubScene.cs" />
-    <Compile Include="Assets\Scripts\SubSceneManager.cs" />
     <Compile Include="Assets\Scripts\TerrainObjectsExporter.cs" />
-    <Compile Include="Assets\Scripts\UIManager.cs" />
+    <Compile Include="Assets\Scripts\UI\AppearanceSlider.cs" />
+    <Compile Include="Assets\Scripts\UI\CharacterCreation.cs" />
+    <Compile Include="Assets\Scripts\UI\CharacterDeleteConfirmationDialog.cs" />
+    <Compile Include="Assets\Scripts\UI\CharacterSelectRow.cs" />
+    <Compile Include="Assets\Scripts\UI\CharacterSelectionPanelUI.cs" />
+    <Compile Include="Assets\Scripts\UI\ChatBubble.cs" />
+    <Compile Include="Assets\Scripts\UI\ChatBubbleManager.cs" />
+    <Compile Include="Assets\Scripts\UI\ChatMessageRow.cs" />
+    <Compile Include="Assets\Scripts\UI\ChatPanel.cs" />
+    <Compile Include="Assets\Scripts\UI\GameUILog.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginPanelUI.cs" />
     <Compile Include="Assets\Scripts\Utilities\GameMath.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
@@ -310,18 +312,18 @@
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\FAE_Sunshaft.shader" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
     <None Include="Assets\Shaders\ToonBasicOutline.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo projectiles\Readme.txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo projectiles\Readme.txt" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.NatureRenderer\VisualDesignCafe.Rendering.Nature.xml" />
     <None Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Shaders\Standard (Culling Off).shader" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\Acknowledgements.uxml" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\Find Errors.uss" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\Acknowledgements.uxml" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\Find Errors.uss" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.PackageManager\VisualDesignCafe.Packages.xml" />
     <None Include="Assets\3rd Party\Open World Nature\Grasslands (Sample Pack)\(Source Assets)\Shaders\Tree Bark.shader" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\URP\VSPro_HDIndirect.cginc" />
-    <None Include="Assets\Hovl Studio\Render Pipelines support\Shaders\LWRP_LightGlow.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo AOE skills\Readme.txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\Render Pipelines support\Shaders\LWRP_LightGlow.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo AOE skills\Readme.txt" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\PigmentMapComposite.shader" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.PackageManager\VisualDesignCafe.Editor.PackageManager.xml" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Changelog.txt" />
@@ -329,56 +331,56 @@
     <None Include="Assets\3rd Party\Open World Nature\Grasslands (Sample Pack)\(Source Assets)\Shaders\Vegetation.shader" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\FAE_Foliage.shader" />
     <None Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Shaders\Pro Diffuse Cutout.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\Lit_CenterGlow.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\Lit_CenterGlow.shader" />
     <None Include="Assets\3rd Party\PolygonNature\Shaders\SyntyStudios_LOD.shader" />
     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Anton OFL.txt" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\SmoothSmoke.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\SmoothSmoke.shader" />
     <None Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\List Of Changes.txt" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\Libraries\Bending.hlsl" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\FAE_TreeTrunk.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Prefabs\HDRP and URP(LWRP).txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Prefabs\HDRP and URP(LWRP).txt" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\Resources\GrassBendMesh.shader" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.Assemblies\VisualDesignCafe.Editor.Web.xml" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.OpenWorldNature\VisualDesignCafe.Nature.Editor.xml" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo magic circles Vol 1\Readme.txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo magic circles Vol 1\Readme.txt" />
     <None Include="Assets\3rd Party\Open World Nature\Common\PostProcessing Profiles\Use with Unity's Postprocessing Stack.txt" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.NatureRenderer\Grass Fallback.shader" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\FAE_FogSheet.shader" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\Libraries\Color.hlsl" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\About.uxml" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\About.uxml" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\FAE_Cliff_Coverage.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo scene lasers\If you want to use lasers in 2D.txt" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\Support.uxml" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo scene lasers\If you want to use lasers in 2D.txt" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\Support.uxml" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\FAE_TreeBranch.shader" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\3rd Party\MT Assets\Easy Mesh Combiner\DemoSceneFiles\Shaders\Pro Diffuse Cutout (Culling Off).shader" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.Assemblies\VisualDesignCafe.Editor.Events.xml" />
     <None Include="Assets\3rd Party\Open World Nature\Grasslands (Sample Pack)\(Source Assets)\Shaders\Tree Billboard.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\Distortion.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\Blend_TwoSides.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\Distortion.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\Blend_TwoSides.shader" />
     <None Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Shaders\Pro Diffuse Cutout (Culling Off).shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\Electricity.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\Electricity.shader" />
     <None Include="Assets\3rd Party\MT Assets\Easy Mesh Combiner\List Of Changes.txt" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\_DemoScenes\Source\_These assets are not officially included, only produced for the demo scene.txt" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\Blend_CenterGlow.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\Blend_Normals.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\Blend_CenterGlow.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\Blend_Normals.shader" />
     <None Include="Assets\3rd Party\PolygonFantasyHeroCharacters\Shaders\POLYGON_CustomCharacters.shader" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\_DemoScenes\Source\FAE_WaterfallFoam.shader" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\ShadowPass.hlsl" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\Find Errors.uxml" />
-    <None Include="Assets\Hovl Studio\Render Pipelines support\Documentation.txt" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Prefabs\AOE spells\Readme.txt" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\Find Errors.uxml" />
+    <None Include="Assets\3rd Party\Hovl Studio\Render Pipelines support\Documentation.txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Prefabs\AOE spells\Readme.txt" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\StylizedGrassShader.shader" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo scene lasers\Readme.txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo scene lasers\Readme.txt" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\LightGlow.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\LightGlow.shader" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF.shader" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.PackageManager\VisualDesignCafe.Editor.Community.xml" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\About.uss" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\About.uss" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Prefabs\Magic circles\Loop version\How to use.txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Prefabs\Magic circles\Loop version\How to use.txt" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\FAE_Water.shader" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\Resources\GrassBendTrail.shader" />
@@ -386,19 +388,19 @@
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\Libraries\VS_InstancedIndirect.cginc" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\Libraries\Wind.hlsl" />
     <None Include="Assets\3rd Party\PolygonNature\Shaders\SyntyStudios_Vines.shader" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\Toolbar.uss" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\Toolbar.uss" />
     <None Include="Assets\3rd Party\Open World Nature\Grasslands (Sample Pack)\Sample Pack of Open World Nature Kit.txt" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.NatureRenderer\VisualDesignCafe.Rendering.Nature.Editor.xml" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\3rd Party\Open World Nature\Grasslands (Sample Pack)\(Source Assets)\Shaders\Grass.shader" />
-    <None Include="Assets\Stylized Water For URP\Shaders\Subgraphs\StylizedWaterForURP.hlsl" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Shaders\Subgraphs\StylizedWaterForURP.hlsl" />
     <None Include="Assets\3rd Party\PolygonNature\Shaders\SyntyStudios_Water.shader" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\Libraries\StylizedGrassCommon.hlsl" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\LightingPass.hlsl" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\Shaders\FAE_TreeBillboard.shader" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.NatureRenderer\VisualDesignCafe.Rendering.xml" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\AddTrail.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\AddTrail.shader" />
     <None Include="Assets\3rd Party\PolygonNature\Shaders\SyntyStudios_Trees.shader" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\DepthPass.hlsl" />
     <None Include="Assets\3rd Party\MT Assets\Easy Mesh Combiner\DemoSceneFiles\Shaders\VertexLit.shader" />
@@ -411,12 +413,12 @@
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Shaders\Libraries\StylizedGrassInput.hlsl" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\PostProcessingAssets\Readme.txt" />
-    <None Include="Assets\Hovl Studio\Render Pipelines support\Shaders\HDRP_LightGlow.shader" />
+    <None Include="Assets\3rd Party\Hovl Studio\Render Pipelines support\Shaders\HDRP_LightGlow.shader" />
     <None Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Shaders\Standard Specular.shader" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\Support.uss" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\Support.uss" />
     <None Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Shaders\Standard.shader" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Shaders\Add_CenterGlow.shader" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\Toolbar.uxml" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Shaders\Add_CenterGlow.shader" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\Toolbar.uxml" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\3rd Party\Stylized Grass Shader\Changelog.txt" />
     <None Include="Assets\3rd Party\MT Assets\Easy Mesh Combiner\DemoSceneFiles\Shaders\Pro Diffuse Cutout.shader" />
@@ -428,10 +430,10 @@
     <None Include="Assets\3rd Party\Open World Nature\Plugins\com.VisualDesignCafe.Assemblies\VisualDesignCafe.Editor.xml" />
     <None Include="Assets\3rd Party\Fantasy Adventure Environment\_DemoScenes\Source\FAE_Waterfall.shader" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Demo scenes\Demo AOE skills\HDRP and URP(LWRP).txt" />
-    <None Include="Assets\Hovl Studio\RPG VFX pack\Scripts\Readme.txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Demo scenes\Demo AOE skills\HDRP and URP(LWRP).txt" />
+    <None Include="Assets\3rd Party\Hovl Studio\RPG VFX pack\Scripts\Readme.txt" />
     <None Include="Assets\3rd Party\Open World Nature\Grasslands (Sample Pack)\(Source Assets)\Shaders\Tree Leaves.shader" />
-    <None Include="Assets\Stylized Water For URP\Scripts\UI\Acknowledgements.uss" />
+    <None Include="Assets\3rd Party\Stylized Water For URP\Scripts\UI\Acknowledgements.uss" />
     <None Include="Assets\3rd Party\RPG Character Animation Pack\SuperCharacterController\Code\SuperCharacterController\README.txt" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile.shader" />
     <None Include="Assets\3rd Party\PolygonNature\Shaders\SyntyStudios_SkyGradient.shader" />
@@ -1081,14 +1083,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="StylizedWaterForURPEditor.csproj">
-      <Project>{F2929505-5A5B-CBD0-EAB8-ADD75AD91CD9}</Project>
-      <Name>StylizedWaterForURPEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="StylizedWaterForURP.csproj">
-      <Project>{B0055194-A1B4-46D3-6A13-49B1CD12881A}</Project>
-      <Name>StylizedWaterForURP</Name>
-    </ProjectReference>
     <ProjectReference Include="StylizedGrass.Runtime.csproj">
       <Project>{17D4B138-4A01-47E0-354C-99AF9E2E7C2D}</Project>
       <Name>StylizedGrass.Runtime</Name>
@@ -1096,6 +1090,14 @@
     <ProjectReference Include="StylizedGrass_Editor.csproj">
       <Project>{8E3D28AA-C975-2E7D-F5B4-BB13F4EA87C1}</Project>
       <Name>StylizedGrass_Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="StylizedWaterForURPEditor.csproj">
+      <Project>{F2929505-5A5B-CBD0-EAB8-ADD75AD91CD9}</Project>
+      <Name>StylizedWaterForURPEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="StylizedWaterForURP.csproj">
+      <Project>{B0055194-A1B4-46D3-6A13-49B1CD12881A}</Project>
+      <Name>StylizedWaterForURP</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

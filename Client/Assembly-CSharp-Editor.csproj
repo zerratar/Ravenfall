@@ -73,13 +73,13 @@
     <Compile Include="Assets\3rd Party\Fantasy Adventure Environment\Scripts\Editor\TreeBranchShaderGUI.cs" />
     <Compile Include="Assets\3rd Party\Fantasy Adventure Environment\Scripts\Editor\TreeTrunkShaderGUI.cs" />
     <Compile Include="Assets\3rd Party\Fantasy Adventure Environment\Scripts\Editor\WindControllerInspector.cs" />
+    <Compile Include="Assets\3rd Party\Hovl Studio\Render Pipelines support\Editor\ShaderChanger.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Easy Mesh Combiner\Editor\Greetings.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Easy Mesh Combiner\Editor\Menu.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Easy Mesh Combiner\Editor\MeshCombinerTool.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Editor\DetectorAnima2D.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Editor\Greetings.cs" />
     <Compile Include="Assets\3rd Party\MT Assets\Skinned Mesh Combiner\Editor\Menu.cs" />
-    <Compile Include="Assets\Hovl Studio\Render Pipelines support\Editor\ShaderChanger.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Unity/2019.3.13f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -758,14 +758,6 @@
       <Project>{12F44184-A422-5F27-22E6-507969043F15}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="StylizedWaterForURPEditor.csproj">
-      <Project>{F2929505-5A5B-CBD0-EAB8-ADD75AD91CD9}</Project>
-      <Name>StylizedWaterForURPEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="StylizedWaterForURP.csproj">
-      <Project>{B0055194-A1B4-46D3-6A13-49B1CD12881A}</Project>
-      <Name>StylizedWaterForURP</Name>
-    </ProjectReference>
     <ProjectReference Include="StylizedGrass.Runtime.csproj">
       <Project>{17D4B138-4A01-47E0-354C-99AF9E2E7C2D}</Project>
       <Name>StylizedGrass.Runtime</Name>
@@ -773,6 +765,14 @@
     <ProjectReference Include="StylizedGrass_Editor.csproj">
       <Project>{8E3D28AA-C975-2E7D-F5B4-BB13F4EA87C1}</Project>
       <Name>StylizedGrass_Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="StylizedWaterForURPEditor.csproj">
+      <Project>{F2929505-5A5B-CBD0-EAB8-ADD75AD91CD9}</Project>
+      <Name>StylizedWaterForURPEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="StylizedWaterForURP.csproj">
+      <Project>{B0055194-A1B4-46D3-6A13-49B1CD12881A}</Project>
+      <Name>StylizedWaterForURP</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

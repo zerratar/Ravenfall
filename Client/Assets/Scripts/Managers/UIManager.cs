@@ -13,8 +13,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private CharacterSelectionPanelUI charSelectionUI;
 
     [SerializeField] private ChatPanel chatPanel;
+    [SerializeField] private ContextMenu contextMenu;
 
     private int uiMask;
+
+    public ContextMenu ContextMenu => contextMenu;
 
     private void Start()
     {

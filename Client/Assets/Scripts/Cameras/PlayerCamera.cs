@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class PlayerCamera : MonoBehaviour
 {
@@ -17,7 +14,6 @@ public class PlayerCamera : MonoBehaviour
     public event EventHandler<MouseClickEventArgs> MouseEnter;
     public event EventHandler<MouseClickEventArgs> MouseExit;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -28,56 +24,75 @@ public class PlayerCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
-        var mousePos = Input.mousePosition;
-        var ray = camera.ScreenPointToRay(mousePos);
-
         if (Input.GetMouseButtonDown(0))
         {
-            if (uiManager.IsMouseOverUI())
-            {
-                return;
-            }
-
-            var hits = Physics.RaycastAll(ray, clickMaxDistance);
-
-            if (hits.Length > 0)
-            {
-                MouseClick?.Invoke(this, new MouseClickEventArgs(hits));
-            }
+            HandleMouseButtonClick(0);
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            HandleMouseButtonClick(1);
         }
         else
         {
-            var hits = Physics.RaycastAll(ray, clickMaxDistance);
-            var wasHit = false;
+            HandleMouseOver();
+        }
+    }
 
-            if (!uiManager.IsMouseOverUI())
+    private void HandleMouseButtonClick(int mouseButton)
+    {
+        if (uiManager.IsMouseOverUI())
+        {
+            return;
+        }
+
+        var mousePos = Input.mousePosition;
+        var ray = camera.ScreenPointToRay(mousePos);
+        var hits = Physics.RaycastAll(ray, clickMaxDistance);
+
+        if (hits.Length > 0)
+        {
+            MouseClick?.Invoke(this, new MouseClickEventArgs(mouseButton, hits));
+        }
+    }
+
+    private void HandleMouseOver()
+    {
+        var mousePos = Input.mousePosition;
+        var ray = camera.ScreenPointToRay(mousePos);
+        var hits = Physics.RaycastAll(ray, clickMaxDistance);
+        var wasHit = false;
+
+        if (!uiManager.IsMouseOverUI())
+        {
+            foreach (var hitInfo in hits)
             {
-                foreach (var hitInfo in hits)
+                var obj = hitInfo.collider.gameObject;
+                if (lastMouseOver && lastMouseOver.GetInstanceID() == obj.GetInstanceID())
                 {
-                    var name = hitInfo.collider.name;
-                    var obj = hitInfo.collider.gameObject;
-                    if (name.IndexOf("::", StringComparison.OrdinalIgnoreCase) > 0)
-                    {
-                        if (lastMouseOver && lastMouseOver.GetInstanceID() == obj.GetInstanceID())
-                        {
-                            return;
-                        }
+                    return;
+                }
 
-                        wasHit = true;
-                        MouseEnter?.Invoke(this, new MouseClickEventArgs(hitInfo));
-                        lastMouseOver = obj;
-                        break;
-                    }
+                var name = hitInfo.collider.name;
+                if (name.IndexOf("::", StringComparison.OrdinalIgnoreCase) > 0)
+                {
+                    wasHit = true;
+                    MouseEnter?.Invoke(this, new MouseClickEventArgs(-1, hitInfo));
+                    lastMouseOver = obj;
+                    break;
                 }
             }
-
-            if (!wasHit && lastMouseOver)
-            {
-                MouseExit?.Invoke(this, new MouseClickEventArgs());
-                lastMouseOver = null;
-            }
         }
+
+        if (!wasHit && lastMouseOver)
+        {
+            OnMouseLeave();
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void OnMouseLeave()
+    {
+        MouseExit?.Invoke(this, new MouseClickEventArgs(-1));
+        lastMouseOver = null;
     }
 }

@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerManager playerManager;
     [SerializeField] private ObjectManager objectManager;
     [SerializeField] private NetworkClient networkClient;
-
+    [SerializeField] private UIManager uiManager;
     [SerializeField] private ClickMarker clickMarker;
     [SerializeField] private Texture2D defaultCursor;
 
@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
+        if (!uiManager) uiManager = FindObjectOfType<UIManager>();
         if (!objectManager) objectManager = FindObjectOfType<ObjectManager>();
         playerCamera.MouseClick += OnMouseClick;
         playerCamera.MouseEnter += OnMouseEnter;
@@ -73,31 +74,84 @@ public class GameManager : MonoBehaviour
 
     private void OnMouseClick(object sender, MouseClickEventArgs e)
     {
-        var myPlayer = playerManager.Me;
-        if (!myPlayer) return;
+        if (!playerManager.Me) return;
 
-        // depending on what is being clicked on
-        // if its an object to interact with
-        var worldObject = e.Collection.Select(x => x.collider.GetComponentInParent<NetworkObject>()).FirstOrDefault(x => x != null);
+        var myPlayer = playerManager.Me;
+
+        if (e.MouseButton == MouseButton.Right)
+        {
+            HandleRightClick(myPlayer, e);
+            return;
+        }
+
+        HandleLeftClick(myPlayer, e);
+    }
+
+    private void HandleLeftClick(NetworkPlayer me, MouseClickEventArgs e)
+    {
+        uiManager.ContextMenu.Hide();
+
+        // ignore other players for now since we don't have
+        // a left button action on players yet. Going to be for selecting/targeting players.
+        //var player = e.GetNetworkPlayer();
+        //if (player)
+        //{
+        //    return;
+        //}
+
+        var worldObject = e.GetNetworkObject();
         //var worldObject = e.Object.transform.GetComponentInParent<NetworkObject>();
         if (worldObject)
         {
-            myPlayer.MoveToAndInteractWith(ObjectInteraction.Create(worldObject), CheckIfRunning());
+            me.MoveToAndInteractWith(ObjectInteraction.Create(worldObject), CheckIfRunning());
+            return;
         }
-        else
-        {
-            var hit = e.Collection.Select(x => new { terrain = x.collider.GetComponent<Terrain>(), point = x.point }).FirstOrDefault(x => x.terrain != null);
-            //var terrain = e.Object.transform.GetComponent<Terrain>();
-            if (hit != null && hit.terrain)
-            {
-                HandleTerrainInteraction(hit.terrain, hit.point);
-                return;
-            }
 
-            myPlayer.MoveTo(hit.point, CheckIfRunning());
-            DisplayMouseMarker(hit.point);
+        var terrainHit = e.GetTerrain();
+        //var terrain = e.Object.transform.GetComponent<Terrain>();
+        if (terrainHit.Terrain)
+        {
+            HandleTerrainInteraction(terrainHit.Terrain, terrainHit.Point);
+            return;
+        }
+
+        WalkTo(me, terrainHit.Point);
+    }
+
+    private void HandleRightClick(NetworkPlayer me, MouseClickEventArgs e)
+    {
+        var player = e.GetNetworkPlayer();
+        if (player)
+        {
+            return;
+        }
+
+        var worldObject = e.GetNetworkObject();
+        //var worldObject = e.Object.transform.GetComponentInParent<NetworkObject>();
+        if (worldObject)
+        {
+            uiManager.ContextMenu
+                .SetHeader(worldObject.ObjectData.Name)
+                .Show();
+            return;
+        }
+
+        var terrainHit = e.GetTerrain();
+        //var terrain = e.Object.transform.GetComponent<Terrain>();
+        if (terrainHit.Terrain)
+        {
+            uiManager.ContextMenu
+                .SetHeader("Terrain")
+                .SetItems(new ContextMenuItem
+                {
+                    Text = "Walk Here",
+                    Click = () => WalkTo(me, terrainHit.Point)
+                })
+                .Show();
+            return;
         }
     }
+
     private void HandleTerrainInteraction(Terrain terrain, Vector3 point)
     {
         var myPlayer = playerManager.Me;
@@ -110,8 +164,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            myPlayer.MoveTo(point, CheckIfRunning());
-            DisplayMouseMarker(point);
+            WalkTo(myPlayer, point);
         }
     }
 
@@ -157,6 +210,11 @@ public class GameManager : MonoBehaviour
             Distance = objDist,
             Position = objPos,
         }), CheckIfRunning());
+    }
+    private void WalkTo(NetworkPlayer me, Vector3 position)
+    {
+        me.MoveTo(position, CheckIfRunning());
+        DisplayMouseMarker(position);
     }
 
     private void OnDestroy()
