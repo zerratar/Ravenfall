@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c503a0ceb43f9e45bbac3fa922eefc6, type: 3}
   m_Name: FishingSpot
   m_EditorClassIdentifier: 
-  Id: 3
+  Id: 75
   Name: Shrimp Fishing Spot
   Description: I can see a lot of shrimps!
   Actions:

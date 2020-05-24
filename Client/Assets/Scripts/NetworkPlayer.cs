@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System;
 using UnityEngine;
 
 public class NetworkPlayer : MonoBehaviour
@@ -13,10 +14,11 @@ public class NetworkPlayer : MonoBehaviour
     [SerializeField] private float objectInteractionRange = 1.5f;
 
     private NetworkClient networkClient;
-    private NetworkObject targetInteractionObject;
+    private ObjectInteraction targetInteractionObject;
+    private ObjectManager objectManager;
 
     private float playerPositionUpdateTimer;
-    private Vector3 lastPushedPosition;
+    private UnityEngine.Vector3 lastPushedPosition;
 
     public bool IsMe { get; set; }
     public int Id { get; set; }
@@ -27,6 +29,7 @@ public class NetworkPlayer : MonoBehaviour
     void Start()
     {
         networkClient = FindObjectOfType<NetworkClient>();
+        objectManager = FindObjectOfType<ObjectManager>();
     }
 
     // Update is called once per frame
@@ -38,7 +41,7 @@ public class NetworkPlayer : MonoBehaviour
 
     private void UpdateObjectInteraction()
     {
-        if (!targetInteractionObject) return;
+        if (targetInteractionObject == null) return;
         var obj = targetInteractionObject;
         GetObjectAction(obj, out var distance, out var action, out var interactionRange);
         if (distance <= interactionRange)
@@ -46,6 +49,11 @@ public class NetworkPlayer : MonoBehaviour
             networkClient.SendObjectAction(obj.ServerId, action.Id, 0);
             targetInteractionObject = null;
         }
+    }
+
+    internal void SetAppearance(Appearance appearance)
+    {
+        equipmentHandler.SetAppearance(appearance);
     }
 
     private void SendPosition()
@@ -60,19 +68,20 @@ public class NetworkPlayer : MonoBehaviour
         }
     }
 
-    internal void MoveToAndInteractWith(NetworkObject obj)
+    internal void MoveToAndInteractWith(ObjectInteraction obj, bool running)
     {
         if (!networkClient.Auth.Authenticated) return;
         targetInteractionObject = obj;
+
 
         GetObjectAction(obj, out var distance, out var action, out var interactionRange);
 
         if (distance > objectInteractionRange)
         {
-            var direction = (transform.position - obj.transform.position).normalized;
-            var targetMoveToPosition = obj.transform.position + ((interactionRange / 2.1f) * direction);
+            var direction = (transform.position - obj.Position).normalized;
+            var targetMoveToPosition = obj.Position + ((interactionRange / 2.1f) * direction);
             //var targetMoveToPosition = obj.transform.position;
-            networkClient.MoveTo(targetMoveToPosition);
+            networkClient.MoveTo(targetMoveToPosition, running);
         }
     }
 
@@ -104,16 +113,16 @@ public class NetworkPlayer : MonoBehaviour
         entityStats.PlayLevelUpAnimation(skill, gainedLevels);
     }
 
-    public void MoveTo(Vector3 destination)
+    public void MoveTo(UnityEngine.Vector3 destination, bool running)
     {
         if (!networkClient.Auth.Authenticated) return;
-        networkClient.MoveTo(destination);
+        networkClient.MoveTo(destination, running);
     }
 
-    private void GetObjectAction(NetworkObject obj, out float distance, out ServerAction action, out float interactionRange)
+    private void GetObjectAction(ObjectInteraction obj, out float distance, out ServerAction action, out float interactionRange)
     {
         var data = obj.ObjectData;
-        distance = Vector3.Distance(obj.transform.position, transform.position);
+        distance = UnityEngine.Vector3.Distance(obj.Position, transform.position);
         action = data.Actions[0];
         interactionRange = action.Range > 0 ? action.Range : data.InteractionRange > 0 ? data.InteractionRange : objectInteractionRange;
     }
@@ -126,5 +135,30 @@ public class NetworkPlayer : MonoBehaviour
     internal void RemoveInventoryItem(int itemId, int amount)
     {
         inventory.RemoveItem(itemId, amount);
+    }
+}
+
+public class ObjectInteraction
+{
+    public NetworkObject NetworkObject { get; set; }
+    public StaticObject StaticObject { get; set; }
+    public ServerObject ObjectData => NetworkObject ? NetworkObject.ObjectData : StaticObject.ObjectData;
+    public int ServerId => NetworkObject ? NetworkObject.ServerId : StaticObject.Instance + 1;
+    public UnityEngine.Vector3 Position => NetworkObject ? NetworkObject.transform.position : StaticObject.Position;
+
+    internal static ObjectInteraction Create(NetworkObject worldObject)
+    {
+        return new ObjectInteraction()
+        {
+            NetworkObject = worldObject
+        };
+    }
+
+    internal static ObjectInteraction Create(StaticObject staticObject)
+    {
+        return new ObjectInteraction()
+        {
+            StaticObject = staticObject
+        };
     }
 }

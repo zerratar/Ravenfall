@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c503a0ceb43f9e45bbac3fa922eefc6, type: 3}
   m_Name: Copper Rock
   m_EditorClassIdentifier: 
-  Id: 2
+  Id: 50
   Name: Copper Rock
   Description: Good ol' Copper Rock
   Actions:

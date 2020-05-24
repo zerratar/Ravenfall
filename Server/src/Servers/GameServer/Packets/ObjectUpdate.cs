@@ -8,14 +8,15 @@ namespace RavenfallServer.Packets
         public int ObjectServerId { get; set; }
         public int ObjectId { get; set; }
         public Vector3 Position { get; set; }
-
+        public bool Static { get; set; }        
         internal static ObjectUpdate Create(SceneObject obj)
         {
             return new ObjectUpdate
             {
                 ObjectServerId = obj.Id,
                 ObjectId = obj.DisplayObjectId,
-                Position = obj.Position
+                Position = obj.Position,
+                Static = obj.Static
             };
         }
     }

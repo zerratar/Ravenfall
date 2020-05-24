@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shinobytes.Ravenfall.RavenNet.Packets.Client;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -37,21 +38,18 @@ namespace Shinobytes.Ravenfall.RavenNet.Serializers
             using (var ms = new MemoryStream())
             using (var bw = new BinaryWriter(ms))
             {
-                if (!Serialize(bw, data))
-                {
-                    SerializeComplex(bw, data, data.GetType());
-                }
+                Serialize(bw, data);
                 return ms.ToArray();
             }
         }
 
         #region Serialization
 
-        private bool Serialize(BinaryWriter bw, object data)
+        private void Serialize(BinaryWriter bw, object data)
         {
             var type = data.GetType();
 
-            if (SerializeSpecial(bw, data, type)) return true;
+            if (SerializeSpecial(bw, data, type)) return;
 
             if (!writeMethodCache.TryGetValue(type.FullName, out var targetMethod))
             {
@@ -64,10 +62,11 @@ namespace Shinobytes.Ravenfall.RavenNet.Serializers
             if (targetMethod != null)
             {
                 targetMethod.Invoke(bw, new object[] { data });
-                return true;
+                return;
             }
 
-            return false;
+
+            SerializeComplex(bw, data, data.GetType());
         }
 
         private void Serialize(BinaryWriter bw, object data, PropertyInfo property)
@@ -86,11 +85,8 @@ namespace Shinobytes.Ravenfall.RavenNet.Serializers
 
         private void Serialize(BinaryWriter bw, object value, Type type)
         {
-            if (SerializeSpecial(bw, value, type)) return;
-
-            //var targetMethod = bw.GetType()
-            //    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-            //    .FirstOrDefault(x => MatchWriteMethod(x, type));
+            if (SerializeSpecial(bw, value, type))
+                return;
 
             if (!writeMethodCache.TryGetValue(type.FullName, out var targetMethod))
             {
@@ -211,15 +207,8 @@ namespace Shinobytes.Ravenfall.RavenNet.Serializers
                 bw.Write(dictionary.Count);
                 foreach (var key in dictionary.Keys)
                 {
-                    if (!Serialize(bw, key))
-                    {
-                        SerializeComplex(bw, key, key.GetType());
-                    }
-                    var val = dictionary[key];
-                    if (!Serialize(bw, val))
-                    {
-                        SerializeComplex(bw, val, val.GetType());
-                    }
+                    Serialize(bw, key);
+                    Serialize(bw, dictionary[key]);
                 }
                 return true;
             }
@@ -230,10 +219,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Serializers
                 bw.Write(items.Count);
                 foreach (var item in items)
                 {
-                    if (!Serialize(bw, item))
-                    {
-                        SerializeComplex(bw, item, item.GetType());
-                    }
+                    Serialize(bw, item);
                 }
 
                 return true;
@@ -241,7 +227,6 @@ namespace Shinobytes.Ravenfall.RavenNet.Serializers
 
             return false;
         }
-
         private bool SerializeArray(BinaryWriter bw, object value, Type elementType, Type type)
         {
             if (elementType == null || !type.IsArray) return false;
@@ -267,8 +252,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Serializers
 
         private object Deserialize(BinaryReader br, PropertyInfo property)
         {
-            var type = property.PropertyType;
-            return Deserialize(br, type);
+            return Deserialize(br, property.PropertyType);
         }
 
         private object Deserialize(BinaryReader br, FieldInfo field)

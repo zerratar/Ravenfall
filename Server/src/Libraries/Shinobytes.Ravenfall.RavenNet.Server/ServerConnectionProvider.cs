@@ -5,6 +5,9 @@ using Shinobytes.Ravenfall.RavenNet.Packets;
 
 namespace Shinobytes.Ravenfall.RavenNet.Server
 {
+    /// <summary>
+    /// We do not have any server to server communication right now.
+    /// </summary>
     public class ServerConnectionProvider : IRavenConnectionProvider
     {
         private readonly ILogger logger;
@@ -33,7 +36,12 @@ namespace Shinobytes.Ravenfall.RavenNet.Server
             throw new System.NotImplementedException();
         }
 
-        public T GetConnection<T>(Func<T, bool> p)
+        public T GetConnection<T>(Func<T, bool> p) where T : RavenNetworkConnection
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Terminate<T, TPacket>(T activeConnection, TPacket reason) where T : RavenNetworkConnection
         {
             throw new NotImplementedException();
         }

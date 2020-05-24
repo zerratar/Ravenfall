@@ -8,5 +8,6 @@ namespace RavenfallServer.Packets
         public int PlayerId { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Destination { get; set; }
+        public bool Running { get; set; }
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class EntityNavigation : MonoBehaviour
 {
     [SerializeField] private float movementSpeed = 3.5f;
     [SerializeField] private float sprintMultiplier = 2.5f;
+    [SerializeField] private float positionUpdateThreshold = 1f;
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private Animator animator;
 
@@ -23,10 +23,21 @@ public class EntityNavigation : MonoBehaviour
         UpdateAnimator();
     }
 
-    internal void MoveTo(Vector3 point, bool sprinting)
+    internal void MoveTo(Vector3 destination, bool sprinting)
+    {
+        MoveTo(transform.position, destination, sprinting);
+    }
+
+    internal void MoveTo(Vector3 currentPosition, Vector3 destination, bool sprinting)
     {
         SetMovement(sprinting);
-        navMeshAgent.SetDestination(point);
+        // to ensure we get a smooth transition and don't jump too much. We wont 
+        // care about small position changes and instead just update the destination.
+        if (Vector3.Distance(transform.position, currentPosition) > positionUpdateThreshold)
+        {
+            navMeshAgent.Warp(currentPosition);
+        }
+        navMeshAgent.SetDestination(destination);
     }
 
     internal void SetMovement(bool sprinting)
@@ -55,6 +66,6 @@ public class EntityNavigation : MonoBehaviour
 
     internal void StopMoving()
     {
-        MoveTo(transform.position, false);
+        MoveTo(transform.position, transform.position, false);
     }
 }

@@ -6,6 +6,7 @@ using Shinobytes.Ravenfall.RavenNet.Packets.Client;
 
 namespace Assets.Scripts.PacketHandlers
 {
+
     public class PlayerEquipmentStateUpdateHandler : INetworkPacketHandler<PlayerEquipmentStateUpdate>
     {
         private readonly ILogger logger;

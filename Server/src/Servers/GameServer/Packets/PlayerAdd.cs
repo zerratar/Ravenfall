@@ -10,7 +10,7 @@ namespace RavenfallServer.Packets
         public int CombatLevel { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Destination { get; set; }
-
+        public Appearance Appearance { get; set; }
         internal static PlayerAdd Create(Player player, int combatLevel)
         {
             return new PlayerAdd
@@ -19,7 +19,8 @@ namespace RavenfallServer.Packets
                 Name = player.Name,
                 CombatLevel = combatLevel,
                 Position = player.Position,
-                Destination = player.Destination
+                Destination = player.Destination,
+                Appearance = player.Appearance
             };
         }
     }

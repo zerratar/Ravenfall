@@ -19,14 +19,14 @@ namespace Assets.Scripts.PacketHandlers
         }
 
         public void Handle(ObjectAdd data, IRavenNetworkConnection connection, SendOption sendOption)
-        {
+        {            
             logger.Debug("Add Instance Id: " + data.ObjectServerId + ", Object Id: " + data.ObjectId + " received from server.");
             var objectHandler = moduleManager.GetModule<ObjectHandler>();
             var obj = new SceneObject()
             {
                 Id = data.ObjectServerId,
                 ObjectId = data.ObjectId,
-                Position = data.Position,
+                Position = data.Position,                
             };
 
             objectHandler.Add(obj);

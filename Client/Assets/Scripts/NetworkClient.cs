@@ -3,6 +3,7 @@ using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Modules;
 using Shinobytes.Ravenfall.RavenNet.Packets.Client;
+using System;
 using System.Collections;
 using System.Net;
 using UnityEngine;
@@ -23,15 +24,44 @@ public class NetworkClient : MonoBehaviour
     public Authentication Auth { get; private set; }
     public PlayerHandler PlayerHandler { get; private set; }
     public ObjectHandler ObjectHandler { get; private set; }
+    public CharacterHandler CharacterHandler { get; private set; }
+    public ChatMessageHandler ChatMessageHandler { get; private set; }
 
-    public void MoveTo(Shinobytes.Ravenfall.RavenNet.Models.Vector3 destination)
+    public void MoveTo(Shinobytes.Ravenfall.RavenNet.Models.Vector3 destination, bool running = false)
     {
         var from = playerManager.Me.transform.position;
         if (from == (UnityEngine.Vector3)destination) return;
         gameClient.Send(new PlayerMoveRequest
         {
             Position = from,
-            Destination = destination
+            Destination = destination,
+            Running = running,
+        }, SendOption.Reliable);
+    }
+
+    internal void SendChatMessage(int channelId, string message)
+    {
+        gameClient.Send(new ChatMessage
+        {
+            ChannelId = channelId,
+            Message = message,
+        }, SendOption.Reliable);
+    }
+
+    internal void SendDeleteCharacter(int id)
+    {
+        gameClient.Send(new UserPlayerDelete
+        {
+            PlayerId = id
+        }, SendOption.Reliable);
+    }
+
+    internal void SendCreateCharacter(Player player)
+    {
+        gameClient.Send(new UserPlayerCreate
+        {
+            Name = player.Name,
+            Appearance = player.Appearance
         }, SendOption.Reliable);
     }
 
@@ -53,6 +83,14 @@ public class NetworkClient : MonoBehaviour
         }, SendOption.None);
     }
 
+    internal void SendSelectCharacter(int id)
+    {
+        gameClient.Send(new UserPlayerSelect
+        {
+            PlayerId = id
+        }, SendOption.Reliable);
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -61,7 +99,8 @@ public class NetworkClient : MonoBehaviour
         Auth = gameClient.Modules.GetModule<Authentication>();
         PlayerHandler = gameClient.Modules.GetModule<PlayerHandler>();
         ObjectHandler = gameClient.Modules.GetModule<ObjectHandler>();
-
+        CharacterHandler = gameClient.Modules.GetModule<CharacterHandler>();
+        ChatMessageHandler = gameClient.Modules.GetModule<ChatMessageHandler>();
         //Connect();
     }
 

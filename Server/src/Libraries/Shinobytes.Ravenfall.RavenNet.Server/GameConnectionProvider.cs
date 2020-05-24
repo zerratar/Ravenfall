@@ -37,9 +37,22 @@ namespace Shinobytes.Ravenfall.RavenNet.Server
             lock (mutex) return connections.Where(x => x.State == ConnectionState.Connected).ToList();
         }
 
-        public T GetConnection<T>(Func<T, bool> p)
+        public T GetConnection<T>(Func<T, bool> p) where T : RavenNetworkConnection
         {
             lock (mutex) return connections.OfType<T>().FirstOrDefault(p);
+        }
+
+        public void Terminate<T, TPacket>(T activeConnection, TPacket reason) where T : RavenNetworkConnection
+        {
+            lock (mutex)
+            {
+                if (reason != null)
+                {
+                    activeConnection.Send(reason, SendOption.None);
+                }
+
+                activeConnection.Disconnect();
+            }
         }
 
         protected abstract RavenNetworkConnection CreateConnection(ILogger logger, Connection connection, INetworkPacketController packetHandlers);

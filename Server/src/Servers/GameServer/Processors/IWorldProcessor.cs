@@ -13,6 +13,7 @@ public interface IWorldProcessor
     void PlayerObjectInteraction(Player player, SceneObject serverObject, SceneObjectAction action, int parameterId);
     void PlayAnimation(Player player, string animation, bool enabled = true, bool trigger = false, int number = 0);
     void SetItemEquipState(Player player, Item item, bool v);
+    void SendChatMessage(Player player, int channelID, string message);
     void UpdatePlayerStat(Player player, PlayerStat skill);
     void PlayerStatLevelUp(Player player, PlayerStat skill, int levelsGaiend);
     void AddPlayerItem(Player player, Item item, int amount = 1);

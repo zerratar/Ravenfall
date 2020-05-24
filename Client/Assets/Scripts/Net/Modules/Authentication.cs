@@ -4,7 +4,6 @@ using System.Threading;
 
 namespace Shinobytes.Ravenfall.RavenNet.Modules
 {
-
     public class Authentication : IModule
     {
         private const int LOGIN_SUCCESS = 0;

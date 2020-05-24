@@ -4,7 +4,7 @@ using Shinobytes.Ravenfall.RavenNet.Packets;
 
 namespace Shinobytes.Ravenfall.RavenNet.Server
 {
-    public class PlayerConnection : GameClientConnection
+    public class PlayerConnection : UserConnection
     {
         public PlayerConnection(
             ILogger logger,
@@ -14,6 +14,6 @@ namespace Shinobytes.Ravenfall.RavenNet.Server
         {
         }
 
-        public Player Player => Tag as Player;
+        public Player Player => PlayerTag as Player;
     }
 }

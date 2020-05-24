@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Shinobytes.Ravenfall.RavenNet.Models
 {
@@ -15,7 +16,9 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
             Z = z;
         }
 
+        [JsonIgnore]
         public float Magnitude => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+        [JsonIgnore]
         public float SqrtMagnitude => X * X + Y * Y + Z * Z;
 
         public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3

@@ -1,4 +1,5 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System.Collections.Generic;
 
 namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
 {
@@ -26,6 +27,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public int CombatLevel { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Destination { get; set; }
+        public Appearance Appearance { get; set; }
     }
 
     public class PlayerRemove
@@ -39,6 +41,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public const short OpCode = 4;
         public Vector3 Position { get; set; }
         public Vector3 Destination { get; set; }
+        public bool Running { get; set; }
     }
 
     public class PlayerMoveResponse
@@ -47,6 +50,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public int PlayerId { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Destination { get; set; }
+        public bool Running { get; set; }
     }
 
     public class PlayerPositionUpdate
@@ -93,6 +97,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public int ObjectServerId { get; set; }
         public int ObjectId { get; set; }
         public Vector3 Position { get; set; }
+        public bool Static { get; set; }
     }
 
     public class PlayerAnimationStateUpdate
@@ -136,9 +141,11 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public const short OpCode = 16;
         public int PlayerId { get; set; }
         public string Name { get; set; }
+        public int CombatLevel { get; set; }
         public Vector3 Position { get; set; }
         public int[] EffectiveLevel { get; set; }
         public decimal[] Experience { get; set; }
+        public Appearance Appearance { get; set; }
     }
 
     public class PlayerItemAdd
@@ -155,5 +162,67 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public int PlayerId { get; set; }
         public int ItemId { get; set; }
         public int Amount { get; set; }
+    }
+
+    public class UserPlayerCreate
+    {
+        public const short OpCode = 19;
+        public string Name { get; set; }
+        public Appearance Appearance { get; set; }
+    }
+
+    public class UserPlayerSelect
+    {
+        public const short OpCode = 20;
+        public int PlayerId { get; set; }
+    }
+
+    public class UserPlayerDelete
+    {
+        public const short OpCode = 21;
+        public int PlayerId { get; set; }
+    }
+
+    public class UserPlayerList
+    {
+        public const short OpCode = 22;
+        public int[] Id { get; set; }
+        public string[] Name { get; set; }
+        public int[] CombatLevel { get; set; }
+        public Appearance[] Appearance { get; set; }
+
+        public Player[] GetPlayers()
+        {
+            if (Id == null || Id.Length == 0)
+                return new Player[0];
+
+            var players = new Player[Id.Length];
+            for (var i = 0; i < Id.Length; ++i)
+            {
+                players[i] = new Player
+                {
+                    Id = Id[i],
+                    Name = Name[i],
+                    CombatLevel = CombatLevel[i],
+                    Appearance = Appearance[i]
+                };
+            }
+            return players;
+        }
+    }
+
+    public class ConnectionKillSwitch
+    {
+        public const short OpCode = 24;
+        public int Reason { get; set; }
+    }
+
+    public class ChatMessage
+    {
+        public const short OpCode = 25;
+        public int ChannelId { get; set; }
+        public int PlayerId { get; set; }
+        public string Sender { get; set; }
+        public string Message { get; set; }
     }
 }

@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public int ObjectId { get; set; }
         public Vector3 Position { get; set; }
+        public bool Static { get; set; }
     }
 }

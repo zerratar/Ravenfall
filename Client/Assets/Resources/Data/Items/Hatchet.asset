@@ -19,4 +19,6 @@ MonoBehaviour:
   InteractionRange: 0
   Model: {fileID: 430105756600135849, guid: 36a1e2a58a69d91468c729fe824b00e7, type: 3}
   Equippable: 1
+  Stackable: 0
+  Consumable: 0
   EquipmentSlot: 3

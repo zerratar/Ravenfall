@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c503a0ceb43f9e45bbac3fa922eefc6, type: 3}
   m_Name: Tree
   m_EditorClassIdentifier: 
-  Id: 0
+  Id: 1
   Name: Tree
   Description: An ordinary tree
   Actions:

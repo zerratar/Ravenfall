@@ -17,7 +17,8 @@ public class Client : IRavenClient
     private readonly PlayerHandler playerHandler;
     private readonly ObjectHandler objectHandler;
     private readonly NpcHandler npcHandler;
-
+    private readonly CharacterHandler characterHandler;
+    private readonly ChatMessageHandler chatMessageHandler;
     private readonly object connectionMutex = new object();
 
     public IModuleManager Modules { get; }
@@ -35,7 +36,10 @@ public class Client : IRavenClient
         this.playerHandler = this.Modules.AddModule(new PlayerHandler());
         this.objectHandler = this.Modules.AddModule(new ObjectHandler());
         this.npcHandler = this.Modules.AddModule(new NpcHandler());
+        this.characterHandler = this.Modules.AddModule(new CharacterHandler());
+        this.chatMessageHandler = this.Modules.AddModule(new ChatMessageHandler());
     }
+
     public void Send<T>(short packetId, T packet, SendOption sendOption)
     {
         client.Send(packetId, packet, sendOption);

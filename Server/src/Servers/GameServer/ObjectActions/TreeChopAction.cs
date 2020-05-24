@@ -5,54 +5,51 @@ using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace GameServer.ObjectActions
+public class TreeChopAction : SkillObjectAction
 {
-    public class TreeChopAction : SkillObjectAction
+    private readonly IKernel kernel;
+    private readonly IRavenConnectionProvider connectionProvider;
+
+    public TreeChopAction(
+        IKernel kernel,
+        IWorldProcessor worldProcessor,
+        IItemProvider itemProvider,
+        IObjectProvider objectProvider,
+        IPlayerStatsProvider statsProvider,
+        IPlayerInventoryProvider inventoryProvider,
+        IRavenConnectionProvider connectionProvider)
+        : base(1,
+              "Chop",
+              "Woodcutting",
+              2000,
+              worldProcessor,
+              itemProvider,
+              objectProvider,
+              statsProvider,
+              inventoryProvider)
     {
-        private readonly IKernel kernel;
-        private readonly IRavenConnectionProvider connectionProvider;
+        this.kernel = kernel;
+        this.connectionProvider = connectionProvider;
+        AfterAction += (sender, ev) => MakeTreeStump(ev.Object);
+    }
 
-        public TreeChopAction(
-            IKernel kernel,
-            IWorldProcessor worldProcessor,
-            IItemProvider itemProvider,
-            IObjectProvider objectProvider,
-            IPlayerStatsProvider statsProvider,
-            IPlayerInventoryProvider inventoryProvider,
-            IRavenConnectionProvider connectionProvider)
-            : base(1,
-                  "Chop",
-                  "Woodcutting",
-                  2000,
-                  worldProcessor,
-                  itemProvider,
-                  objectProvider,
-                  statsProvider,
-                  inventoryProvider)
+    private void MakeTreeStump(SceneObject tree)
+    {
+        tree.DisplayObjectId = 0;
+        foreach (var playerConnection in connectionProvider.GetAll())
         {
-            this.kernel = kernel;
-            this.connectionProvider = connectionProvider;
-            AfterAction += (sender, ev) => MakeTreeStump(ev.Object);
+            playerConnection.Send(ObjectUpdate.Create(tree), SendOption.Reliable);
         }
 
-        private void MakeTreeStump(SceneObject tree)
+        kernel.SetTimeout(() => RespawnTree(tree), tree.RespawnMilliseconds);
+    }
+
+    private void RespawnTree(SceneObject tree)
+    {
+        tree.DisplayObjectId = tree.ObjectId;
+        foreach (var playerConnection in connectionProvider.GetAll())
         {
-            tree.DisplayObjectId = 1;
-            foreach (var playerConnection in connectionProvider.GetAll())
-            {
-                playerConnection.Send(ObjectUpdate.Create(tree), SendOption.Reliable);
-            }
-
-            kernel.SetTimeout(() => RespawnTree(tree), tree.RespawnMilliseconds);
-        }
-
-        private void RespawnTree(SceneObject tree)
-        {            
-            tree.DisplayObjectId = 0;
-            foreach (var playerConnection in connectionProvider.GetAll())
-            {
-                playerConnection.Send(ObjectUpdate.Create(tree), SendOption.Reliable);
-            }
+            playerConnection.Send(ObjectUpdate.Create(tree), SendOption.Reliable);
         }
     }
 }

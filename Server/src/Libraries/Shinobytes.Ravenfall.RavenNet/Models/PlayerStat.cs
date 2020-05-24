@@ -7,6 +7,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
     {
         private static volatile int index;
 
+        public int Index { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public decimal Experience { get; set; }
@@ -22,11 +23,12 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
             return delta;
         }
 
-        public static PlayerStat Create(string name, int level = 1, decimal experience = 0)
+        public static PlayerStat Create(int index, string name, int level = 1, decimal experience = 0)
         {
             var levelExp = GameMath.LevelToExperience(level);
             return new PlayerStat
             {
+                Index = index,
                 Id = index++,
                 Name = name,
                 Level = level,

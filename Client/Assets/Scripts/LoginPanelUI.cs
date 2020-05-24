@@ -17,6 +17,12 @@ public class LoginPanelUI : MonoBehaviour
     {
     }
 
+    private void OnEnable()
+    {
+        inputUsername.readOnly = false;
+        inputPassword.readOnly = false;
+    }
+
     public void OnLoginClicked()
     {
         if (!networkClient)

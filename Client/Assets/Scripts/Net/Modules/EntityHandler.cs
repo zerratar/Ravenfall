@@ -38,12 +38,12 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             }
         }
 
-        internal void Update(TEntity entity)
+        internal void Update(TEntity entity, bool entityMustExist)
         {
             lock (SyncRoot)
             {
                 var targetEntity = Entities.FirstOrDefault(x => idComparison(x, entity));
-                if (targetEntity == null) return;
+                if (targetEntity == null && entityMustExist) return;
                 Changes.Enqueue(new EntityUpdated<TEntity>(entity));
             }
         }

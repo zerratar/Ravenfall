@@ -27,9 +27,10 @@ namespace Assets.Scripts.PacketHandlers
                 Id = data.ObjectServerId,
                 ObjectId = data.ObjectId,
                 Position = data.Position,
+                Static = data.Static
             };
 
-            objectHandler.Update(obj);
+            objectHandler.Update(obj, !data.Static);
         }
     }
 }

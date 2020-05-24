@@ -6,7 +6,7 @@ namespace RavenfallServer.Providers
     public interface IPlayerStatsProvider
     {
         IReadOnlyList<PlayerStat> GetStats(int playerId);
-        PlayerStat GetStatById(int playerId, int id);
+        PlayerStat GetStatByIndex(int playerId, int id);
         PlayerStat GetStatByName(int playerId, string name);
         int GetCombatLevel(int playerId);
     }

@@ -5,12 +5,12 @@ using System;
 namespace Shinobytes.Ravenfall.RavenNet
 {
     public abstract class RavenNetworkConnection : IRavenNetworkConnection, IDisposable
-    {        
+    {
         private readonly INetworkPacketController controller;
-        
+
         protected readonly Connection Connection;
         protected readonly ILogger Logger;
-        
+
         private bool disposed;
 
         public RavenNetworkConnection(
@@ -27,7 +27,9 @@ namespace Shinobytes.Ravenfall.RavenNet
 
         public event EventHandler Disconnected;
         public Guid InstanceID => Connection.InstanceID;
-        public object Tag { get; set; }
+
+        public object UserTag { get; set; }
+        public object PlayerTag { get; set; }
         public ConnectionState State => Connection.State;
         private void Connection_DataReceived(DataReceivedEventArgs obj)
         {
@@ -49,6 +51,11 @@ namespace Shinobytes.Ravenfall.RavenNet
         public void Send<TPacket>(TPacket packet, SendOption sendOption)
         {
             controller.Send(Connection, packet, sendOption);
+        }
+
+        public void Disconnect()
+        {
+            Connection.Disconnect(null);
         }
 
         private void Connection_Disconnected(object sender, DisconnectedEventArgs e)

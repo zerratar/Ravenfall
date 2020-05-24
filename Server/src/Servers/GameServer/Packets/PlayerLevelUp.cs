@@ -14,7 +14,7 @@ namespace RavenfallServer.Packets
             return new PlayerLevelUp
             {
                 PlayerId = player.Id,
-                Skill = stat.Id,
+                Skill = stat.Index,
                 GainedLevels = gainedLevels
             };
         }

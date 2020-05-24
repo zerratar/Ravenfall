@@ -1,14 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MouseClickEventArgs : EventArgs
 {
-    public MouseClickEventArgs(GameObject obj, Vector3 destination)
+    public MouseClickEventArgs(params RaycastHit[] Hits)
     {
-        Object = obj;
-        Point = destination;
+        Collection = Hits;
     }
 
-    public GameObject Object { get; }
-    public Vector3 Point { get; }
+    public RaycastHit[] Collection { get; }
 }

@@ -15,5 +15,5 @@ MonoBehaviour:
   Id: 1
   Name: Chop
   BubbleIcon: {fileID: 0}
+  CursorIcon: {fileID: 2800000, guid: 0230513a91d07d949958e664ab2a6cb8, type: 3}
   Range: 3
-  AnimationTriggerName: 

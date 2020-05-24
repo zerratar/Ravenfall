@@ -21,7 +21,14 @@ public class EntityStats : MonoBehaviour
 
     internal void PlayLevelUpAnimation(int skill, int gainedLevels)
     {
-        var playerSkill = Stats.FirstOrDefault(x => x.Id == skill);
+        if (levelUpEffectPrefab)
+        {
+            var levelupEffect = Instantiate(levelUpEffectPrefab, this.transform);
+            
+            levelupEffect.AddComponent<AutoDestroyPS>();
+        }
+
+        var playerSkill = Stats[skill];
         if (playerSkill == null) return;
 
         Debug.Log("Congratulations, you've gained " + gainedLevels + " " + playerSkill.Name + " level(s)!");
@@ -29,7 +36,7 @@ public class EntityStats : MonoBehaviour
 
     internal void UpdateStat(int skill, int level, int effectiveLevel, decimal experience)
     {
-        var playerSkill = Stats.FirstOrDefault(x => x.Id == skill);
+        var playerSkill = Stats[skill];
         if (playerSkill == null) return;
 
         playerSkill.Level = level;

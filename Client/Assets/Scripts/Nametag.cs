@@ -16,6 +16,8 @@ public class Nametag : MonoBehaviour
     private void Update()
     {
         if (!player) return;
+        if (!playerCamera) playerCamera = GameObject.FindObjectOfType<PlayerCamera>();
+        if (!playerCamera) return;
         transform.position = player.transform.position + (Vector3.up * offsetY);
         transform.LookAt(playerCamera.transform);
     }
@@ -24,6 +26,7 @@ public class Nametag : MonoBehaviour
     {
         if (!lblName) return;
         lblName.text = player.name;
+        lblName.faceColor = player.IsMe ? Color.green : Color.white;
         this.player = player;
     }
 }

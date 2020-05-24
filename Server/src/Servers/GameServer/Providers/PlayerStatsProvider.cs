@@ -24,16 +24,17 @@ namespace RavenfallServer.Providers
             return (int)Math.Floor((attack.Level + defense.Level + strength.Level + health.Level) / 4f + (magic.Level + ranged.Level) / 8f);
         }
 
-        public PlayerStat GetStatById(int playerId, int id)
+        public PlayerStat GetStatByIndex(int playerId, int index)
         {
             if (playerStats.TryGetValue(playerId, out var stats))
             {
-                return stats.FirstOrDefault(x => x.Id == id);
+                //return stats.FirstOrDefault(x => x.Id == index);
+                return stats[index];
             }
 
             CreatePlayerStats(playerId);
 
-            return GetStatById(playerId, id);
+            return GetStatByIndex(playerId, index);
         }
 
         public PlayerStat GetStatByName(int playerId, string name)
@@ -62,18 +63,19 @@ namespace RavenfallServer.Providers
 
         private void CreatePlayerStats(int playerId)
         {
+            var index = 0;
             playerStats[playerId] = new PlayerStat[]
             {
-                PlayerStat.Create("Attack"),
-                PlayerStat.Create("Defense"),
-                PlayerStat.Create("Strength"),
-                PlayerStat.Create("Health", 10, 1000),
-                PlayerStat.Create("Ranged"),
-                PlayerStat.Create("Magic"),
-                PlayerStat.Create("Woodcutting"),
-                PlayerStat.Create("Mining"),
-                PlayerStat.Create("Fishing"),
-                PlayerStat.Create("Cooking"),
+                PlayerStat.Create(index++, "Attack"),
+                PlayerStat.Create(index++, "Defense"),
+                PlayerStat.Create(index++, "Strength"),
+                PlayerStat.Create(index++, "Health", 10, 1000),
+                PlayerStat.Create(index++, "Ranged"),
+                PlayerStat.Create(index++, "Magic"),
+                PlayerStat.Create(index++, "Woodcutting"),
+                PlayerStat.Create(index++, "Mining"),
+                PlayerStat.Create(index++, "Fishing"),
+                PlayerStat.Create(index++, "Cooking"),
             };
         }
     }

@@ -9,7 +9,8 @@ namespace Shinobytes.Ravenfall.RavenNet.Server
 
         IReadOnlyList<RavenNetworkConnection> GetAll();
         IReadOnlyList<RavenNetworkConnection> GetConnected();
-        T GetConnection<T>(Func<T, bool> p);
+        T GetConnection<T>(Func<T, bool> p) where T : RavenNetworkConnection;
+        void Terminate<T, TPacket>(T activeConnection, TPacket reason) where T : RavenNetworkConnection;
     }
 
 }

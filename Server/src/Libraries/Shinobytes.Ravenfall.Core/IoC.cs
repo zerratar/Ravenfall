@@ -17,6 +17,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Core
             = new ConcurrentDictionary<Type, Func<object>>();
 
         public void RegisterShared<TInterface, TImplementation>()
+            where TImplementation : TInterface
         {
             typeLookup[typeof(TInterface)] = new TypeLookup(typeof(TImplementation), true);
         }

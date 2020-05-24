@@ -28,7 +28,8 @@ namespace Assets.Scripts.PacketHandlers
                 IsMe = false,
                 Name = data.Name,
                 Position = data.Position,
-                Destination = data.Destination
+                Destination = data.Destination,
+                Appearance = data.Appearance
             };
 
             playerHandler.Add(player);

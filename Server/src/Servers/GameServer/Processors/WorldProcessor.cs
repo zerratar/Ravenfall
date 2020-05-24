@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using RavenfallServer.Packets;
 using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet;
@@ -18,8 +19,11 @@ public class WorldProcessor : IWorldProcessor
     private readonly IPlayerInventoryProvider playerInventoryProvider;
     private readonly IObjectProvider objectProvider;
 
-    private readonly object mutex = new object();
+    private readonly object objectUpdateMutex = new object();
+    private readonly object playerMutex = new object();
+
     private readonly List<ObjectTick> objectTicks = new List<ObjectTick>();
+    private readonly List<Player> activePlayers = new List<Player>();
 
     public WorldProcessor(
         ILogger logger,
@@ -40,12 +44,25 @@ public class WorldProcessor : IWorldProcessor
         this.kernel.RegisterTickUpdate(Update, TimeSpan.FromSeconds(60f / 1f));
     }
 
+    public void SendChatMessage(Player player, int channelID, string message)
+    {
+        var connections = GetConnectedActivePlayerConnections();
+
+        // var connections = chatHandler.GetChannelPlayers(channelID);
+
+        foreach (var connection in connections)
+        {
+            connection.Send(ChatMessage.Create(player, channelID, message), SendOption.Reliable);
+        }
+    }
+
     public void AddPlayer(PlayerConnection myConnection)
     {
         try
         {
-            var connections = connectionProvider.GetAll().OfType<PlayerConnection>();
-            var allPlayers = playerProvider.GetAll();
+            AddActivePlayer(myConnection.Player);
+            var connections = GetConnectedActivePlayerConnections();
+            var allPlayers = GetActivePlayers();
             var objects = objectProvider.GetAll();
 
             foreach (var connection in connections)
@@ -54,7 +71,8 @@ public class WorldProcessor : IWorldProcessor
                 if (isMe)
                 {
                     var stats = statsProvider.GetStats(myConnection.Player.Id);
-                    connection.Send(MyPlayerAdd.Create(myConnection.Player, stats), SendOption.Reliable);
+                    var level = statsProvider.GetCombatLevel(myConnection.Player.Id);
+                    connection.Send(MyPlayerAdd.Create(myConnection.Player, level, stats), SendOption.Reliable);
                 }
                 else
                 {
@@ -72,7 +90,17 @@ public class WorldProcessor : IWorldProcessor
 
             foreach (var obj in objects)
             {
-                myConnection.Send(ObjectAdd.Create(obj), SendOption.Reliable);
+                if (obj.Static)
+                {
+                    if (obj.DisplayObjectId != obj.ObjectId)
+                    {
+                        myConnection.Send(ObjectUpdate.Create(obj), SendOption.Reliable);
+                    }
+                }
+                else
+                {
+                    myConnection.Send(ObjectAdd.Create(obj), SendOption.Reliable);
+                }
             }
         }
         catch (Exception exc)
@@ -83,10 +111,10 @@ public class WorldProcessor : IWorldProcessor
 
     public void RemovePlayer(Player player)
     {
+        RemoveActivePlayer(player);
         objectProvider.ReleaseObjectLocks(player);
 
-        var connections = connectionProvider.GetConnected();
-        foreach (var connection in connections)
+        foreach (var connection in GetConnectedActivePlayerConnections())
         {
             connection.Send(PlayerRemove.Create(player), SendOption.Reliable);
         }
@@ -94,8 +122,7 @@ public class WorldProcessor : IWorldProcessor
 
     public void PlayAnimation(Player player, string animation, bool enabled = true, bool trigger = false, int number = 0)
     {
-        var connections = connectionProvider.GetConnected();
-        foreach (var connection in connections)
+        foreach (var connection in GetConnectedActivePlayerConnections())
         {
             connection.Send(PlayerAnimationStateUpdate.Create(player, animation, enabled, trigger, number), SendOption.Reliable);
         }
@@ -152,8 +179,7 @@ public class WorldProcessor : IWorldProcessor
 
     public void PlayerStatLevelUp(Player player, PlayerStat skill, int levelsGained)
     {
-        var connections = connectionProvider.GetConnected();
-        foreach (var connection in connections)
+        foreach (var connection in GetConnectedActivePlayerConnections())
         {
             connection.Send(PlayerLevelUp.Create(player, skill, levelsGained), SendOption.Reliable);
         }
@@ -162,13 +188,12 @@ public class WorldProcessor : IWorldProcessor
     public void SetItemEquipState(Player player, Item item, bool state)
     {
         var inventory = playerInventoryProvider.GetInventory(player.Id);
-        if (state) 
+        if (state)
             inventory.EquipItem(item);
-        else 
+        else
             inventory.UnEquipItem(item);
 
-        var connections = connectionProvider.GetConnected();
-        foreach (var connection in connections)
+        foreach (var connection in GetConnectedActivePlayerConnections())
         {
             connection.Send(PlayerEquipmentStateUpdate.Create(player, item, state), SendOption.Reliable);
         }
@@ -198,7 +223,7 @@ public class WorldProcessor : IWorldProcessor
         Player player, TObject obj, ObjectTickHandler<TObject> handleObjectTick)
         where TObject : SceneObject
     {
-        lock (mutex) objectTicks.Add(new ObjectTick<TObject>(player, obj, handleObjectTick));
+        lock (objectUpdateMutex) objectTicks.Add(new ObjectTick<TObject>(player, obj, handleObjectTick));
     }
     public ITimeoutHandle SetObjectTimeout<TObject>(int milliseconds, Player player, TObject obj, ObjectTickHandler<TObject> handleObjectTick) where TObject : SceneObject
     {
@@ -216,11 +241,48 @@ public class WorldProcessor : IWorldProcessor
         kernel.ClearTimeout(handle);
     }
 
+    private IReadOnlyList<Player> GetActivePlayers()
+    {
+        lock (playerMutex) return activePlayers;
+    }
+
+    private void AddActivePlayer(Player player)
+    {
+        lock (playerMutex) activePlayers.Add(player);
+    }
+
+    private void RemoveActivePlayer(Player player)
+    {
+        lock (playerMutex) activePlayers.Remove(player);
+    }
+
+    /// <summary>
+    /// Gets all active players regardless of their connection state.
+    /// </summary>
+    /// <remarks>Use this when you need to access all players regardless of their current state of connection. 
+    /// This can be helpful in case some players get a temporary disconnection due to server lag.</remarks>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private IEnumerable<PlayerConnection> GetAllActivePlayerConnections()
+    {
+        return connectionProvider.GetAll().OfType<PlayerConnection>().Where(x => x.Player != null);
+    }
+
+    /// <summary>
+    /// Gets all active players with a known connected state
+    /// </summary>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private IEnumerable<PlayerConnection> GetConnectedActivePlayerConnections()
+    {
+        return connectionProvider.GetConnected().OfType<PlayerConnection>().Where(x => x.Player != null);
+    }
+
     private void Update(TimeSpan deltaTime)
     {
         // Server Tick
 
-        lock (mutex)
+        lock (objectUpdateMutex)
         {
             var ticksToRemove = new List<ObjectTick>();
             foreach (var objectTick in objectTicks)

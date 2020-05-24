@@ -1,4 +1,4 @@
-﻿using GameServer.ObjectActions;
+﻿using GameServer.Repositories;
 using RavenfallServer.Objects;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace RavenfallServer.Providers
 {
-    public class ObjectProvider : IObjectProvider
+    public partial class ObjectProvider : IObjectProvider
     {
         private readonly ConcurrentDictionary<int, Lazy<SceneObjectAction>[]> objectActions
             = new ConcurrentDictionary<int, Lazy<SceneObjectAction>[]>();
@@ -26,30 +26,29 @@ namespace RavenfallServer.Providers
         private readonly List<SceneObject> entities = new List<SceneObject>();
         private readonly object mutex = new object();
         private readonly IoC ioc;
+        private readonly IGameObjectRepository objectRepository;
         private int index = 0;
 
         public ObjectProvider(IoC ioc)
         {
             this.ioc = ioc;
+            this.objectRepository = ioc.Resolve<IGameObjectRepository>();
 
-            entities.Add(TreeObject.Create(ref index, new Vector3(2.5f, 0, 13.55f)));
-            entities.Add(TreeObject.Create(ref index, new Vector3(7.35f, 0, 20.3f)));
+            AddGameObjects();
+            AddObjectDrops();
+            AddObjectActions();
 
-            entities.Add(Chair.Create(ref index, new Vector3(-2.96f, 0, 9.83f)));
+            //for (var i = 1; i <= 10; ++i)
+            //{
+            //    //RegisterObjectItemDrop(i, new ObjectItemDrop { DropChance = 1f, ItemId = 2 });
+            //    RegisterObjectActions(i, typeof(TreeChopAction), typeof(ExamineAction));
+            //}
 
-            entities.Add(RockObject.Create(ref index, new Vector3(-11.57f, 0, -12.39f)));
-            entities.Add(RockObject.Create(ref index, new Vector3(-15.43f, 0, -8.64f)));
+            ////RegisterObjectItemDrop(50, new ObjectItemDrop { DropChance = 1f, ItemId = 3 });
+            //RegisterObjectActions(50, typeof(RockPickAction), typeof(ExamineAction));
 
-            entities.Add(FishingSpotObject.Create(ref index, new Vector3(-4.8f, 0, -10.3f)));
-
-            RegisterObjectItemDrop(0, new ObjectItemDrop { DropChance = 1f, ItemId = 2 });
-            RegisterObjectActions(0, typeof(TreeChopAction), typeof(ExamineAction));
-
-            RegisterObjectItemDrop(2, new ObjectItemDrop { DropChance = 1f, ItemId = 3 });
-            RegisterObjectActions(2, typeof(RockPickAction), typeof(ExamineAction));
-
-            RegisterObjectItemDrop(3, new ObjectItemDrop { DropChance = 1f, ItemId = 4 });
-            RegisterObjectActions(3, typeof(FishAction), typeof(ExamineAction));
+            ////RegisterObjectItemDrop(75, new ObjectItemDrop { DropChance = 1f, ItemId = 4 });
+            //RegisterObjectActions(75, typeof(FishAction), typeof(ExamineAction));
         }
 
         public bool AcquireObjectLock(SceneObject obj, Player player)
@@ -145,11 +144,5 @@ namespace RavenfallServer.Providers
 
             objectActions[objectId] = actions.ToArray();
         }
-    }
-
-    public class ObjectItemDrop
-    {
-        public int ItemId { get; set; }
-        public float DropChance { get; set; }
     }
 }

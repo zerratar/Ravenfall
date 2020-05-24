@@ -38,7 +38,8 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
                 {
                     PlayerId = player.Id,
                     Destination = data.Destination,
-                    Position = player.Position
+                    Position = player.Position,
+                    Running = data.Running
                 }, RavenNet.SendOption.Reliable);
             }
         }

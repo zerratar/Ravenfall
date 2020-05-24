@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -12,6 +13,11 @@ public class PlayerManager : MonoBehaviour
     private readonly List<NetworkPlayer> players = new List<NetworkPlayer>();
     public NetworkPlayer Me { get; private set; }
 
+    public NetworkPlayer GetPlayerById(int playerId)
+    {
+        return this.players.FirstOrDefault(x => x.Id == playerId);
+    }
+
     internal void OnPlayerMove(Player player)
     {
         var targetPlayer = players.FirstOrDefault(x => x.Id == player.Id);
@@ -20,8 +26,7 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        targetPlayer.transform.position = player.Position;
-        targetPlayer.Navigation.MoveTo(player.Destination, false);
+        targetPlayer.Navigation.MoveTo(player.Position, player.Destination, player.Running);
     }
 
     public void OnPlayerAdded(Player player)
@@ -32,12 +37,23 @@ public class PlayerManager : MonoBehaviour
         networkPlayer.PlayerManager = this;
         networkPlayer.IsMe = player.IsMe;
         networkPlayer.Id = player.Id;
-        networkPlayer.name = player.Name + (player.IsMe ? " [ME]" : "");
-        networkPlayer.transform.position = player.Position;
+        networkPlayer.name = player.Name;
+
+        var navMeshAgent = networkPlayer.GetComponent<NavMeshAgent>();
+        if (navMeshAgent)
+        {
+            navMeshAgent.Warp(player.Position);
+        }
+        else
+        {
+            networkPlayer.transform.position = player.Position;
+        }
 
         if (player.IsMe) Me = networkPlayer;
         if (player.Destination != player.Position)
-            networkPlayer.Navigation.MoveTo(player.Destination, false);
+            networkPlayer.Navigation.MoveTo(player.Position, player.Destination, false);
+
+        networkPlayer.SetAppearance(player.Appearance);
 
         players.Add(networkPlayer);
 
@@ -154,7 +170,7 @@ public class PlayerManager : MonoBehaviour
 
         targetPlayer.RemoveInventoryItem(itemId, amount);
     }
-    
+
     internal void ResetState()
     {
         foreach (var player in players)

@@ -15,4 +15,5 @@ MonoBehaviour:
   Id: 2
   Name: Pick
   BubbleIcon: {fileID: 0}
+  CursorIcon: {fileID: 2800000, guid: b23a0084fea403945a302e12cc707439, type: 3}
   Range: 3

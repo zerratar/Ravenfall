@@ -14,7 +14,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
 
         public override string Name => "Player Handler";
 
-        public void Move(int playerId, Vector3 position, Vector3 destination)
+        public void Move(int playerId, Vector3 position, Vector3 destination, bool running)
         {
             UnityEngine.Debug.Log("PlayerHandler::MovePlayer");
 
@@ -25,6 +25,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
                 {
                     targetPlayer.Destination = destination;
                     targetPlayer.Position = position;
+                    targetPlayer.Running = running;
                     Changes.Enqueue(new EntityMoved<Player>(targetPlayer));
                 }
             }

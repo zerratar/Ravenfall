@@ -7,8 +7,7 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
     {
         protected override void Handle(PlayerPositionUpdate data, PlayerConnection connection)
         {
-            var player = connection.Player;
-            player.Position = data.Position;
+            connection.Player.Position = data.Position;
         }
     }
 }

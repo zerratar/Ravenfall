@@ -1,5 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RavenfallServer.Packets;
+using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet;
+using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Serializers;
 using System;
 using System.Collections.Generic;
@@ -35,13 +38,83 @@ namespace RavenNet.Tests
     public class SerializerTests
     {
         [TestMethod]
+        public void TestComplexArraySerialization()
+        {
+            var serializer = new BinarySerializer();
+            var lookup = new NetworkPacketTypeRegistry();
+            lookup.Register<UserPlayerList>(UserPlayerList.OpCode);
+
+            var packetSerializer = new NetworkPacketSerializer(null, lookup, serializer);
+
+            var packet = new NetworkPacket();
+            packet.Id = UserPlayerList.OpCode;
+
+            var name = new string[] { "Zerratar", "Zerratar2" };
+            var id = new int[] { 1, 2 };
+            var combatLevel = new int[] { 3, 3 };
+            var appearance = new Appearance[] {
+                GenerateRandomAppearance(),
+                GenerateRandomAppearance()
+            };
+
+            packet.Data = new UserPlayerList
+            {
+                Appearance = appearance,
+                Id = id,
+                Name = name,
+                CombatLevel = combatLevel
+            };
+
+            var data = packetSerializer.Serialize(packet);
+            var result = packetSerializer.Deserialize(data);
+
+
+            if (!result.TryGetValue<UserPlayerList>(out var resultData))
+            {
+                Assert.Fail("Resulting data was not of the expected type UserPlayerList");
+                return;
+            }
+
+            Assert.AreEqual(appearance.Length, resultData.Appearance.Length);
+            Assert.AreEqual(id.Length, resultData.Id.Length);
+            Assert.AreEqual(combatLevel.Length, resultData.CombatLevel.Length);
+            Assert.AreEqual(name.Length, resultData.Name.Length);
+
+        }
+
+
+        private Appearance GenerateRandomAppearance()
+        {
+            var gender = Utility.Random<Gender>();
+            var skinColor = Utility.Random("#d6b8ae");
+            var hairColor = Utility.Random("#A8912A", "#27ae60", "#2980b9", "#8e44ad");
+            var beardColor = Utility.Random("#A8912A", "#27ae60", "#2980b9", "#8e44ad");
+            return new Appearance
+            {
+                Gender = gender,
+                SkinColor = skinColor,
+                HairColor = hairColor,
+                BeardColor = beardColor,
+                StubbleColor = skinColor,
+                WarPaintColor = hairColor,
+                EyeColor = Utility.Random("#000000", "#c0392b", "#2c3e50"),
+                Eyebrows = Utility.Random(0, gender == Gender.Male ? 10 : 7),
+                Hair = Utility.Random(0, 38),
+                FacialHair = gender == Gender.Male ? Utility.Random(0, 18) : -1,
+                Head = Utility.Random(0, 23),
+                HelmetVisible = true
+            };
+        }
+
+
+        [TestMethod]
         public void TestBadSerialization()
         {
-            var payload = new byte[] { 1, 3, 0, 0, 0, 1, 10, 112, 108, 97, 121, 101, 114, 51, 55, 54, 49, 0, 35, 208, 146, 63, 87, 22, 133, 63, 48, 213, 164, 63, };
+            //var payload = new byte[] { 1, 3, 0, 0, 0, 1, 10, 112, 108, 97, 121, 101, 114, 51, 55, 54, 49, 0, 35, 208, 146, 63, 87, 22, 133, 63, 48, 213, 164, 63, };
 
-            var targetType = typeof(PlayerAdd);
-            var serializer = new BinarySerializer();
-            var data = serializer.Deserialize(payload, targetType);
+            //var targetType = typeof(PlayerAdd);
+            //var serializer = new BinarySerializer();
+            //var data = serializer.Deserialize(payload, targetType);
 
 
 

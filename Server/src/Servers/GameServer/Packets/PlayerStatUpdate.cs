@@ -16,7 +16,7 @@ namespace RavenfallServer.Packets
             return new PlayerStatUpdate
             {
                 PlayerId = player.Id,
-                Skill = stat.Id,
+                Skill = stat.Index,
                 Experience = stat.Experience,
                 Level = stat.Level,
                 EffectiveLevel = stat.EffectiveLevel
