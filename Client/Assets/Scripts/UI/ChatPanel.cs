@@ -35,27 +35,54 @@ public class ChatPanel : MonoBehaviour
         var message = networkClient.ChatMessageHandler.GetNextMessage();
         if (message != null)
         {
+            if (message.PlayerId <= -1)
+            {
+                AddSystemMessage(message.Message);
+                return;
+            }
+
             var isMe = playerManager.Me.Id == message.PlayerId;
             var player = playerManager.GetPlayerById(message.PlayerId);
             AddMessage(player, message.Message, isMe ? "#00ff00" : "#ffff00");
         }
     }
 
-    private void OnInputDeselect(string _)
+    internal void OnExamine(string description)
     {
-        HasFocus = false;
+        AddActionMessage("", $"<color=#ffff00>{description}</color>");
     }
 
-    private void OnInputSelect(string _)
+    internal void OnItemAdd(ServerItem item, int amount)
     {
-        HasFocus = true;
+        AddActionMessage("", $"<color=#00ff00>{amount}x {item.Name} was added to your inventory.</color>");
     }
 
-    private void SendChatMessage(string message)
+    internal void OnItemRemove(ServerItem item, int amount)
     {
-        if (string.IsNullOrEmpty(message)) return;
-        networkClient.SendChatMessage(currentChannelId, message);
-        inputChatMessage.text = "";
+        AddActionMessage("", $"{amount}x {item.Name} was removed from your inventory.");
+    }
+
+    internal void OnLevelUp(PlayerStat stat, int gainedLevels)
+    {
+        AddActionMessage("", "<color=#00ff00>Congratulations, you've gained " + gainedLevels + " " + stat.Name + " level(s)!</color>");
+    }
+
+    public void AddActionMessage(string action, string message, string senderColor = "#ff0000")
+    {
+        Instantiate(chatMessageRowPrefab, chatMessageContainer.transform)
+            .GetComponent<ChatMessageRow>()
+            .SetMessage(action, message, senderColor, false);
+
+        StartCoroutine(ScrollToBottom());
+    }
+
+    private void AddSystemMessage(string message)
+    {
+        Instantiate(chatMessageRowPrefab, chatMessageContainer.transform)
+            .GetComponent<ChatMessageRow>()
+            .SetMessage("System", message, "#00ff00", false);
+
+        StartCoroutine(ScrollToBottom());
     }
 
     private void AddMessage(NetworkPlayer player, string message, string senderColor = "#ffff00")
@@ -82,4 +109,23 @@ public class ChatPanel : MonoBehaviour
             chatScrollRect.verticalNormalizedPosition = 0f;
         }
     }
+
+    private void OnInputDeselect(string _)
+    {
+        HasFocus = false;
+    }
+
+    private void OnInputSelect(string _)
+    {
+        HasFocus = true;
+    }
+
+    private void SendChatMessage(string message)
+    {
+        if (string.IsNullOrEmpty(message)) return;
+        networkClient.SendChatMessage(currentChannelId, message);
+        inputChatMessage.text = "";
+        inputChatMessage.Select();
+    }
+
 }

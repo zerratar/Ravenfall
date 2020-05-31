@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Shinobytes.Ravenfall.RavenNet.Models
@@ -8,6 +9,8 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
     {
         private readonly ConcurrentDictionary<int, InventoryItem> inventoryItems
             = new ConcurrentDictionary<int, InventoryItem>();
+
+        public IReadOnlyList<InventoryItem> Items => inventoryItems.Values.ToList();
 
         public InventoryItem GetItem(int id)
         {
@@ -20,11 +23,11 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
         }
 
         public void EquipItem(Item item)
-        {   
+        {
         }
 
         public void UnEquipItem(Item item)
-        {         
+        {
         }
 
         public void AddItem(Item item, int amount)

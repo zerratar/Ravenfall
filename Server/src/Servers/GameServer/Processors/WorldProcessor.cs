@@ -72,7 +72,9 @@ public class WorldProcessor : IWorldProcessor
                 {
                     var stats = statsProvider.GetStats(myConnection.Player.Id);
                     var level = statsProvider.GetCombatLevel(myConnection.Player.Id);
+                    var inventory = playerInventoryProvider.GetInventory(myConnection.Player.Id);
                     connection.Send(MyPlayerAdd.Create(myConnection.Player, level, stats), SendOption.Reliable);
+                    connection.Send(PlayerInventory.Create(myConnection.Player, inventory.Items), SendOption.Reliable);
                 }
                 else
                 {

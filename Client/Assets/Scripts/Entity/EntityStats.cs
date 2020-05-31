@@ -19,19 +19,19 @@ public class EntityStats : MonoBehaviour
         PlayerStat.Create("Cooking"),
     };
 
-    internal void PlayLevelUpAnimation(int skill, int gainedLevels)
+    internal PlayerStat PlayLevelUpAnimation(int skill, int gainedLevels)
     {
         if (levelUpEffectPrefab)
         {
             var levelupEffect = Instantiate(levelUpEffectPrefab, this.transform);
-            
+
             levelupEffect.AddComponent<AutoDestroyPS>();
         }
 
         var playerSkill = Stats[skill];
-        if (playerSkill == null) return;
-
-        Debug.Log("Congratulations, you've gained " + gainedLevels + " " + playerSkill.Name + " level(s)!");
+        if (playerSkill == null) return null;
+        
+        return playerSkill;
     }
 
     internal void UpdateStat(int skill, int level, int effectiveLevel, decimal experience)

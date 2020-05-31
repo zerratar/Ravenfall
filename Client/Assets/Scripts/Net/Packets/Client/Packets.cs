@@ -225,4 +225,12 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public string Sender { get; set; }
         public string Message { get; set; }
     }
+
+    public class PlayerInventory
+    {
+        public const short OpCode = 26;
+        public int PlayerId { get; set; }
+        public int[] ItemId { get; set; }
+        public long[] Amount { get; set; }
+    }
 }

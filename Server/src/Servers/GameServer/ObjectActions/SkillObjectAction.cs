@@ -38,6 +38,13 @@ public abstract class SkillObjectAction : SceneObjectAction
 
     public override bool Invoke(Player player, SceneObject obj, int parameterId)
     {
+        // if we are already interacting with this object
+        // ignore it.
+        if (objectProvider.HasAcquiredObjectLock(obj, player))
+        {
+            return false;
+        }
+
         if (!objectProvider.AcquireObjectLock(obj, player))
         {
             return false;

@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: A reliable old pickaxe, used for mining.
   Actions: []
   InteractionRange: 0
-  Model: {fileID: 100000, guid: 7fe84665d2d556148b3e8a3e714e6602, type: 3}
+  Model: {fileID: 4930245811985900756, guid: 6673aa717ad35514ba9dbdd3f800e8c5, type: 3}
   Equippable: 1
   Stackable: 0
   Consumable: 0

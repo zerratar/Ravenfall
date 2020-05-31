@@ -19,7 +19,7 @@ public class TerrainObjectsExporter : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             StringBuilder sb = new StringBuilder();
-            var trees = new List<SceneObject>();
+            var objects = new List<SceneObject>();
             for (var treeIndex = 0; treeIndex < terrain.terrainData.treeInstanceCount; ++treeIndex)
             {
                 var tree = terrain.terrainData.GetTreeInstance(treeIndex);
@@ -29,22 +29,28 @@ public class TerrainObjectsExporter : MonoBehaviour
                 //var y = pos.y.ToString("0.000").Replace(",", ".");
                 //var z = pos.z.ToString("0.000").Replace(",", ".");
 
+                var interaction = 1; // 1: chop chop, tree
+                if (tree.prototypeIndex >= 5)
+                {
+                    interaction = 2; // 2: pickaxe required
+                }
+
                 var obj = new SceneObject
                 {
                     ObjectId = tree.prototypeIndex,
                     DisplayObjectId = tree.prototypeIndex,
                     Position = pos,
                     Experience = 15,
-                    InteractItemType = 1,
+                    InteractItemType = interaction,
                     RespawnMilliseconds = 5000,
                     Static = true
                 };
-                trees.Add(obj);
+                objects.Add(obj);
                 //sb.AppendLine($"entities.Add(TreeObject.Create(ref index, new Vector3({x}f, {y}f, {z}f)));");
 
             }
 
-            var data = Newtonsoft.Json.JsonConvert.SerializeObject(trees);
+            var data = Newtonsoft.Json.JsonConvert.SerializeObject(objects);
             //var data = JsonUtility.ToJson(trees);
             System.IO.File.WriteAllText("C:\\git\\ravenfall\\Server\\src\\Servers\\GameServer\\bin\\Debug\\netcoreapp3.1\\repositories\\Shinobytes.Ravenfall.RavenNet.Models.SceneObject.json", data.ToString());
         }

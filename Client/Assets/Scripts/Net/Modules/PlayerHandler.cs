@@ -31,6 +31,16 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             }
         }
 
+        internal void SetPlayerInventory(int playerId, int[] itemId, long[] amount)
+        {
+            var targetPlayer = GetPlayer(playerId);
+            if (targetPlayer != null)
+            {
+                Changes.Enqueue(new PlayerInventoryUpdated(targetPlayer, itemId, amount));
+                return;
+            }
+        }
+
         internal void PlayerStatsUpdate(int playerId, decimal[] experience, int[] effectiveLevel)
         {
             var targetPlayer = GetPlayer(playerId);

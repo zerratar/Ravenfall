@@ -15,14 +15,30 @@ public class ObjectManager : MonoBehaviour
 
 
     private Terrain activeTerrain;
+    private TreeInstance[] originalStaticObjectData;
     private readonly List<NetworkObject> objects = new List<NetworkObject>();
-    private readonly List<CapsuleCollider> treeColliders = new List<CapsuleCollider>();
+    private readonly List<CapsuleCollider> staticObjectColliders = new List<CapsuleCollider>();
 
     void Awake()
     {
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
         spawnableObjects = Resources.LoadAll<ServerObject>("Data/Objects");
         LoadStaticObjectColliders();
+    }
+
+    private void OnApplicationExit()
+    {
+        CleanupStaticObjects();
+    }
+
+    private void CleanupStaticObjects()
+    {
+        activeTerrain.terrainData.treeInstances = new TreeInstance[0];
+        for (int i = 0; i < originalStaticObjectData.Length; i++)
+        {
+            activeTerrain.AddTreeInstance(originalStaticObjectData[i]);
+        }
+        activeTerrain.Flush();
     }
 
     internal void OnObjectAdded(SceneObject entity)
@@ -73,13 +89,15 @@ public class ObjectManager : MonoBehaviour
         int objCount = activeTerrain.terrainData.treeInstances.Length;
         var trees = activeTerrain.terrainData.treeInstances;
 
+        this.originalStaticObjectData = activeTerrain.terrainData.treeInstances;
+
         for (int i = 0; i < objCount; i++)
         {
             var tree = trees[i];
             var thisTreePos = UnityEngine.Vector3.Scale(tree.position, activeTerrain.terrainData.size) + activeTerrain.transform.position;
             var prototype = activeTerrain.terrainData.treePrototypes[tree.prototypeIndex];
 
-            var go = new GameObject("ObjectCollider::" + tree.prototypeIndex);
+            var go = new GameObject("ObjectCollider::" + tree.prototypeIndex + "::" + i);
             go.transform.SetParent(staticObjectColliderContainer);
             go.transform.position = thisTreePos;
 
@@ -91,7 +109,7 @@ public class ObjectManager : MonoBehaviour
                 bc.radius = collider.radius;
                 bc.height = collider.height;
                 bc.direction = collider.direction;
-                treeColliders.Add(bc);
+                staticObjectColliders.Add(bc);
             }
         }
     }
@@ -116,6 +134,21 @@ public class ObjectManager : MonoBehaviour
             if (thisTreeDist < 0.2f)
             {
                 tree.prototypeIndex = entity.ObjectId;
+
+                var objCollider = staticObjectColliders[i];
+                if (objCollider)
+                {
+                    var prototype = activeTerrain.terrainData.treePrototypes[tree.prototypeIndex];
+                    objCollider.gameObject.name = "ObjectCollider::" + tree.prototypeIndex + "::" + i;
+                    var collider = prototype.prefab.GetComponent<CapsuleCollider>();
+                    if (collider)
+                    {
+                        objCollider.center = collider.center;
+                        objCollider.radius = collider.radius;
+                        objCollider.height = collider.height;                        
+                        objCollider.direction = collider.direction;
+                    }
+                }
             }
 
             activeTerrain.AddTreeInstance(tree);

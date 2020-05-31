@@ -14,10 +14,13 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private ChatPanel chatPanel;
     [SerializeField] private ContextMenu contextMenu;
+    [SerializeField] private InventoryPanel inventoryPanel;
 
     private int uiMask;
 
+    public ChatPanel ChatPanel => chatPanel;
     public ContextMenu ContextMenu => contextMenu;
+    public InventoryPanel InventoryPanel => inventoryPanel;
 
     private void Start()
     {
@@ -42,6 +45,15 @@ public class UIManager : MonoBehaviour
         SetActiveFast(charSelectionUI.gameObject, subSceneManager.SubSceneIndex == 1);
         SetActiveFast(loginPanel.gameObject, subSceneManager.SubSceneIndex == 0);
     }
+
+    public void ToggleInventory()
+    {
+        inventoryPanel.gameObject.SetActive(!inventoryPanel.gameObject.activeSelf);
+    }
+
+    public void ToggleMenu() { }
+    public void ToggleStats() { }
+    public void TogglePlayerInfo() { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void SetActiveFast(GameObject obj, bool state)

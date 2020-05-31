@@ -40,7 +40,15 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
             if (serverObject == null) return;
             var action = objectProvider.GetAction(serverObject, data.ActionId);
             if (action == null) return;
-            
+
+            // if we are already interacting with this object
+            // ignore it.
+            if (objectProvider.HasAcquiredObjectLock(serverObject, connection.Player))
+            {
+                logger.Debug("Player is already interacting with object. Ignore");
+                return;
+            }
+
             worldProcessor.PlayerObjectInteraction(connection.Player, serverObject, action, data.ParameterId);
         }
     }

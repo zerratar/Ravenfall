@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ContextMenu : MonoBehaviour
 {
@@ -26,6 +28,8 @@ public class ContextMenu : MonoBehaviour
 
     internal ContextMenu SetItems(params ContextMenuItem[] items)
     {
+        this.gameObject.SetActive(true);
+
         foreach (var btn in buttons)
         {
             btn.gameObject.SetActive(false);
@@ -45,7 +49,20 @@ public class ContextMenu : MonoBehaviour
             buttons[i].Text = items[i].Text;
         }
 
+        StartCoroutine(Refresh());
+
         return this;
+    }
+
+    private IEnumerator Refresh()
+    {
+        // wtf?
+        LayoutRebuilder.ForceRebuildLayoutImmediate(this.rectTransform);
+        for (var i = 0; i < 3; ++i)
+        {
+            yield return new WaitForEndOfFrame();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(this.rectTransform);
+        }
     }
 
     internal ContextMenu Show()

@@ -10,4 +10,5 @@ public class ServerObject : ScriptableObject
     public float InteractionRange;
 
     public GameObject Model;
+    public Sprite Icon;
 }

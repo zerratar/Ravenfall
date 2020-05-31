@@ -145,6 +145,20 @@ public class PlayerManager : MonoBehaviour
         targetPlayer.SetEquipmentState(itemId, equipped);
     }
 
+
+    internal void OnPlayerInventoryUpdated(Player entity, int[] itemId, long[] amount)
+    {
+        Debug.Log("OnPlayerInventoryUpdated");
+        var targetPlayer = players.FirstOrDefault(x => x.Id == entity.Id);
+        if (!targetPlayer)
+        {
+            Debug.LogError("Trying to set inventory items for a player that does not exist. ID: " + entity.Id);
+            return;
+        }
+
+        targetPlayer.SetInventoryItems(itemId, amount);
+    }
+
     internal void OnPlayerItemAdded(Player entity, int itemId, int amount)
     {
         Debug.Log("OnPlayerItemAdded");
@@ -196,5 +210,4 @@ public class PlayerManager : MonoBehaviour
             return;
         }
     }
-
 }

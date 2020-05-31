@@ -15,5 +15,5 @@ MonoBehaviour:
   Id: 0
   Name: Examine
   BubbleIcon: {fileID: 0}
+  CursorIcon: {fileID: 2800000, guid: fe2443101ded6f544b32f8dc8690c367, type: 3}
   Range: 50
-  AnimationTriggerName: 

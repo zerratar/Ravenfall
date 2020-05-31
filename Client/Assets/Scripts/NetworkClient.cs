@@ -202,6 +202,9 @@ public class NetworkClient : MonoBehaviour
             case PlayerItemRemoved itemRemoved:
                 playerManager.OnPlayerItemRemoved(itemRemoved.Entity, itemRemoved.ItemId, itemRemoved.Amount);
                 break;
+            case PlayerInventoryUpdated inventoryUpdated:
+                playerManager.OnPlayerInventoryUpdated(inventoryUpdated.Entity, inventoryUpdated.ItemId, inventoryUpdated.Amount);
+                break;
         }
     }
 

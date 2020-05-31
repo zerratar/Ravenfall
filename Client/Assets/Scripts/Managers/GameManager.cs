@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Extensions;
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -111,7 +112,7 @@ public class GameManager : MonoBehaviour
         //var terrain = e.Object.transform.GetComponent<Terrain>();
         if (terrainHit.Terrain)
         {
-            HandleTerrainInteraction(terrainHit.Terrain, terrainHit.Point);
+            HandleTerrainInteraction(e, terrainHit.Terrain, terrainHit.Point);
             return;
         }
 
@@ -140,25 +141,51 @@ public class GameManager : MonoBehaviour
         //var terrain = e.Object.transform.GetComponent<Terrain>();
         if (terrainHit.Terrain)
         {
-            uiManager.ContextMenu
-                .SetHeader("Terrain")
-                .SetItems(new ContextMenuItem
+            var staticObjectHit = e.Collection.FirstOrDefault(x => x.collider.name.Contains("::"));
+            if (staticObjectHit.point != Vector3.zero || IsStaticObject(terrainHit.Terrain, terrainHit.Point))
+            {
+                var objCollider = e.GetStaticCollider();
+                var objId = objCollider.gameObject.GetObjectId();
+                if (objId >= 0)
                 {
-                    Text = "Walk Here",
-                    Click = () => WalkTo(me, terrainHit.Point)
-                })
-                .Show();
+                    var data = objectManager.GetObjectData(objId);
+                    var actions = data.Actions.Select(x =>
+                         new ContextMenuItem
+                         {
+                             Text = x.Name,
+                             Click = () => HandleStaticObjectInteraction(terrainHit.Terrain, terrainHit.Point, x.Id, objCollider),
+                             ActionId = x.Id
+                         }
+                    );
+
+                    uiManager.ContextMenu
+                      .SetHeader(data.Name)
+                      .SetItems(actions.ToArray())
+                      .Show();
+                }
+            }
+            else
+            {
+                uiManager.ContextMenu
+                    .SetHeader("Terrain")
+                    .SetItems(new ContextMenuItem
+                    {
+                        Text = "Walk Here",
+                        Click = () => WalkTo(me, terrainHit.Point)
+                    })
+                    .Show();
+            }
             return;
         }
     }
 
-    private void HandleTerrainInteraction(Terrain terrain, Vector3 point)
+    private void HandleTerrainInteraction(MouseClickEventArgs e, Terrain terrain, Vector3 point)
     {
         var myPlayer = playerManager.Me;
         if (!myPlayer) return;
 
-        float groundHeight = terrain.SampleHeight(point);
-        if (point.y - .033f > groundHeight)
+        var staticObjectHit = e.Collection.FirstOrDefault(x => x.collider.name.Contains("::"));
+        if (staticObjectHit.point != Vector3.zero || IsStaticObject(terrain, point))
         {
             HandleStaticObjectInteraction(terrain, point);
         }
@@ -168,7 +195,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void HandleStaticObjectInteraction(Terrain terrain, Vector3 point)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private bool IsStaticObject(Terrain terrain, Vector3 point)
+    {
+        float groundHeight = terrain.SampleHeight(point);
+        return point.y - .033f > groundHeight;
+    }
+
+    private void HandleStaticObjectInteraction(Terrain terrain, Vector3 point, int actionId = -1, Collider objectCollider = null)
     {
         var myPlayer = playerManager.Me;
         if (!myPlayer) return;
@@ -179,29 +213,44 @@ public class GameManager : MonoBehaviour
         float objDist = 100;
         Vector3 objPos = new Vector3(0, 0, 0);
 
-        // Notice we are looping through every terrain tree, 
-        // which is a caution against a 15,000 tree terrain
-
-        for (int i = 0; i < objCount; i++)
+        if (objectCollider)
         {
-            var tree = terrain.terrainData.treeInstances[i];
-            Vector3 thisTreePos = Vector3.Scale(tree.position, terrain.terrainData.size) + terrain.transform.position;
-            float thisTreeDist = Vector3.Distance(thisTreePos, point);
+            objId = objectCollider.gameObject.GetObjectId();
+            objInstance = objectCollider.gameObject.GetObjectIndex();
+            objDist = Vector3.Distance(objectCollider.transform.position, point);
+            objPos = objectCollider.transform.position;
+        }
+        else
+        {
+            // Notice we are looping through every terrain tree, 
+            // which is a caution against a 15,000 tree terrain
 
-            if (thisTreeDist < objDist)
+            for (int i = 0; i < objCount; i++)
             {
-                objId = tree.prototypeIndex;
-                objInstance = i;
-                objDist = thisTreeDist;
-                objPos = thisTreePos;
+                var tree = terrain.terrainData.treeInstances[i];
+                Vector3 thisTreePos = Vector3.Scale(tree.position, terrain.terrainData.size) + terrain.transform.position;
+                float thisTreeDist = Vector3.Distance(thisTreePos, point);
+
+                if (thisTreeDist < objDist)
+                {
+                    objId = tree.prototypeIndex;
+                    objInstance = i;
+                    objDist = thisTreeDist;
+                    objPos = thisTreePos;
+                }
+            }
+
+            if (objDist > 10)
+            {
+                return;
             }
         }
 
-        if (objDist > 10)
-        {
-            return;
-        }
+        InteractWithStaticObject(actionId, myPlayer, objInstance, objId, objDist, objPos);
+    }
 
+    private void InteractWithStaticObject(int actionId, NetworkPlayer myPlayer, int objInstance, int objId, float objDist, Vector3 objPos)
+    {
         myPlayer.MoveToAndInteractWith(ObjectInteraction.Create(new StaticObject
         {
             ObjectData = objectManager.GetObjectData(objId),
@@ -209,8 +258,9 @@ public class GameManager : MonoBehaviour
             Instance = objInstance,
             Distance = objDist,
             Position = objPos,
-        }), CheckIfRunning());
+        }, actionId), CheckIfRunning());
     }
+
     private void WalkTo(NetworkPlayer me, Vector3 position)
     {
         me.MoveTo(position, CheckIfRunning());

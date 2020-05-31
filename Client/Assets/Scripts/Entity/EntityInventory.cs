@@ -1,4 +1,5 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine;
 public class EntityInventory : MonoBehaviour
 {
     [SerializeField] private ItemManager itemManager;
+    [SerializeField] private UIManager uiManager;
 
     private readonly List<InventoryItem> inventoryItems
         = new List<InventoryItem>();
@@ -13,76 +15,105 @@ public class EntityInventory : MonoBehaviour
     private void Start()
     {
         if (!itemManager) itemManager = FindObjectOfType<ItemManager>();
+        if (!uiManager) uiManager = FindObjectOfType<UIManager>();
     }
 
-    internal void AddItem(int itemId, int amount)
+    internal void SetItems(int[] itemId, long[] itemAmounts)
     {
-        var item = itemManager.GetItemById(itemId);
-        if (item == null) return;
+        inventoryItems.Clear();
 
-        if (item.Stackable)
+        for (var i = 0; i < itemId.Length; ++i)
         {
-            var stack = inventoryItems.FirstOrDefault(x => x.Item.Id == itemId);
-            if (stack != null)
-            {
-                stack.Amount += amount;
-                return;
-            }
-
-            inventoryItems.Add(new InventoryItem
-            {
-                Amount = amount,
-                Item = item
-            });
-            return;
+            var id = itemId[i];
+            var amount = itemAmounts[i];
+            AddItem(id, amount);
         }
-
-        for (var i = 0; i < amount; ++i)
-        {
-            inventoryItems.Add(new InventoryItem
-            {
-                Amount = 1,
-                Item = item
-            });
-        }
-
-        Debug.Log("Item added to inventory: " + item.Name + " x" + amount);
     }
 
-    internal void RemoveItem(int itemId, int amount)
+    internal ServerItem AddItem(int itemId, long amount)
     {
-        var item = itemManager.GetItemById(itemId);
-        if (item == null) return;
-        if (item.Stackable)
+        try
         {
-            var stack = inventoryItems.FirstOrDefault(x => x.Item.Id == itemId);
-            if (stack != null)
+            var item = itemManager.GetItemById(itemId);
+            if (item == null) return null;
+
+            if (item.Stackable)
             {
-                stack.Amount -= amount;
-                if (stack.Amount <= 0)
+                var stack = inventoryItems.FirstOrDefault(x => x.Item.Id == itemId);
+                if (stack != null)
                 {
-                    inventoryItems.Remove(stack);
+                    stack.Amount += amount;
+                    return item;
                 }
-                return;
+
+                inventoryItems.Add(new InventoryItem
+                {
+                    Amount = amount,
+                    Item = item
+                });
+                return item;
             }
+
+            for (var i = 0; i < amount; ++i)
+            {
+                inventoryItems.Add(new InventoryItem
+                {
+                    Amount = 1,
+                    Item = item
+                });
+            }
+
+            return item;
         }
-
-        for (var i = 0; i < amount; ++i)
+        finally
         {
-            var targetItem = inventoryItems.FirstOrDefault(x => x.Item.Id == itemId);
-            if (targetItem == null)
+            uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
+        }
+    }
+
+    internal ServerItem RemoveItem(int itemId, long amount)
+    {
+        try
+        {
+            var item = itemManager.GetItemById(itemId);
+            if (item == null) return item;
+            if (item.Stackable)
             {
-                Debug.LogError("Trying to remove item from inventory that does not exist!!");
-                return;
+                var stack = inventoryItems.FirstOrDefault(x => x.Item.Id == itemId);
+                if (stack != null)
+                {
+                    stack.Amount -= amount;
+                    if (stack.Amount <= 0)
+                    {
+                        inventoryItems.Remove(stack);
+                    }
+                    return item;
+                }
             }
 
-            if (targetItem.Amount > 1)
+            for (var i = 0; i < amount; ++i)
             {
-                Debug.LogError("Trying to remove item as non stackable but item in inventory stacked!!");
-                return;
+                var targetItem = inventoryItems.FirstOrDefault(x => x.Item.Id == itemId);
+                if (targetItem == null)
+                {
+                    Debug.LogError("Trying to remove item from inventory that does not exist!!");
+                    return item;
+                }
+
+                if (targetItem.Amount > 1)
+                {
+                    Debug.LogError("Trying to remove item as non stackable but item in inventory stacked!!");
+                    return item;
+                }
+
+                inventoryItems.Remove(targetItem);
             }
 
-            inventoryItems.Remove(targetItem);
+            return item;
+        }
+        finally
+        {
+            uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
         }
     }
 }
