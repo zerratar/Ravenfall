@@ -2,7 +2,7 @@
 
 public class NetworkObject : MonoBehaviour
 {
-    public ServerObject ObjectData;
+    public ServerObject Data;
 
     public int ServerId;
 }

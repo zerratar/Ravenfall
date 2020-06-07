@@ -12,3 +12,5 @@ public class ServerObject : ScriptableObject
     public GameObject Model;
     public Sprite Icon;
 }
+
+

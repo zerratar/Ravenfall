@@ -34,6 +34,7 @@ public class Client : IRavenClient
         this.client = new RavenNetworkClient(logger, RegisterPacketHandlers(controller));
         this.auth = this.Modules.AddModule(new Authentication(this.client));
         this.playerHandler = this.Modules.AddModule(new PlayerHandler());
+        this.npcHandler = this.Modules.AddModule(new NpcHandler());
         this.objectHandler = this.Modules.AddModule(new ObjectHandler());
         this.npcHandler = this.Modules.AddModule(new NpcHandler());
         this.characterHandler = this.Modules.AddModule(new CharacterHandler());

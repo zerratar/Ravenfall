@@ -326,9 +326,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>C:/git/ravenfall/Client/Assets/Libraries/Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.NRefactory">
-      <HintPath>C:/git/ravenfall/Client/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
-    </Reference>
     <Reference Include="VisualDesignCafe.Nature.Editor.ShaderGraph.Access">
       <HintPath>C:/git/ravenfall/Client/Assets/Visual Design Cafe/Plugins/com.VisualDesignCafe.NatureShaders/VisualDesignCafe.Nature.Editor.ShaderGraph.Access.dll</HintPath>
     </Reference>
@@ -337,6 +334,9 @@
     </Reference>
     <Reference Include="VisualDesignCafe.Nature.Editor.ShaderGraph.Universal">
       <HintPath>C:/git/ravenfall/Client/Assets/Visual Design Cafe/Plugins/com.VisualDesignCafe.NatureShaders/VisualDesignCafe.Nature.Editor.ShaderGraph.Universal.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory">
+      <HintPath>C:/git/ravenfall/Client/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>C:/git/ravenfall/Client/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>

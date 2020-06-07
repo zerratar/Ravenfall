@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using UnityEngine;
 using UnityEngine.AI;
@@ -10,12 +11,25 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private NametagManager nametagManager;
 
+    private ServerPlayerAlignmentActions[] alignmentActions;
+
     private readonly List<NetworkPlayer> players = new List<NetworkPlayer>();
     public NetworkPlayer Me { get; private set; }
+
+    private void Awake()
+    {
+        alignmentActions = Resources.LoadAll<ServerPlayerAlignmentActions>("Data/Players");
+    }
 
     public NetworkPlayer GetPlayerById(int playerId)
     {
         return this.players.FirstOrDefault(x => x.Id == playerId);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal IReadOnlyList<ServerAction> GetPlayerAlignmentActions(PlayerAlignment alignment)
+    {
+        return alignmentActions.FirstOrDefault(x => x.Alignment == alignment).Actions.ToArray();
     }
 
     internal void OnPlayerMove(Player player)
@@ -144,7 +158,6 @@ public class PlayerManager : MonoBehaviour
 
         targetPlayer.SetEquipmentState(itemId, equipped);
     }
-
 
     internal void OnPlayerInventoryUpdated(Player entity, int[] itemId, long[] amount)
     {

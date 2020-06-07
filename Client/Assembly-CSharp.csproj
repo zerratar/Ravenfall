@@ -131,7 +131,9 @@
     <Compile Include="Assets\Scripts\Data\PlayerStat.cs" />
     <Compile Include="Assets\Scripts\Data\ServerAction.cs" />
     <Compile Include="Assets\Scripts\Data\ServerItem.cs" />
+    <Compile Include="Assets\Scripts\Data\ServerNpc.cs" />
     <Compile Include="Assets\Scripts\Data\ServerObject.cs" />
+    <Compile Include="Assets\Scripts\Data\ServerPlayerAlignmentActions.cs" />
     <Compile Include="Assets\Scripts\Entity\EntityAction.cs" />
     <Compile Include="Assets\Scripts\Entity\EntityAnimationHandler.cs" />
     <Compile Include="Assets\Scripts\Entity\EntityAppearanceHandler.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Managers\ItemManager.cs" />
     <Compile Include="Assets\Scripts\Managers\NametagManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\NpcManager.cs" />
     <Compile Include="Assets\Scripts\Managers\ObjectManager.cs" />
     <Compile Include="Assets\Scripts\Managers\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\Managers\SubSceneManager.cs" />
@@ -205,6 +208,7 @@
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\EntityState.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\EntityUpdated.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\IEntityStateChange.cs" />
+    <Compile Include="Assets\Scripts\Net\Modules\StateModels\NpcAnimationStateUpdated.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerAnimationStateUpdated.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerEquipmentStateUpdated.cs" />
     <Compile Include="Assets\Scripts\Net\Modules\StateModels\PlayerInventoryUpdated.cs" />
@@ -243,8 +247,10 @@
     <Compile Include="Assets\Scripts\Net\Udp\UdpServerConnection.cs" />
     <Compile Include="Assets\Scripts\NetworkClient.cs" />
     <Compile Include="Assets\Scripts\NetworkItem.cs" />
+    <Compile Include="Assets\Scripts\NetworkNpc.cs" />
     <Compile Include="Assets\Scripts\NetworkObject.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayer.cs" />
+    <Compile Include="Assets\Scripts\ObjectInteraction.cs" />
     <Compile Include="Assets\Scripts\PacketHandlers\AuthResponseHandler.cs" />
     <Compile Include="Assets\Scripts\PacketHandlers\ChatMessagePacketHandler.cs" />
     <Compile Include="Assets\Scripts\PacketHandlers\ConnectionKillSwitchHandler.cs" />

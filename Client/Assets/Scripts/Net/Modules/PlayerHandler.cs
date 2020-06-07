@@ -16,8 +16,6 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
 
         public void Move(int playerId, Vector3 position, Vector3 destination, bool running)
         {
-            UnityEngine.Debug.Log("PlayerHandler::MovePlayer");
-
             lock (SyncRoot)
             {
                 var targetPlayer = Entities.FirstOrDefault(x => x.Id == playerId);

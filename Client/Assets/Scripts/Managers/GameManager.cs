@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private PlayerCamera playerCamera;
     [SerializeField] private PlayerManager playerManager;
+    [SerializeField] private NpcManager npcManager;
     [SerializeField] private ObjectManager objectManager;
     [SerializeField] private NetworkClient networkClient;
     [SerializeField] private UIManager uiManager;
@@ -21,10 +23,10 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         if (!uiManager) uiManager = FindObjectOfType<UIManager>();
         if (!objectManager) objectManager = FindObjectOfType<ObjectManager>();
+        if (!npcManager) npcManager = FindObjectOfType<NpcManager>();
         playerCamera.MouseClick += OnMouseClick;
         playerCamera.MouseEnter += OnMouseEnter;
         playerCamera.MouseExit += OnMouseExit;
-
 
         SetCursorIcon(defaultCursor);
     }
@@ -94,17 +96,25 @@ public class GameManager : MonoBehaviour
 
         // ignore other players for now since we don't have
         // a left button action on players yet. Going to be for selecting/targeting players.
-        //var player = e.GetNetworkPlayer();
-        //if (player)
-        //{
-        //    return;
-        //}
+        var player = e.GetNetworkPlayer();
+        if (player)
+        {
+            UnityEngine.Debug.Log("We left clicked on a player.");
+            return;
+        }
+
+        var npc = e.GetNetworkNpc();
+        if (npc)
+        {
+            UnityEngine.Debug.Log("We left clicked on a npc.");
+            return;
+        }
 
         var worldObject = e.GetNetworkObject();
         //var worldObject = e.Object.transform.GetComponentInParent<NetworkObject>();
         if (worldObject)
         {
-            me.MoveToAndInteractWith(ObjectInteraction.Create(worldObject), CheckIfRunning());
+            me.MoveToAndInteractWith(ObjectInteraction.Create(me, worldObject), CheckIfRunning());
             return;
         }
 
@@ -124,21 +134,51 @@ public class GameManager : MonoBehaviour
         var player = e.GetNetworkPlayer();
         if (player)
         {
+            var playerActions = playerManager.GetPlayerAlignmentActions(player.Alignment);
+            if (playerActions.Count == 0)
+                return;
+
+            uiManager.ContextMenu
+              .SetHeader(player.name)
+              .SetItems(playerActions.Select(x => new ContextMenuItem
+              {
+                  Text = x.Name,
+                  Click = () => HandlePlayerInteraction(player, x.Id),
+                  ActionId = x.Id
+              }).ToArray())
+              .Show();
+            return;
+        }
+
+        var npc = e.GetNetworkNpc();
+        if (npc)
+        {
+            var npcActions = npc.Data.Actions;
+            if (npcActions.Length == 0)
+                return;
+
+            uiManager.ContextMenu
+              .SetHeader(npc.name)
+              .SetItems(npcActions.Select(x => new ContextMenuItem
+              {
+                  Text = x.Name,
+                  Click = () => HandleNpcInteraction(npc, x.Id),
+                  ActionId = x.Id
+              }).ToArray())
+              .Show();
             return;
         }
 
         var worldObject = e.GetNetworkObject();
-        //var worldObject = e.Object.transform.GetComponentInParent<NetworkObject>();
         if (worldObject)
         {
             uiManager.ContextMenu
-                .SetHeader(worldObject.ObjectData.Name)
+                .SetHeader(worldObject.Data.Name)
                 .Show();
             return;
         }
 
         var terrainHit = e.GetTerrain();
-        //var terrain = e.Object.transform.GetComponent<Terrain>();
         if (terrainHit.Terrain)
         {
             var staticObjectHit = e.Collection.FirstOrDefault(x => x.collider.name.Contains("::"));
@@ -149,34 +189,41 @@ public class GameManager : MonoBehaviour
                 if (objId >= 0)
                 {
                     var data = objectManager.GetObjectData(objId);
-                    var actions = data.Actions.Select(x =>
-                         new ContextMenuItem
-                         {
-                             Text = x.Name,
-                             Click = () => HandleStaticObjectInteraction(terrainHit.Terrain, terrainHit.Point, x.Id, objCollider),
-                             ActionId = x.Id
-                         }
-                    );
 
                     uiManager.ContextMenu
                       .SetHeader(data.Name)
-                      .SetItems(actions.ToArray())
+                      .SetItems(data.Actions.Select(x => new ContextMenuItem
+                      {
+                          Text = x.Name,
+                          Click = () => HandleStaticObjectInteraction(terrainHit.Terrain, terrainHit.Point, x.Id, objCollider),
+                          ActionId = x.Id
+                      }).ToArray())
                       .Show();
                 }
+                return;
             }
-            else
-            {
-                uiManager.ContextMenu
-                    .SetHeader("Terrain")
-                    .SetItems(new ContextMenuItem
-                    {
-                        Text = "Walk Here",
-                        Click = () => WalkTo(me, terrainHit.Point)
-                    })
-                    .Show();
-            }
-            return;
+
+            uiManager.ContextMenu
+                .SetHeader("Terrain")
+                .SetItems(new ContextMenuItem
+                {
+                    Text = "Walk Here",
+                    Click = () => WalkTo(me, terrainHit.Point)
+                })
+                .Show();
         }
+    }
+
+    private void HandleNpcInteraction(NetworkNpc targetNpc, int actionId)
+    {
+        var myPlayer = playerManager.Me;
+        if (!myPlayer) return;
+    }
+
+    private void HandlePlayerInteraction(NetworkPlayer targetPlayer, int actionId)
+    {
+        var myPlayer = playerManager.Me;
+        if (!myPlayer) return;
     }
 
     private void HandleTerrainInteraction(MouseClickEventArgs e, Terrain terrain, Vector3 point)
@@ -251,7 +298,7 @@ public class GameManager : MonoBehaviour
 
     private void InteractWithStaticObject(int actionId, NetworkPlayer myPlayer, int objInstance, int objId, float objDist, Vector3 objPos)
     {
-        myPlayer.MoveToAndInteractWith(ObjectInteraction.Create(new StaticObject
+        myPlayer.MoveToAndInteractWith(ObjectInteraction.Create(myPlayer, new StaticObject
         {
             ObjectData = objectManager.GetObjectData(objId),
             ObjectId = objId,

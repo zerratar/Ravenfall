@@ -3,7 +3,6 @@ using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Modules;
 using Shinobytes.Ravenfall.RavenNet.Packets.Client;
-using System;
 using System.Collections;
 using System.Net;
 using UnityEngine;
@@ -14,6 +13,7 @@ public class NetworkClient : MonoBehaviour
     [SerializeField] private string serverAddress = "51.89.117.205";
     [SerializeField] private Shinobytes.Ravenfall.RavenNet.Core.ILogger logger;
     [SerializeField] private PlayerManager playerManager;
+    [SerializeField] private NpcManager npcManager;
     [SerializeField] private ObjectManager objectManager;
 
     private volatile bool canAuthenticate = true;
@@ -23,6 +23,7 @@ public class NetworkClient : MonoBehaviour
 
     public Authentication Auth { get; private set; }
     public PlayerHandler PlayerHandler { get; private set; }
+    public NpcHandler NpcHandler { get; private set; }
     public ObjectHandler ObjectHandler { get; private set; }
     public CharacterHandler CharacterHandler { get; private set; }
     public ChatMessageHandler ChatMessageHandler { get; private set; }
@@ -99,6 +100,7 @@ public class NetworkClient : MonoBehaviour
         Auth = gameClient.Modules.GetModule<Authentication>();
         PlayerHandler = gameClient.Modules.GetModule<PlayerHandler>();
         ObjectHandler = gameClient.Modules.GetModule<ObjectHandler>();
+        NpcHandler = gameClient.Modules.GetModule<NpcHandler>();
         CharacterHandler = gameClient.Modules.GetModule<CharacterHandler>();
         ChatMessageHandler = gameClient.Modules.GetModule<ChatMessageHandler>();
         //Connect();
@@ -129,6 +131,27 @@ public class NetworkClient : MonoBehaviour
 
     private void HandleNpcUpdates()
     {
+        var stateChange = NpcHandler.PollEvent();
+        if (stateChange == null) return;
+
+        switch (stateChange)
+        {
+            case NpcAnimationStateUpdated animation:
+                npcManager.OnNpcAnimationStateChanged(animation.Entity, animation.AnimationState, animation.Enabled, animation.Trigger, animation.Action);
+                break;
+
+            case EntityAdded<Npc> add:
+                npcManager.OnNpcAdded(add.Entity);
+                break;
+
+            case EntityUpdated<Npc> updated:
+                npcManager.OnNpcUpdated(updated.Entity);
+                break;
+
+            case EntityRemoved<Npc> removed:
+                npcManager.OnNpcRemoved(removed.Entity);
+                break;
+        }
     }
 
     private void HandleObjectUpdates()

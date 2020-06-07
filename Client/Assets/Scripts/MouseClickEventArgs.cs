@@ -21,10 +21,17 @@ public class MouseClickEventArgs : EventArgs
             .FirstOrDefault(x => x != null);
     }
 
+    public NetworkNpc GetNetworkNpc()
+    {
+        return Collection
+            .Select(x => x.collider.GetComponentInParent<NetworkNpc>())
+            .FirstOrDefault(x => x != null);
+    }
+
     public Collider GetStaticCollider()
     {
         return Collection
-            .Select(x => x.collider )
+            .Select(x => x.collider)
             .FirstOrDefault(x => x != null && x.name.Contains("::") && !x.GetComponent<Terrain>());
     }
 

@@ -18,7 +18,6 @@ public class NetworkPlayer : MonoBehaviour
 
     private NetworkClient networkClient;
     private ObjectInteraction targetInteractionObject;
-    private ObjectManager objectManager;
 
     private float playerPositionUpdateTimer;
     private UnityEngine.Vector3 lastPushedPosition;
@@ -27,12 +26,14 @@ public class NetworkPlayer : MonoBehaviour
     public int Id { get; set; }
     public EntityNavigation Navigation => movement;
     public PlayerManager PlayerManager { get; set; }
+    public float ObjectInteractionRange => objectInteractionRange;
+
+    public PlayerAlignment Alignment { get; set; }
 
     // Start is called before the first frame update
     void Start()
     {
         networkClient = FindObjectOfType<NetworkClient>();
-        objectManager = FindObjectOfType<ObjectManager>();
         if (!uiManager) uiManager = FindObjectOfType<UIManager>();
     }
 
@@ -41,24 +42,46 @@ public class NetworkPlayer : MonoBehaviour
     {
         SendPosition();
         UpdateObjectInteraction();
+        UpdateNpcInteraction();
+        UpdatePlayerInteraction();
+        UpdateItemInteraction();
+    }
+
+    private void UpdateItemInteraction()
+    {
+    }
+
+    private void UpdatePlayerInteraction()
+    {
+    }
+
+    private void UpdateNpcInteraction()
+    {
     }
 
     private void UpdateObjectInteraction()
     {
         if (targetInteractionObject == null) return;
-        var obj = targetInteractionObject;
-        GetObjectAction(obj, out var distance, out var action, out var interactionRange);
+
+        if (!targetInteractionObject.TryGetAction(
+            out var distance,
+            out var action,
+            out var interactionRange))
+        {
+            return;
+        }
+
         if (distance <= interactionRange)
         {
             targetInteractionObject = null;
             // ignore examinations
             if (action.Id == 0)
             {
-                uiManager.ChatPanel.OnExamine(obj.ObjectData.Description);
+                uiManager.ChatPanel.OnExamine(targetInteractionObject.ObjectData.Description);
                 return;
             }
 
-            networkClient.SendObjectAction(obj.ServerId, action.Id, 0);
+            networkClient.SendObjectAction(targetInteractionObject.ServerId, action.Id, 0);
         }
     }
 
@@ -84,8 +107,13 @@ public class NetworkPlayer : MonoBehaviour
         if (!networkClient.Auth.Authenticated) return;
         targetInteractionObject = obj;
 
-
-        GetObjectAction(obj, out var distance, out var action, out var interactionRange);
+        if (!obj.TryGetAction(
+            out var distance,
+            out var action,
+            out var interactionRange))
+        {
+            return;
+        }
 
         if (distance > interactionRange)
         {
@@ -131,14 +159,6 @@ public class NetworkPlayer : MonoBehaviour
         networkClient.MoveTo(destination, running);
     }
 
-    private void GetObjectAction(ObjectInteraction obj, out float distance, out ServerAction action, out float interactionRange)
-    {
-        var data = obj.ObjectData;
-        distance = UnityEngine.Vector3.Distance(obj.Position, transform.position);
-        action = obj.ActionId == -1 ? data.Actions[0] : data.Actions.FirstOrDefault(x => x.Id == obj.ActionId);
-        interactionRange = action.Range > 0 ? action.Range : data.InteractionRange > 0 ? data.InteractionRange : objectInteractionRange;
-    }
-
     internal void AddInventoryItem(int itemId, int amount)
     {
         var item = inventory.AddItem(itemId, amount);
@@ -154,32 +174,5 @@ public class NetworkPlayer : MonoBehaviour
     internal void SetInventoryItems(int[] itemId, long[] amount)
     {
         inventory.SetItems(itemId, amount);
-    }
-}
-
-public class ObjectInteraction
-{
-    public NetworkObject NetworkObject { get; set; }
-    public StaticObject StaticObject { get; set; }
-    public ServerObject ObjectData => NetworkObject ? NetworkObject.ObjectData : StaticObject.ObjectData;
-    public int ServerId => NetworkObject ? NetworkObject.ServerId : StaticObject.Instance + 1;
-    public UnityEngine.Vector3 Position => NetworkObject ? NetworkObject.transform.position : StaticObject.Position;
-    public int ActionId { get; set; }
-    internal static ObjectInteraction Create(NetworkObject worldObject, int actionId = 0)
-    {
-        return new ObjectInteraction()
-        {
-            NetworkObject = worldObject,
-            ActionId = actionId
-        };
-    }
-
-    internal static ObjectInteraction Create(StaticObject staticObject, int actionId = 0)
-    {
-        return new ObjectInteraction()
-        {
-            StaticObject = staticObject,
-            ActionId = actionId
-        };
     }
 }

@@ -44,12 +44,12 @@ public class ObjectManager : MonoBehaviour
     internal void OnObjectAdded(SceneObject entity)
     {
         var networkObject = Instantiate(objectPrefab, objectContainer).GetComponent<NetworkObject>();
-        networkObject.ObjectData = GetObjectData(entity);
+        networkObject.Data = GetObjectData(entity);
         networkObject.ServerId = entity.Id;
-        networkObject.name = networkObject.ObjectData.Name;
+        networkObject.name = networkObject.Data.Name;
         networkObject.transform.position = entity.Position;
 
-        Instantiate(networkObject.ObjectData.Model, networkObject.transform);
+        Instantiate(networkObject.Data.Model, networkObject.transform);
         objects.Add(networkObject);
     }
 
@@ -66,17 +66,17 @@ public class ObjectManager : MonoBehaviour
             return;
         }
 
-        var oldObjectId = networkObject.ObjectData.Id;
+        var oldObjectId = networkObject.Data.Id;
 
-        networkObject.ObjectData = GetObjectData(entity);
-        networkObject.name = networkObject.ObjectData.Name;
+        networkObject.Data = GetObjectData(entity);
+        networkObject.name = networkObject.Data.Name;
         networkObject.transform.position = entity.Position;
 
         if (entity.ObjectId != oldObjectId)
         {
             var model = networkObject.transform.GetChild(0);
             Destroy(model.gameObject);
-            Instantiate(networkObject.ObjectData.Model, networkObject.transform);
+            Instantiate(networkObject.Data.Model, networkObject.transform);
         }
     }
 
@@ -89,7 +89,7 @@ public class ObjectManager : MonoBehaviour
         int objCount = activeTerrain.terrainData.treeInstances.Length;
         var trees = activeTerrain.terrainData.treeInstances;
 
-        this.originalStaticObjectData = activeTerrain.terrainData.treeInstances;
+        originalStaticObjectData = activeTerrain.terrainData.treeInstances;
 
         for (int i = 0; i < objCount; i++)
         {
@@ -145,7 +145,7 @@ public class ObjectManager : MonoBehaviour
                     {
                         objCollider.center = collider.center;
                         objCollider.radius = collider.radius;
-                        objCollider.height = collider.height;                        
+                        objCollider.height = collider.height;
                         objCollider.direction = collider.direction;
                     }
                 }
