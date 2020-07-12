@@ -29,12 +29,24 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             }
         }
 
-        internal void SetPlayerInventory(int playerId, int[] itemId, long[] amount)
+        internal void UpdateHealth(int targetPlayerId, int health, int maxHealth, int delta)
+        {
+            lock (SyncRoot)
+            {
+                var targetPlayer = Entities.FirstOrDefault(x => x.Id == targetPlayerId);
+                if (targetPlayer != null)
+                {
+                    Changes.Enqueue(new PlayerHealthUpdated(targetPlayer, health, maxHealth, delta));
+                }
+            }
+        }
+
+        internal void SetPlayerInventory(int playerId, long coins, int[] itemId, long[] amount)
         {
             var targetPlayer = GetPlayer(playerId);
             if (targetPlayer != null)
             {
-                Changes.Enqueue(new PlayerInventoryUpdated(targetPlayer, itemId, amount));
+                Changes.Enqueue(new PlayerInventoryUpdated(targetPlayer, coins, itemId, amount));
                 return;
             }
         }
@@ -105,13 +117,33 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             }
         }
 
-        public void Action(int playerId, int objectId, int actionType, int parameterId, byte status)
+        public void OpenTradeWindow(int playerId, int npcServerId, string shopName, int[] itemId, int[] itemPrice, int[] itemStock)
         {
-            UnityEngine.Debug.Log("PlayerHandler::Action");
+            UnityEngine.Debug.Log("PlayerHandler::ObjectAction");
+            var targetPlayer = GetPlayer(playerId);
+            if (targetPlayer != null)
+            {
+                Changes.Enqueue(new OpenNpcTradeWindow(targetPlayer, npcServerId, shopName, itemId, itemPrice, itemStock));
+            }
+        }
+
+        public void ObjectAction(int playerId, int objectId, int actionType, int parameterId, byte status)
+        {
+            UnityEngine.Debug.Log("PlayerHandler::ObjectAction");
             var targetPlayer = GetPlayer(playerId);
             if (targetPlayer != null)
             {
                 Changes.Enqueue(new PlayerObjectAction(targetPlayer, objectId, actionType, parameterId, status));
+            }
+        }
+
+        public void NpcAction(int playerId, int npcId, int actionType, int parameterId, byte status)
+        {
+            UnityEngine.Debug.Log("PlayerHandler::NpcAction");
+            var targetPlayer = GetPlayer(playerId);
+            if (targetPlayer != null)
+            {
+                Changes.Enqueue(new PlayerNpcAction(targetPlayer, npcId, actionType, parameterId, status));
             }
         }
 

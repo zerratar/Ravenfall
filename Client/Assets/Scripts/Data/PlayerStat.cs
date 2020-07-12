@@ -32,4 +32,10 @@ public class PlayerStat
             Experience = experience > 0 ? experience : levelExp
         };
     }
+
+    internal void Set(int effective, int level)
+    {
+        this.EffectiveLevel = effective;
+        this.Level = level;
+    }
 }

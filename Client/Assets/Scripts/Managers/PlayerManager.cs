@@ -10,12 +10,13 @@ public class PlayerManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private NametagManager nametagManager;
-
-    private ServerPlayerAlignmentActions[] alignmentActions;
+    [SerializeField] private HealthCounterManager healthCounterManager;
 
     private readonly List<NetworkPlayer> players = new List<NetworkPlayer>();
-    public NetworkPlayer Me { get; private set; }
 
+    private ServerPlayerAlignmentActions[] alignmentActions;
+    public NetworkPlayer Me { get; private set; }
+    
     private void Awake()
     {
         alignmentActions = Resources.LoadAll<ServerPlayerAlignmentActions>("Data/Players");
@@ -159,7 +160,7 @@ public class PlayerManager : MonoBehaviour
         targetPlayer.SetEquipmentState(itemId, equipped);
     }
 
-    internal void OnPlayerInventoryUpdated(Player entity, int[] itemId, long[] amount)
+    internal void OnPlayerInventoryUpdated(Player entity, long coins, int[] itemId, long[] amount)
     {
         Debug.Log("OnPlayerInventoryUpdated");
         var targetPlayer = players.FirstOrDefault(x => x.Id == entity.Id);
@@ -169,7 +170,12 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        targetPlayer.SetInventoryItems(itemId, amount);
+        if (itemId != null && amount != null)
+        {
+            targetPlayer.SetInventoryItems(itemId, amount);
+        }
+
+        targetPlayer.SetCoins(coins);
     }
 
     internal void OnPlayerItemAdded(Player entity, int itemId, int amount)
@@ -208,7 +214,35 @@ public class PlayerManager : MonoBehaviour
         players.Clear();
     }
 
-    internal void OnPlayerAction(
+    internal void OnPlayerHealthChanged(Player player, int health, int maxHealth, int delta)
+    {
+        Debug.Log("OnPlayerHealthChanged");
+        var targetPlayer = players.FirstOrDefault(x => x.Id == player.Id);
+        if (!targetPlayer)
+        {
+            return;
+        }
+        healthCounterManager.ShowCounter(targetPlayer.transform, delta);
+        targetPlayer.SetHealth(health, maxHealth);
+    }
+
+    internal void OnPlayerNpcAction(
+        Player player,
+        int npcId,
+        int actionType,
+        int parameterId,
+        byte status)
+    {
+        Debug.Log("OnPlayerNpcAction Response From Server");
+
+        var targetPlayer = players.FirstOrDefault(x => x.Id == player.Id);
+        if (!targetPlayer)
+        {
+            return;
+        }
+    }
+
+    internal void OnPlayerObjectAction(
         Player player,
         int objectId,
         int actionType,

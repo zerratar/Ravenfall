@@ -33,9 +33,14 @@ namespace Shinobytes.Ravenfall.GameServer
             ioc.RegisterShared<IUserProvider, UserProvider>();
             ioc.RegisterShared<IPlayerProvider, PlayerProvider>();
             ioc.RegisterShared<IObjectProvider, ObjectProvider>();
+            ioc.RegisterShared<INpcProvider, NpcProvider>();
             ioc.RegisterShared<IItemProvider, ItemProvider>();
             ioc.RegisterShared<IPlayerStatsProvider, PlayerStatsProvider>();
+            ioc.RegisterShared<IPlayerStateProvider, PlayerStateProvider>();
+            ioc.RegisterShared<INpcStatsProvider, NpcStatsProvider>();
             ioc.RegisterShared<IPlayerInventoryProvider, PlayerInventoryProvider>();
+            ioc.RegisterShared<INpcShopInventoryProvider, NpcShopInventoryProvider>();
+            ioc.RegisterShared<INpcStateProvider, NpcStateProvider>();
 
             // processors
             ioc.RegisterShared<IWorldProcessor, WorldProcessor>();
@@ -46,7 +51,10 @@ namespace Shinobytes.Ravenfall.GameServer
             // repositories
             ioc.RegisterShared<IGameObjectRepository, JsonBasedGameObjectRepository>();
             ioc.RegisterShared<IItemRepository, JsonBasedItemRepository>();
+            ioc.RegisterShared<INpcRepository, JsonBasedNpcRepository>();
             ioc.RegisterShared<IPlayerRepository, JsonBasedPlayerRepository>();
+            ioc.RegisterShared<IEntityActionsRepository, JsonBasedEntityActionsRepository>();
+
 
             var logger = ioc.Resolve<ILogger>();
             var packetController = ioc.Resolve<INetworkPacketController>();

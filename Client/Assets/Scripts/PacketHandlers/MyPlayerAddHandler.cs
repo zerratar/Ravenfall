@@ -35,6 +35,8 @@ namespace Assets.Scripts.PacketHandlers
 
             playerHandler.Add(player);
             playerHandler.PlayerStatsUpdate(player.Id, data.Experience, data.EffectiveLevel);
+            playerHandler.SetPlayerInventory(player.Id, data.Coins, data.InventoryItemId, data.InventoryItemAmount);
+
         }
     }
 }

@@ -18,7 +18,7 @@ MonoBehaviour:
   Actions: []
   InteractionRange: 0
   Model: {fileID: 5589132880061157761, guid: 9af1666b2420a294eb7ae6b62680d303, type: 3}
-  Icon: {fileID: 21300000, guid: fc63ffdd665bfe147bd4fc44c87d6afa, type: 3}
+  Icon: {fileID: 21300000, guid: 0acbf5ed67bbcb34882575e8df4608d0, type: 3}
   Equippable: 0
   Stackable: 0
   Consumable: 0

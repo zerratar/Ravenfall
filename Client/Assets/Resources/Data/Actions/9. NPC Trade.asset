@@ -16,4 +16,4 @@ MonoBehaviour:
   Name: Trade
   BubbleIcon: {fileID: 0}
   CursorIcon: {fileID: 2800000, guid: 96d4bfdb0d6d8c042bf8fccf6524d239, type: 3}
-  Range: 50
+  Range: 3

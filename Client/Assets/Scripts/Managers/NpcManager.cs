@@ -1,4 +1,5 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,6 +11,7 @@ public class NpcManager : MonoBehaviour
     [SerializeField] private ServerNpc[] spawnableNpcs;
     [SerializeField] private GameObject npcPrefab;
     [SerializeField] private Transform npcContainer;
+    [SerializeField] private HealthCounterManager healthCounterManager;
 
     private readonly List<NetworkNpc> npcs = new List<NetworkNpc>();
 
@@ -28,7 +30,7 @@ public class NpcManager : MonoBehaviour
     internal void OnNpcAnimationStateChanged(Npc entity, string animationState, bool enabled, bool trigger, int action)
     {
         Debug.Log("OnNpcAnimationStateChanged");
-        var npc = npcs.FirstOrDefault(x => x.Id == entity.Id);
+        var npc = npcs.FirstOrDefault(x => x.ServerId == entity.Id);
         if (!npc)
         {
             Debug.LogError("Trying to play an animation on a npc that does not exist. ID: " + entity.Id);
@@ -41,18 +43,44 @@ public class NpcManager : MonoBehaviour
     internal void OnNpcAdded(Npc entity)
     {
         var npc = Instantiate(npcPrefab, npcContainer).GetComponent<NetworkNpc>();
-        npc.Data = GetNpcData(entity);        
+        npc.Data = GetNpcData(entity);
         npc.ServerId = entity.Id;
+        npc.Id = entity.NpcId;
         npc.Alignment = npc.Data.Alignment;
         npc.name = npc.Data.Name;
         npc.transform.position = entity.Position;
-
+        npc.transform.rotation = Quaternion.Euler(entity.Rotation);
         Instantiate(npc.Data.Model, npc.transform);
         npcs.Add(npc);
     }
 
     internal void OnNpcUpdated(Npc entity)
     {
+        Debug.Log("OnNpcUpdated");
+    }
+
+    internal void OnNpcHealthChanged(Npc entity, int health, int maxHealth, int delta)
+    {
+        Debug.Log("OnNpcHealthChanged");
+
+        var targetNpc = npcs.FirstOrDefault(x => x.ServerId == entity.Id);
+        if (!targetNpc)
+        {
+            return;
+        }
+
+        healthCounterManager.ShowCounter(targetNpc.transform, delta);
+        targetNpc.SetHealth(health, maxHealth);
+    }
+
+    internal void OnNpcDeath(Npc entity)
+    {
+        Debug.Log("OnNpcDeath");
+    }
+
+    internal void OnNpcRespawn(Npc entity)
+    {
+        Debug.Log("OnNpcRespawn");
     }
 
     internal void OnNpcRemoved(Npc entity)
@@ -67,7 +95,7 @@ public class NpcManager : MonoBehaviour
 
     internal void OnNpcMove(Npc entity)
     {
-        var npc = npcs.FirstOrDefault(x => x.Id == entity.Id);
+        var npc = npcs.FirstOrDefault(x => x.ServerId == entity.Id);
         if (!npc)
         {
             return;
@@ -76,10 +104,15 @@ public class NpcManager : MonoBehaviour
         npc.Navigation.MoveTo(entity.Position, entity.Destination, false);
     }
 
+    public NetworkNpc GetNpcByServerId(int serverId)
+    {
+        return npcs.FirstOrDefault(x => x.ServerId == serverId);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ServerNpc GetNpcData(Npc npc)
     {
-        return spawnableNpcs.FirstOrDefault(x => x.Id == npc.Id);
+        return spawnableNpcs.FirstOrDefault(x => x.Id == npc.NpcId);
     }
 
 
@@ -88,7 +121,6 @@ public class NpcManager : MonoBehaviour
     {
         return spawnableNpcs.FirstOrDefault(x => x.Id == id);
     }
-
 
     void OnDestroy()
     {

@@ -9,15 +9,18 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
     {
         private readonly ILogger logger;
         private readonly IObjectProvider objectProvider;
+        private readonly IPlayerStateProvider playerState;
         private readonly IRavenConnectionProvider connectionProvider;
 
         public PlayerMoveRequestHandler(
             ILogger logger,
             IObjectProvider objectProvider,
+            IPlayerStateProvider playerState,
             IRavenConnectionProvider connectionProvider)
         {
             this.logger = logger;
             this.objectProvider = objectProvider;
+            this.playerState = playerState;
             this.connectionProvider = connectionProvider;
         }
 
@@ -30,7 +33,10 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
             player.Destination = data.Destination;
 
             // player moves, release any locked objects the player may have.
-            objectProvider.ReleaseObjectLocks(player);
+            objectProvider.ReleaseLocks(player);
+
+            // exit combat if we are in one. This will cancel any ongoing attacks.
+            playerState.ExitCombat(player);
 
             foreach (var playerConnection in connectionProvider.GetAll())
             {

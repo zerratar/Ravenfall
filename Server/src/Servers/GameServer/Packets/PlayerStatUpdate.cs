@@ -11,7 +11,7 @@ namespace RavenfallServer.Packets
         public int EffectiveLevel { get; set; }
         public decimal Experience { get; set; }
 
-        internal static PlayerStatUpdate Create(Player player, PlayerStat stat)
+        internal static PlayerStatUpdate Create(Player player, EntityStat stat)
         {
             return new PlayerStatUpdate
             {

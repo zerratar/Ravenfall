@@ -25,6 +25,8 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public int PlayerId { get; set; }
         public string Name { get; set; }
         public int CombatLevel { get; set; }
+        public int Health { get; set; }
+        public int MaxHealth { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Destination { get; set; }
         public Appearance Appearance { get; set; }
@@ -146,6 +148,9 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public int[] EffectiveLevel { get; set; }
         public decimal[] Experience { get; set; }
         public Appearance Appearance { get; set; }
+        public int[] InventoryItemId { get; set; }
+        public long[] InventoryItemAmount { get; set; }
+        public long Coins { get; set; }
     }
 
     public class PlayerItemAdd
@@ -232,5 +237,158 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public int PlayerId { get; set; }
         public int[] ItemId { get; set; }
         public long[] Amount { get; set; }
+        public long Coins { get; set; }
     }
+
+
+    public class NpcAdd
+    {
+        public const short OpCode = 27;
+        public int ServerId { get; set; }
+        public int NpcId { get; set; }
+        public int Health { get; set; }
+        public int MaxHealth { get; set; }
+        public Vector3 Position { get; set; }
+        public Vector3 Rotation { get; set; }
+        public Vector3 Destination { get; set; }
+    }
+
+    public class NpcRemove
+    {
+        public const short OpCode = 28;
+        public int NpcServerId { get; set; }
+    }
+
+    public class NpcUpdate
+    {
+        public const short OpCode = 29;
+        public int ServerId { get; set; }
+        public int NpcId { get; set; }
+        public Vector3 Position { get; set; }
+        public Vector3 Rotation { get; set; }
+    }
+
+    public class NpcMove
+    {
+        public const short OpCode = 30;
+        public int ServerId { get; set; }
+        public Vector3 Position { get; set; }
+        public Vector3 Destination { get; set; }
+        public bool Running { get; set; }
+    }
+
+    public class PlayerNpcActionRequest
+    {
+        public const short OpCode = 31;
+        public int NpcServerId { get; set; }
+        public int ActionId { get; set; }
+        public int ParameterId { get; set; }
+    }
+
+    public class PlayerPlayerActionRequest
+    {
+        public const short OpCode = 32;
+        public int PlayerId { get; set; }
+        public int ActionId { get; set; }
+        public int ParameterId { get; set; }
+    }
+
+    public class PlayerNpcActionResponse
+    {
+        public const short OpCode = 33;
+        public int PlayerId { get; set; }
+        public int NpcServerId { get; set; }
+        public int ActionId { get; set; }
+        public int ParameterId { get; set; }
+        public byte Status { get; set; }
+    }
+
+    public class NpcTradeOpenWindow
+    {
+        public const short OpCode = 34;
+        public int PlayerId { get; set; }
+        public int NpcServerId { get; set; }
+        public string ShopName { get; set; }
+        public int[] ItemId { get; set; }
+        public int[] ItemPrice { get; set; }
+        public int[] ItemStock { get; set; }
+    }
+
+    public class NpcTradeUpdateStock
+    {
+        public const short OpCode = 35;
+        public int PlayerId { get; set; }
+        public int NpcServerId { get; set; }
+        public int[] ItemId { get; set; }
+        public int[] ItemPrice { get; set; }
+        public int[] ItemStock { get; set; }
+    }
+
+    public class NpcTradeSellItem
+    {
+        public const short OpCode = 36;
+        public int NpcServerId { get; set; }
+        public int ItemId { get; set; }
+        public int Amount { get; set; }
+    }
+
+    public class NpcTradeBuyItem
+    {
+        public const short OpCode = 37;
+        public int NpcServerId { get; set; }
+        public int ItemId { get; set; }
+        public int Amount { get; set; }
+    }
+
+    public class PlayerCoinsUpdate
+    {
+        public const short OpCode = 38;
+        public int PlayerId { get; set; }
+        public long Coins { get; set; }
+    }
+
+    public class PlayerHealthChange
+    {
+        public const short OpCode = 39;
+        public int TargetPlayerId { get; set; }
+        public int PlayerId { get; set; }
+        public int Delta { get; set; }
+        public int Health { get; set; }
+        public int MaxHealth { get; set; }
+    }
+
+    public class NpcHealthChange
+    {
+        public const short OpCode = 40;
+        public int NpcServerId { get; set; }
+        public int PlayerId { get; set; }
+        public int Delta { get; set; }
+        public int Health { get; set; }
+        public int MaxHealth { get; set; }
+    }
+
+    public class NpcDeath
+    {
+        public const short OpCode = 41;
+        public int NpcServerId { get; set; }
+        public int PlayerId { get; set; }
+    }
+
+    public class NpcRespawn
+    {
+        public const short OpCode = 42;
+        public int NpcServerId { get; set; }
+        public int PlayerId { get; set; }
+    }
+
+    public class NpcAnimationStateUpdate
+    {
+        public const short OpCode = 43;
+        public int NpcServerId { get; set; }
+        public string AnimationState { get; set; }
+        public bool Enabled { get; set; }
+        public bool Trigger { get; set; }
+        public int ActionNumber { get; set; }
+    }
+
 }

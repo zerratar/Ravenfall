@@ -53,3 +53,19 @@ The following packages were updated:
   com.unity.ide.vscode from version 1.1.4 to 1.2.0
   com.unity.render-pipelines.universal from version 7.2.1 to 7.3.1
   com.unity.test-framework from version 1.1.11 to 1.1.13
+
+=== Sun May 31 10:14:30 2020
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.test-framework from version 1.1.13 to 1.1.14
+
+=== Sat Jun 27 13:40:31 2020
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ide.vscode from version 1.2.0 to 1.2.1

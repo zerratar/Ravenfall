@@ -3,7 +3,7 @@ using System;
 
 namespace Shinobytes.Ravenfall.RavenNet.Models
 {
-    public class PlayerStat
+    public class EntityStat
     {
         private static volatile int index;
 
@@ -23,10 +23,10 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
             return delta;
         }
 
-        public static PlayerStat Create(int index, string name, int level = 1, decimal experience = 0)
+        public static EntityStat Create(int index, string name, int level = 1, decimal experience = 0)
         {
             var levelExp = GameMath.LevelToExperience(level);
-            return new PlayerStat
+            return new EntityStat
             {
                 Index = index,
                 Id = index++,

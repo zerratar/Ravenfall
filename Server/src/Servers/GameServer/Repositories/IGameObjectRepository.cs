@@ -7,7 +7,6 @@ namespace GameServer.Repositories
     public interface IGameObjectRepository
     {
         IReadOnlyList<SceneObject> AllObjects();
-        IReadOnlyList<SceneObjectActions> GetActions();
         IReadOnlyList<SceneObjectItemDrops> GetItemDrops();
     }
 }

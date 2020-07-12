@@ -17,12 +17,15 @@ public class WorldProcessor : IWorldProcessor
     private readonly IRavenConnectionProvider connectionProvider;
     private readonly IPlayerProvider playerProvider;
     private readonly IPlayerInventoryProvider playerInventoryProvider;
+    private readonly INpcShopInventoryProvider shopInventoryProvider;
     private readonly IObjectProvider objectProvider;
+    private readonly INpcProvider npcProvider;
+    private readonly IItemProvider itemProvider;
 
     private readonly object objectUpdateMutex = new object();
     private readonly object playerMutex = new object();
 
-    private readonly List<ObjectTick> objectTicks = new List<ObjectTick>();
+    private readonly List<EntityTick> entityIntervalItems = new List<EntityTick>();
     private readonly List<Player> activePlayers = new List<Player>();
 
     public WorldProcessor(
@@ -30,17 +33,23 @@ public class WorldProcessor : IWorldProcessor
         IKernel kernel,
         IPlayerStatsProvider statsProvider,
         IPlayerInventoryProvider playerInventoryProvider,
+        INpcShopInventoryProvider shopInventoryProvider,
         IRavenConnectionProvider connectionProvider,
         IPlayerProvider playerProvider,
-        IObjectProvider objectProvider)
+        IObjectProvider objectProvider,
+        INpcProvider npcProvider,
+        IItemProvider itemProvider)
     {
         this.logger = logger;
         this.kernel = kernel;
         this.statsProvider = statsProvider;
         this.playerInventoryProvider = playerInventoryProvider;
+        this.shopInventoryProvider = shopInventoryProvider;
         this.connectionProvider = connectionProvider;
         this.playerProvider = playerProvider;
         this.objectProvider = objectProvider;
+        this.npcProvider = npcProvider;
+        this.itemProvider = itemProvider;
         this.kernel.RegisterTickUpdate(Update, TimeSpan.FromSeconds(60f / 1f));
     }
 
@@ -64,6 +73,7 @@ public class WorldProcessor : IWorldProcessor
             var connections = GetConnectedActivePlayerConnections();
             var allPlayers = GetActivePlayers();
             var objects = objectProvider.GetAll();
+            var npcs = npcProvider.GetAll();
 
             foreach (var connection in connections)
             {
@@ -73,8 +83,8 @@ public class WorldProcessor : IWorldProcessor
                     var stats = statsProvider.GetStats(myConnection.Player.Id);
                     var level = statsProvider.GetCombatLevel(myConnection.Player.Id);
                     var inventory = playerInventoryProvider.GetInventory(myConnection.Player.Id);
-                    connection.Send(MyPlayerAdd.Create(myConnection.Player, level, stats), SendOption.Reliable);
-                    connection.Send(PlayerInventory.Create(myConnection.Player, inventory.Items), SendOption.Reliable);
+                    connection.Send(MyPlayerAdd.Create(myConnection.Player, level, stats, inventory.Items), SendOption.Reliable);
+                    //connection.Send(PlayerInventory.Create(myConnection.Player, inventory.Items), SendOption.Reliable);
                 }
                 else
                 {
@@ -104,6 +114,12 @@ public class WorldProcessor : IWorldProcessor
                     myConnection.Send(ObjectAdd.Create(obj), SendOption.Reliable);
                 }
             }
+
+
+            foreach (var npc in npcs)
+            {
+                myConnection.Send(NpcAdd.Create(npc), SendOption.Reliable);
+            }
         }
         catch (Exception exc)
         {
@@ -114,7 +130,7 @@ public class WorldProcessor : IWorldProcessor
     public void RemovePlayer(Player player)
     {
         RemoveActivePlayer(player);
-        objectProvider.ReleaseObjectLocks(player);
+        objectProvider.ReleaseLocks(player);
 
         foreach (var connection in GetConnectedActivePlayerConnections())
         {
@@ -130,13 +146,17 @@ public class WorldProcessor : IWorldProcessor
         }
     }
 
-    public void UpdatePlayerStat(Player player, PlayerStat skill)
+    public void PlayAnimation(Npc npc, string animation, bool enabled = true, bool trigger = false, int number = 0)
     {
-        var playerConnection = connectionProvider
-            .GetConnection<PlayerConnection>(x =>
-                x != null &&
-                x.Player.Id == player.Id);
+        foreach (var connection in GetConnectedActivePlayerConnections())
+        {
+            connection.Send(NpcAnimationStateUpdate.Create(npc, animation, enabled, trigger, number), SendOption.Reliable);
+        }
+    }
 
+    public void UpdatePlayerStat(Player player, EntityStat skill)
+    {
+        var playerConnection = GetPlayerConnection(player);
         if (playerConnection != null)
         {
             playerConnection.Send(PlayerStatUpdate.Create(player, skill), SendOption.Reliable);
@@ -144,11 +164,7 @@ public class WorldProcessor : IWorldProcessor
     }
     public void AddPlayerItem(Player player, Item item, int amount = 1)
     {
-        var playerConnection = connectionProvider
-            .GetConnection<PlayerConnection>(x =>
-               x != null &&
-               x.Player.Id == player.Id);
-
+        var playerConnection = GetPlayerConnection(player);
         var inventory = playerInventoryProvider.GetInventory(player.Id);
         if (inventory != null)
         {
@@ -162,11 +178,7 @@ public class WorldProcessor : IWorldProcessor
     }
     public void RemovePlayerItem(Player player, Item item, int amount = 1)
     {
-        var playerConnection = connectionProvider
-            .GetConnection<PlayerConnection>(x =>
-               x != null &&
-               x.Player.Id == player.Id);
-
+        var playerConnection = GetPlayerConnection(player);
         var inventory = playerInventoryProvider.GetInventory(player.Id);
         if (inventory != null)
         {
@@ -179,11 +191,128 @@ public class WorldProcessor : IWorldProcessor
         }
     }
 
-    public void PlayerStatLevelUp(Player player, PlayerStat skill, int levelsGained)
+
+    public void PlayerBuyItem(Player player, Npc npc, int itemId, int amount)
+    {
+        var item = itemProvider.GetItemById(itemId);
+        if (item == null) return;
+
+        var shopInventory = shopInventoryProvider.GetInventory(npc.Id);
+        if (shopInventory == null) return;
+
+        var shopItem = shopInventory.GetItem(itemId);
+
+        var totalPrice = shopItem.Price * amount;
+        if (player.Coins < totalPrice) return;
+
+        if (shopInventory.TryRemoveItem(item, amount))
+        {
+            player.Coins -= totalPrice;
+
+            UpdatePlayerCoins(player);
+            AddPlayerItem(player, item, amount);
+            NpcTradeUpdateStock(npc);
+        }
+    }
+
+    public void PlayerSellItem(Player player, Npc npc, int itemId, int amount)
+    {
+        var item = itemProvider.GetItemById(itemId);
+        if (item == null) return;
+
+        var inventory = playerInventoryProvider.GetInventory(player.Id);
+        if (inventory == null) return;
+
+        var shopInventory = shopInventoryProvider.GetInventory(npc.Id);
+        if (shopInventory == null) return;
+
+        if (inventory.HasItem(item, amount))
+        {
+            var shopItem = shopInventory.GetItem(item.Id);
+            if (shopItem == null) return;
+
+            //player.Coins += shopItem.Item.Value * amount;
+            player.Coins += shopItem.Price * amount;
+
+            RemovePlayerItem(player, item, amount);
+            shopInventory.AddItem(item, amount, shopItem.Price);
+            NpcTradeUpdateStock(npc);
+            UpdatePlayerCoins(player);
+        }
+    }
+
+    public void UpdatePlayerCoins(Player player)
+    {
+        var connection = GetPlayerConnection(player);
+        if (connection == null) return;
+
+        connection.Send(new PlayerCoinsUpdate
+        {
+            Coins = player.Coins,
+            PlayerId = connection.Player.Id
+        }, SendOption.Reliable);
+    }
+
+    public void NpcTradeUpdateStock(Npc npc)
+    {
+        var shopInventory = shopInventoryProvider.GetInventory(npc.Id);
+        if (shopInventory == null) return;
+
+        var itemCount = shopInventory.Items.Count;
+        var itemIds = new int[itemCount];
+        var itemPrice = new int[itemCount];
+        var itemStock = new int[itemCount];
+
+        for (var i = 0; i < itemCount; ++i)
+        {
+            var item = shopInventory.Items[i];
+            itemIds[i] = item.Item.Id;
+            itemPrice[i] = item.Price;
+            itemStock[i] = item.Amount;
+        }
+
+        foreach (var connection in GetConnectedActivePlayerConnections())
+        {
+            connection.Send(new NpcTradeUpdateStock
+            {
+                ItemId = itemIds,
+                ItemPrice = itemPrice,
+                ItemStock = itemStock,
+                NpcServerId = npc.Id,
+                PlayerId = connection.Player.Id
+            }, SendOption.Reliable);
+        }
+    }
+
+    public void PlayerStatLevelUp(Player player, EntityStat skill, int levelsGained)
     {
         foreach (var connection in GetConnectedActivePlayerConnections())
         {
             connection.Send(PlayerLevelUp.Create(player, skill, levelsGained), SendOption.Reliable);
+        }
+    }
+
+    public void NpcDamage(Player player, Npc npc, int damage, int health, int maxHealth)
+    {
+        foreach (var connection in GetConnectedActivePlayerConnections())
+        {
+            connection.Send(NpcHealthChange.Create(npc, player, -damage, health, maxHealth), SendOption.Reliable);
+        }
+    }
+
+    public void NpcDeath(Player player, Npc npc)
+    {
+        foreach (var connection in GetConnectedActivePlayerConnections())
+        {
+            connection.Send(RavenfallServer.Packets.NpcDeath.Create(npc, player), SendOption.Reliable);
+        }
+    }
+
+    public void NpcRespawn(Player player, Npc npc)
+    {
+        foreach (var connection in GetConnectedActivePlayerConnections())
+        {
+            connection.Send(RavenfallServer.Packets.NpcRespawn.Create(npc, player), SendOption.Reliable);
         }
     }
 
@@ -201,8 +330,59 @@ public class WorldProcessor : IWorldProcessor
         }
     }
 
+    public void OpenTradeWindow(Player player, Npc npc, string shopName, ShopInventory shopInventory)
+    {
+        var playerConnection = GetPlayerConnection(player);
+        if (playerConnection == null)
+        {
+            return;
+        }
+
+        var itemCount = shopInventory.Items.Count;
+        var itemIds = new int[itemCount];
+        var itemPrice = new int[itemCount];
+        var itemStock = new int[itemCount];
+
+        for (var i = 0; i < itemCount; ++i)
+        {
+            var item = shopInventory.Items[i];
+            itemIds[i] = item.Item.Id;
+            itemPrice[i] = item.Price;
+            itemStock[i] = item.Amount;
+        }
+
+        playerConnection.Send(new NpcTradeOpenWindow
+        {
+            PlayerId = player.Id,
+            ItemId = itemIds,
+            ItemPrice = itemPrice,
+            ItemStock = itemStock,
+            ShopName = shopName,
+            NpcServerId = npc.Id,
+        }, SendOption.Reliable);
+    }
+
+    public void PlayerNpcInteraction(
+        Player player, Npc npc, EntityAction action, int parameterId)
+    {
+        if (action.Invoke(player, npc, parameterId))
+        {
+            foreach (var playerConnection in connectionProvider.GetAll())
+            {
+                playerConnection.Send(new PlayerNpcActionResponse
+                {
+                    PlayerId = player.Id,
+                    ActionId = action.Id,
+                    NpcServerId = npc.Id,
+                    ParameterId = parameterId,
+                    Status = 1 // 0: fail, 1: success
+                }, SendOption.Reliable);
+            }
+        }
+    }
+
     public void PlayerObjectInteraction(
-        Player player, SceneObject obj, SceneObjectAction action, int parameterId)
+        Player player, SceneObject obj, EntityAction action, int parameterId)
     {
         // use 
         if (action.Invoke(player, obj, parameterId))
@@ -221,15 +401,22 @@ public class WorldProcessor : IWorldProcessor
         }
     }
 
-    public void RegisterObjectTickUpdate<TObject>(
-        Player player, TObject obj, ObjectTickHandler<TObject> handleObjectTick)
-        where TObject : SceneObject
+    public void SetEntityInterval<TObject>(
+        Player player, TObject obj, EntityTickHandler<TObject> handleObjectTick)
+        where TObject : Entity
     {
-        lock (objectUpdateMutex) objectTicks.Add(new ObjectTick<TObject>(player, obj, handleObjectTick));
+        lock (objectUpdateMutex)
+            entityIntervalItems.Add(
+                new EntityTick<TObject>(player, obj, handleObjectTick));
     }
-    public ITimeoutHandle SetObjectTimeout<TObject>(int milliseconds, Player player, TObject obj, ObjectTickHandler<TObject> handleObjectTick) where TObject : SceneObject
+    public ITimeoutHandle SetEntityTimeout<TObject>(
+        int milliseconds,
+        Player player,
+        TObject obj,
+        EntityTickHandler<TObject> handleObjectTick)
+        where TObject : Entity
     {
-        var tick = new ObjectTick<TObject>(player, obj, handleObjectTick);
+        var tick = new EntityTick<TObject>(player, obj, handleObjectTick);
         var started = DateTime.Now;
         return kernel.SetTimeout(() =>
         {
@@ -258,6 +445,15 @@ public class WorldProcessor : IWorldProcessor
         lock (playerMutex) activePlayers.Remove(player);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private PlayerConnection GetPlayerConnection(Player player)
+    {
+        return connectionProvider
+            .GetConnection<PlayerConnection>(x =>
+               x != null &&
+               x.Player.Id == player.Id);
+    }
+
     /// <summary>
     /// Gets all active players regardless of their connection state.
     /// </summary>
@@ -267,7 +463,10 @@ public class WorldProcessor : IWorldProcessor
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private IEnumerable<PlayerConnection> GetAllActivePlayerConnections()
     {
-        return connectionProvider.GetAll().OfType<PlayerConnection>().Where(x => x.Player != null);
+        return connectionProvider
+            .GetAll()
+            .OfType<PlayerConnection>()
+            .Where(x => x.Player != null);
     }
 
     /// <summary>
@@ -277,7 +476,10 @@ public class WorldProcessor : IWorldProcessor
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private IEnumerable<PlayerConnection> GetConnectedActivePlayerConnections()
     {
-        return connectionProvider.GetConnected().OfType<PlayerConnection>().Where(x => x.Player != null);
+        return connectionProvider
+            .GetConnected()
+            .OfType<PlayerConnection>()
+            .Where(x => x.Player != null);
     }
 
     private void Update(TimeSpan deltaTime)
@@ -286,8 +488,8 @@ public class WorldProcessor : IWorldProcessor
 
         lock (objectUpdateMutex)
         {
-            var ticksToRemove = new List<ObjectTick>();
-            foreach (var objectTick in objectTicks)
+            var ticksToRemove = new List<EntityTick>();
+            foreach (var objectTick in entityIntervalItems)
             {
                 if (objectTick.Invoke(deltaTime))
                 {
@@ -297,7 +499,7 @@ public class WorldProcessor : IWorldProcessor
 
             foreach (var remove in ticksToRemove)
             {
-                objectTicks.Remove(remove);
+                entityIntervalItems.Remove(remove);
             }
         }
     }

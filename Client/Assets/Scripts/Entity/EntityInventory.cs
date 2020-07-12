@@ -12,6 +12,8 @@ public class EntityInventory : MonoBehaviour
     private readonly List<InventoryItem> inventoryItems
         = new List<InventoryItem>();
 
+    public long Coins { get; private set; }
+
     private void Start()
     {
         if (!itemManager) itemManager = FindObjectOfType<ItemManager>();
@@ -20,17 +22,21 @@ public class EntityInventory : MonoBehaviour
 
     internal void SetItems(int[] itemId, long[] itemAmounts)
     {
+        Debug.Log("EntityInventory::SetItems");
+
         inventoryItems.Clear();
 
         for (var i = 0; i < itemId.Length; ++i)
         {
             var id = itemId[i];
             var amount = itemAmounts[i];
-            AddItem(id, amount);
+            AddItem(id, amount, false);
         }
+
+        uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
     }
 
-    internal ServerItem AddItem(int itemId, long amount)
+    internal ServerItem AddItem(int itemId, long amount, bool updateInventory = true)
     {
         try
         {
@@ -67,8 +73,16 @@ public class EntityInventory : MonoBehaviour
         }
         finally
         {
-            uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
+            if (updateInventory)
+            {
+                uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
+            }
         }
+    }
+
+    internal bool HasItem(ServerItem item)
+    {
+        return inventoryItems.FirstOrDefault(x => x.Item.Id == item.Id) != null;
     }
 
     internal ServerItem RemoveItem(int itemId, long amount)
@@ -115,6 +129,12 @@ public class EntityInventory : MonoBehaviour
         {
             uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
         }
+    }
+
+    internal void SetCoins(long amount)
+    {
+        Coins = amount;
+        uiManager.InventoryPanel.SetCoins(amount);
     }
 }
 

@@ -23,7 +23,7 @@ namespace Assets.Scripts.PacketHandlers
             logger.Debug("PlayerObjectActionResponseHandler::Handle");
             Debug.Log("PlayerObjectActionResponseHandler::Handle");
             var playerHandler = moduleManager.GetModule<PlayerHandler>();
-            playerHandler.Action(data.PlayerId, data.ObjectServerId, data.ActionId, data.ParameterId, data.Status);
+            playerHandler.ObjectAction(data.PlayerId, data.ObjectServerId, data.ActionId, data.ParameterId, data.Status);
         }
     }
 }

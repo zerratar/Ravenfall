@@ -16,6 +16,7 @@ public class EntityNavigation : MonoBehaviour
     void Start()
     {
         if (!navMeshAgent) navMeshAgent = GetComponent<NavMeshAgent>();
+        if (!animator) animator = gameObject.GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -51,6 +52,7 @@ public class EntityNavigation : MonoBehaviour
         if (animator)
         {
             var speed =
+                !navMeshAgent.isOnNavMesh ||
                 navMeshAgent.isStopped ||
                 navMeshAgent.velocity == Vector3.zero ||
                 navMeshAgent.remainingDistance <= 0.21f

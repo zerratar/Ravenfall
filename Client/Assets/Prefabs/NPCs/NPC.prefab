@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5582887901439919581}
   - component: {fileID: 5582887901439919579}
   - component: {fileID: 1246999969847456357}
+  - component: {fileID: 431983255148641706}
   m_Layer: 0
   m_Name: NPC
   m_TagString: NPC
@@ -62,6 +63,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
+  defaultController: {fileID: 9100000, guid: d4072f53d0638fe48822e2ccd108b72a, type: 2}
 --- !u!114 &5582887901439919581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,3 +118,17 @@ MonoBehaviour:
   movement: {fileID: 5582887901439919581}
   animationHandler: {fileID: 5582887901439919580}
   entityStats: {fileID: 6761823740226028194}
+--- !u!136 &431983255148641706
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5582887901439919576}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.31725323
+  m_Height: 2.397801
+  m_Direction: 1
+  m_Center: {x: 0.018680692, y: 0.69890046, z: 0}

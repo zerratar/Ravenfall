@@ -1,8 +1,6 @@
-﻿using System;
-using RavenfallServer.Packets;
+﻿using RavenfallServer.Packets;
 using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet.Core;
-using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
 namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
@@ -43,7 +41,7 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
 
             // if we are already interacting with this object
             // ignore it.
-            if (objectProvider.HasAcquiredObjectLock(serverObject, connection.Player))
+            if (objectProvider.HasAcquiredLock(serverObject, connection.Player))
             {
                 logger.Debug("Player is already interacting with object. Ignore");
                 return;

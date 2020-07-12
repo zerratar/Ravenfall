@@ -14,8 +14,20 @@ namespace RavenfallServer.Packets
         public int[] EffectiveLevel { get; set; }
         public decimal[] Experience { get; set; }
         public Appearance Appearance { get; set; }
-        internal static MyPlayerAdd Create(Player player, int combatLevel, IEnumerable<PlayerStat> stats)
+        public int[] InventoryItemId { get; set; }
+        public long[] InventoryItemAmount { get; set; }
+        public long Coins { get; set; }
+
+        internal static MyPlayerAdd Create(Player player, int combatLevel, IEnumerable<EntityStat> stats, IReadOnlyList<Inventory.InventoryItem> items)
         {
+            var itemIds = new int[items.Count];
+            var amounts = new long[items.Count];
+            for (var i = 0; i < items.Count; ++i)
+            {
+                itemIds[i] = items[i].Item.Id;
+                amounts[i] = items[i].Amount;
+            }
+
             return new MyPlayerAdd
             {
                 PlayerId = player.Id,
@@ -24,7 +36,10 @@ namespace RavenfallServer.Packets
                 CombatLevel = combatLevel,
                 Experience = stats.Select(x => x.Experience).ToArray(),
                 EffectiveLevel = stats.Select(x => x.EffectiveLevel).ToArray(),
-                Appearance = player.Appearance
+                Appearance = player.Appearance,
+                InventoryItemId = itemIds,
+                InventoryItemAmount = amounts,
+                Coins = player.Coins
             };
         }
     }

@@ -73,7 +73,9 @@ public class PlayerCamera : MonoBehaviour
                 }
 
                 var name = hitInfo.collider.name;
-                if (name.IndexOf("::", StringComparison.OrdinalIgnoreCase) > 0)
+                if (name.IndexOf("::", StringComparison.OrdinalIgnoreCase) > 0
+                    || hitInfo.collider.tag == "NPC" || hitInfo.collider.tag == "Player"
+                    || hitInfo.collider.transform.parent.tag == "NPC")
                 {
                     wasHit = true;
                     MouseEnter?.Invoke(this, new MouseClickEventArgs(-1, hitInfo));

@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Shinobytes.Ravenfall.RavenNet.Models
 {
+
     public class Inventory
     {
         private readonly ConcurrentDictionary<int, InventoryItem> inventoryItems
@@ -28,6 +29,17 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
 
         public void UnEquipItem(Item item)
         {
+        }
+
+        public bool HasItem(Item item, int amount)
+        {
+            return HasItem(item.Id, amount);
+        }
+
+        public bool HasItem(int itemId, int amount)
+        {
+            var item = GetItem(itemId);
+            return item != null && item.Amount >= amount;
         }
 
         public void AddItem(Item item, int amount)

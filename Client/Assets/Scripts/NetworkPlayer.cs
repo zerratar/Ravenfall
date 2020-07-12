@@ -18,6 +18,7 @@ public class NetworkPlayer : MonoBehaviour
 
     private NetworkClient networkClient;
     private ObjectInteraction targetInteractionObject;
+    private NpcInteraction targetInteractionNpc;
 
     private float playerPositionUpdateTimer;
     private UnityEngine.Vector3 lastPushedPosition;
@@ -25,7 +26,9 @@ public class NetworkPlayer : MonoBehaviour
     public bool IsMe { get; set; }
     public int Id { get; set; }
     public EntityNavigation Navigation => movement;
+    public EntityInventory Inventory => inventory;
     public PlayerManager PlayerManager { get; set; }
+
     public float ObjectInteractionRange => objectInteractionRange;
 
     public PlayerAlignment Alignment { get; set; }
@@ -47,6 +50,12 @@ public class NetworkPlayer : MonoBehaviour
         UpdateItemInteraction();
     }
 
+    internal void ClearInteractionTargets()
+    {
+        targetInteractionObject = null;
+        targetInteractionNpc = null;
+    }
+
     private void UpdateItemInteraction()
     {
     }
@@ -57,6 +66,34 @@ public class NetworkPlayer : MonoBehaviour
 
     private void UpdateNpcInteraction()
     {
+        if (targetInteractionNpc == null) return;
+
+        if (!targetInteractionNpc.TryGetAction(
+            out var distance,
+            out var action,
+            out var interactionRange))
+        {
+            return;
+        }
+
+        if (distance <= interactionRange)
+        {
+            try
+            {
+                // ignore examinations
+                if (action.Id == 0)
+                {
+                    uiManager.ChatPanel.OnExamine(targetInteractionNpc.NpcData.Description);
+                    return;
+                }
+
+                networkClient.SendNpcAction(targetInteractionNpc.ServerId, action.Id, 0);
+            }
+            finally
+            {
+                targetInteractionNpc = null;
+            }
+        }
     }
 
     private void UpdateObjectInteraction()
@@ -73,21 +110,32 @@ public class NetworkPlayer : MonoBehaviour
 
         if (distance <= interactionRange)
         {
-            targetInteractionObject = null;
-            // ignore examinations
-            if (action.Id == 0)
+            try
             {
-                uiManager.ChatPanel.OnExamine(targetInteractionObject.ObjectData.Description);
-                return;
-            }
+                // ignore examinations
+                if (action.Id == 0)
+                {
+                    uiManager.ChatPanel.OnExamine(targetInteractionObject.ObjectData.Description);
+                    return;
+                }
 
-            networkClient.SendObjectAction(targetInteractionObject.ServerId, action.Id, 0);
+                networkClient.SendObjectAction(targetInteractionObject.ServerId, action.Id, 0);
+            }
+            finally
+            {
+                targetInteractionObject = null;
+            }
         }
     }
 
     internal void SetAppearance(Appearance appearance)
     {
         equipmentHandler.SetAppearance(appearance);
+    }
+
+    internal void SetHealth(int health, int maxHealth)
+    {
+        entityStats.GetStatByName("health").Set(health, maxHealth);
     }
 
     private void SendPosition()
@@ -106,6 +154,28 @@ public class NetworkPlayer : MonoBehaviour
     {
         if (!networkClient.Auth.Authenticated) return;
         targetInteractionObject = obj;
+
+        if (!obj.TryGetAction(
+            out var distance,
+            out var action,
+            out var interactionRange))
+        {
+            return;
+        }
+
+        if (distance > interactionRange)
+        {
+            var direction = (transform.position - obj.Position).normalized;
+            var targetMoveToPosition = obj.Position + ((interactionRange / 2.1f) * direction);
+            //var targetMoveToPosition = obj.transform.position;
+            networkClient.MoveTo(targetMoveToPosition, running);
+        }
+    }
+
+    internal void MoveToAndInteractWith(NpcInteraction obj, bool running)
+    {
+        if (!networkClient.Auth.Authenticated) return;
+        targetInteractionNpc = obj;
 
         if (!obj.TryGetAction(
             out var distance,
@@ -174,5 +244,10 @@ public class NetworkPlayer : MonoBehaviour
     internal void SetInventoryItems(int[] itemId, long[] amount)
     {
         inventory.SetItems(itemId, amount);
+    }
+
+    internal void SetCoins(long amount)
+    {
+        inventory.SetCoins(amount);
     }
 }

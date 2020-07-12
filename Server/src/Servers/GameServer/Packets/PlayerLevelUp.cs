@@ -9,7 +9,7 @@ namespace RavenfallServer.Packets
         public int Skill { get; set; }
         public int GainedLevels { get; set; }
 
-        internal static PlayerLevelUp Create(Player player, PlayerStat stat, int gainedLevels)
+        internal static PlayerLevelUp Create(Player player, EntityStat stat, int gainedLevels)
         {
             return new PlayerLevelUp
             {

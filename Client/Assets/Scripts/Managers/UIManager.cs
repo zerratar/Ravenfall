@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -12,9 +13,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private IngameBottomBarUI bottomBarUI;
     [SerializeField] private CharacterSelectionPanelUI charSelectionUI;
 
+    [SerializeField] private NpcTradePanel npcTradePanel;
+
     [SerializeField] private ChatPanel chatPanel;
     [SerializeField] private ContextMenu contextMenu;
     [SerializeField] private InventoryPanel inventoryPanel;
+    [SerializeField] private NpcManager npcManager;
 
     private int uiMask;
 
@@ -25,6 +29,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         uiMask = LayerMask.NameToLayer("UI");
+        if (!npcManager) npcManager = FindObjectOfType<NpcManager>();
     }
 
     public bool HasFocus
@@ -33,6 +38,21 @@ public class UIManager : MonoBehaviour
         {
             return chatPanel.HasFocus; // || ;
         }
+    }
+
+    internal void OnNpcTradeWindowOpen(
+        Player entity,
+        int npcServerId,
+        string shopName,
+        int[] itemId,
+        int[] itemPrice,
+        int[] itemStock)
+    {
+        var npc = npcManager.GetNpcByServerId(npcServerId);
+        if (!npc) return;
+
+        inventoryPanel.gameObject.SetActive(true);
+        npcTradePanel.Show(npc.ServerId, npc.name, shopName, itemId, itemPrice, itemStock);
     }
 
     // Update is called once per frame
@@ -44,6 +64,14 @@ public class UIManager : MonoBehaviour
         SetActiveFast(bottomBarUI.gameObject, subSceneManager.SubSceneIndex == 2);
         SetActiveFast(charSelectionUI.gameObject, subSceneManager.SubSceneIndex == 1);
         SetActiveFast(loginPanel.gameObject, subSceneManager.SubSceneIndex == 0);
+
+        if (!HasFocus)
+        {
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                ToggleInventory();
+            }
+        }
     }
 
     public void ToggleInventory()

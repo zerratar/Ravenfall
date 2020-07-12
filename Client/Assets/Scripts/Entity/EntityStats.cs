@@ -19,6 +19,11 @@ public class EntityStats : MonoBehaviour
         PlayerStat.Create("Cooking"),
     };
 
+    internal PlayerStat GetStatByName(string name)
+    {
+        return Stats.FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+    }
+
     internal PlayerStat PlayLevelUpAnimation(int skill, int gainedLevels)
     {
         if (levelUpEffectPrefab)
@@ -30,7 +35,7 @@ public class EntityStats : MonoBehaviour
 
         var playerSkill = Stats[skill];
         if (playerSkill == null) return null;
-        
+
         return playerSkill;
     }
 

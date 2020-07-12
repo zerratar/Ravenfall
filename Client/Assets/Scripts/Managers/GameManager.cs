@@ -15,12 +15,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     [SerializeField] private ClickMarker clickMarker;
     [SerializeField] private Texture2D defaultCursor;
+    [SerializeField] private AudioSource moveSound;
 
     public Vector2 CursorPixelOffset = new Vector2(6f, 6f);
 
     private void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        DontDestroyOnLoad(this.transform.root.gameObject);
         if (!uiManager) uiManager = FindObjectOfType<UIManager>();
         if (!objectManager) objectManager = FindObjectOfType<ObjectManager>();
         if (!npcManager) npcManager = FindObjectOfType<NpcManager>();
@@ -51,22 +52,50 @@ public class GameManager : MonoBehaviour
         var objId = -1;
         foreach (var hit in e.Collection)
         {
+            if (hit.collider.gameObject.name.IndexOf("::") < 0)
+                continue;
+
             if (int.TryParse(hit.collider.gameObject.name.Split(new string[] { "::" }, StringSplitOptions.RemoveEmptyEntries)[1], out objId))
-            {
                 break;
-            }
         }
 
-        var data = objectManager.GetObjectData(objId);
-        if (!data)
+        var npc = e.GetNetworkNpc();
+        if (npc)
         {
+            var defaultAction = npc.Data.Actions.FirstOrDefault();
+            if (defaultAction)
+            {
+                SetCursorIcon(defaultAction.CursorIcon);
+            }
             return;
         }
 
-        var defaultAction = data.Actions.FirstOrDefault();
-        if (defaultAction)
+        var player = e.GetNetworkPlayer();
+        if (player)
         {
-            SetCursorIcon(defaultAction.CursorIcon);
+            if (playerManager.Me == player)
+            {
+                return;
+            }
+
+            var playerActions = playerManager.GetPlayerAlignmentActions(player.Alignment);
+            var defaultAction = playerActions.FirstOrDefault();
+            if (defaultAction)
+            {
+                SetCursorIcon(defaultAction.CursorIcon);
+            }
+            return;
+        }
+
+        var data = objectManager.GetObjectData(objId);
+        if (data)
+        {
+            var defaultAction = data.Actions.FirstOrDefault();
+            if (defaultAction)
+            {
+                SetCursorIcon(defaultAction.CursorIcon);
+            }
+            return;
         }
     }
 
@@ -106,7 +135,7 @@ public class GameManager : MonoBehaviour
         var npc = e.GetNetworkNpc();
         if (npc)
         {
-            UnityEngine.Debug.Log("We left clicked on a npc.");
+            me.MoveToAndInteractWith(NpcInteraction.Create(me, npc, -1), CheckIfRunning());
             return;
         }
 
@@ -116,6 +145,12 @@ public class GameManager : MonoBehaviour
         {
             me.MoveToAndInteractWith(ObjectInteraction.Create(me, worldObject), CheckIfRunning());
             return;
+        }
+
+
+        if (moveSound)
+        {
+            moveSound.Play();
         }
 
         var terrainHit = e.GetTerrain();
@@ -218,6 +253,12 @@ public class GameManager : MonoBehaviour
     {
         var myPlayer = playerManager.Me;
         if (!myPlayer) return;
+
+        var npc = targetNpc;
+        if (npc)
+        {
+            myPlayer.MoveToAndInteractWith(NpcInteraction.Create(myPlayer, npc, actionId), CheckIfRunning());
+        }
     }
 
     private void HandlePlayerInteraction(NetworkPlayer targetPlayer, int actionId)
@@ -238,6 +279,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            myPlayer.ClearInteractionTargets();
             WalkTo(myPlayer, point);
         }
     }

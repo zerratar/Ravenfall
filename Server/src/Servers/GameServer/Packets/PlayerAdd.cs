@@ -8,6 +8,8 @@ namespace RavenfallServer.Packets
         public int PlayerId { get; set; }
         public string Name { get; set; }
         public int CombatLevel { get; set; }
+        public int Health { get; set; }
+        public int MaxHealth { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Destination { get; set; }
         public Appearance Appearance { get; set; }
@@ -19,6 +21,7 @@ namespace RavenfallServer.Packets
                 Name = player.Name,
                 CombatLevel = combatLevel,
                 Position = player.Position,
+#warning add health and maxhealth for player
                 Destination = player.Destination,
                 Appearance = player.Appearance
             };

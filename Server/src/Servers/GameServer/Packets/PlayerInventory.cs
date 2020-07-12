@@ -9,7 +9,7 @@ namespace RavenfallServer.Packets
         public int PlayerId { get; set; }
         public int[] ItemId { get; set; }
         public long[] Amount { get; set; }
-
+        public long Coins { get; set; }
         public static PlayerInventory Create(Player player, IReadOnlyList<Inventory.InventoryItem> items)
         {
             var itemIds = new int[items.Count];
@@ -24,7 +24,8 @@ namespace RavenfallServer.Packets
             {
                 PlayerId = player.Id,
                 Amount = amounts,
-                ItemId = itemIds
+                ItemId = itemIds,
+                Coins = player.Coins
             };
         }
     }

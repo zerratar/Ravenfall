@@ -2,10 +2,8 @@
 
 namespace Shinobytes.Ravenfall.RavenNet.Models
 {
-
-    public class SceneObject
+    public class SceneObject : WorldEntity
     {
-        public int Id { get; set; }
         public int ObjectId { get; set; }
         public int DisplayObjectId { get; set; }
         public Vector3 Position { get; set; }
@@ -18,11 +16,6 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
     {
         public int ObjectId { get; set; }
         public ObjectItemDrop[] Drops { get; set; }
-    }
-    public class SceneObjectActions
-    {
-        public int ObjectId { get; set; }
-        public string[] ActionTypes { get; set; }
     }
 
     public class ObjectItemDrop

@@ -1,4 +1,5 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -13,9 +14,36 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
 
         public override string Name => "Npc Handler";
 
-        public void SetAnimationState(int npcId, string animationState, bool enabled, bool trigger, int actionNumber)
+        internal void Respawn(int npcServerId)
         {
-            var targetPlayer = GetNPC(npcId);
+            var npc = GetNPC(npcServerId);
+            if (npc != null)
+            {
+                Changes.Enqueue(new NpcRespawned(npc));
+            }
+        }
+
+        internal void Death(int npcServerId)
+        {
+            var npc = GetNPC(npcServerId);
+            if (npc != null)
+            {
+                Changes.Enqueue(new NpcDied(npc));
+            }
+        }
+
+        internal void UpdateHealth(int npcServerId, int health, int maxHealth, int delta)
+        {
+            var npc = GetNPC(npcServerId);
+            if (npc != null)
+            {
+                Changes.Enqueue(new NpcHealthUpdated(npc, health, maxHealth, delta));
+            }
+        }
+
+        public void SetAnimationState(int npcServerId, string animationState, bool enabled, bool trigger, int actionNumber)
+        {
+            var targetPlayer = GetNPC(npcServerId);
 
             if (targetPlayer != null)
             {
@@ -24,12 +52,13 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Npc GetNPC(int npcId)
+        private Npc GetNPC(int npcServerId)
         {
             lock (SyncRoot)
             {
-                return Entities.FirstOrDefault(x => x.Id == npcId);
+                return Entities.FirstOrDefault(x => x.Id == npcServerId);
             }
         }
+
     }
 }

@@ -3,6 +3,7 @@ using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Modules;
 using Shinobytes.Ravenfall.RavenNet.Packets.Client;
+using System;
 using System.Collections;
 using System.Net;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class NetworkClient : MonoBehaviour
     [SerializeField] private PlayerManager playerManager;
     [SerializeField] private NpcManager npcManager;
     [SerializeField] private ObjectManager objectManager;
+    [SerializeField] private UIManager uiManager;
 
     private volatile bool canAuthenticate = true;
     private volatile bool canConnect = true;
@@ -72,6 +74,36 @@ public class NetworkClient : MonoBehaviour
         {
             Position = position
         }, SendOption.None);
+    }
+
+    public void SendNpcAction(int npcServerId, int actionId, int actionParameterId)
+    {
+        gameClient.Send(new PlayerNpcActionRequest
+        {
+            NpcServerId = npcServerId,
+            ActionId = actionId,
+            ParameterId = actionParameterId
+        }, SendOption.None);
+    }
+
+    internal void SendSellItem(int npcServerId, int itemId, int amount)
+    {
+        gameClient.Send(new NpcTradeSellItem
+        {
+            NpcServerId = npcServerId,
+            ItemId = itemId,
+            Amount = amount
+        }, SendOption.Reliable);
+    }
+
+    internal void SendBuyItem(int npcServerId, int itemId, int amount)
+    {
+        gameClient.Send(new NpcTradeBuyItem
+        {
+            NpcServerId = npcServerId,
+            ItemId = itemId,
+            Amount = amount
+        }, SendOption.Reliable);
     }
 
     public void SendObjectAction(int objectServerId, int actionId, int actionParameterId)
@@ -136,6 +168,18 @@ public class NetworkClient : MonoBehaviour
 
         switch (stateChange)
         {
+            case NpcHealthUpdated healthChange:
+                npcManager.OnNpcHealthChanged(healthChange.Entity, healthChange.Health, healthChange.MaxHealth, healthChange.Delta);
+                break;
+
+            case NpcDied death:
+                npcManager.OnNpcDeath(death.Entity);
+                break;
+
+            case NpcRespawned respawn:
+                npcManager.OnNpcRespawn(respawn.Entity);
+                break;
+
             case NpcAnimationStateUpdated animation:
                 npcManager.OnNpcAnimationStateChanged(animation.Entity, animation.AnimationState, animation.Enabled, animation.Trigger, animation.Action);
                 break;
@@ -182,6 +226,14 @@ public class NetworkClient : MonoBehaviour
 
         switch (stateChange)
         {
+            case PlayerHealthUpdated healthChange:
+                playerManager.OnPlayerHealthChanged(healthChange.Entity, healthChange.Health, healthChange.MaxHealth, healthChange.Delta);
+                break;
+
+            case OpenNpcTradeWindow npcTrade:
+                uiManager.OnNpcTradeWindowOpen(npcTrade.Entity, npcTrade.NpcServerId, npcTrade.ShopName, npcTrade.ItemId, npcTrade.ItemPrice, npcTrade.ItemStock);
+                break;
+
             case EntityAdded<Player> add:
                 playerManager.OnPlayerAdded(add.Entity);
                 break;
@@ -194,8 +246,12 @@ public class NetworkClient : MonoBehaviour
                 playerManager.OnPlayerMove(moved.Entity);
                 break;
 
+            case PlayerNpcAction npcAction:
+                playerManager.OnPlayerNpcAction(npcAction.Entity, npcAction.NpcId, npcAction.ActionType, npcAction.ParameterId, npcAction.Status);
+                break;
+
             case PlayerObjectAction action:
-                playerManager.OnPlayerAction(action.Entity, action.ObjectId, action.ActionType, action.ParameterId, action.Status);
+                playerManager.OnPlayerObjectAction(action.Entity, action.ObjectId, action.ActionType, action.ParameterId, action.Status);
                 break;
 
             case PlayerAnimationStateUpdated animation:
@@ -226,7 +282,7 @@ public class NetworkClient : MonoBehaviour
                 playerManager.OnPlayerItemRemoved(itemRemoved.Entity, itemRemoved.ItemId, itemRemoved.Amount);
                 break;
             case PlayerInventoryUpdated inventoryUpdated:
-                playerManager.OnPlayerInventoryUpdated(inventoryUpdated.Entity, inventoryUpdated.ItemId, inventoryUpdated.Amount);
+                playerManager.OnPlayerInventoryUpdated(inventoryUpdated.Entity, inventoryUpdated.Coins, inventoryUpdated.ItemId, inventoryUpdated.Amount);
                 break;
         }
     }

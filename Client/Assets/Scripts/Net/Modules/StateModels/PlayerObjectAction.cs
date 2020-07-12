@@ -23,4 +23,5 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
         public int ParameterId { get; }
         public byte Status { get; }
     }
+
 }
