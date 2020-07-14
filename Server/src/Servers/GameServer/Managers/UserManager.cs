@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace RavenfallServer.Providers
+namespace GameServer.Managers
 {
-    public class UserProvider : IUserProvider
+    public class UserManager : IUserManager
     {
         private readonly List<User> users = new List<User>();
         private readonly object mutex = new object();

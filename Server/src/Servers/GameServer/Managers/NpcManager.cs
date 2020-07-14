@@ -1,28 +1,40 @@
 ﻿using GameServer.Repositories;
+using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace RavenfallServer.Providers
+namespace GameServer.Managers
 {
-    public partial class NpcProvider : EntityProvider, INpcProvider
+    public partial class NpcManager : EntityManager, INpcManager
     {
         private readonly List<Npc> entities = new List<Npc>();
         private readonly object mutex = new object();
-        private readonly IoC ioc;
         private readonly INpcRepository npcRepository;
-        private readonly IEntityActionsRepository actionRepo;
         private int index = 0;
 
-        public NpcProvider(IoC ioc, INpcRepository npcRepo, IEntityActionsRepository actionRepo)
+        public INpcShopInventoryProvider Inventories { get; }
+
+        public INpcStatsProvider Stats { get; }
+
+        public INpcStateProvider States { get; }
+
+        public NpcManager(
+            IoC ioc,
+            INpcRepository npcRepo,
+            IItemManager itemManager,
+            IEntityActionsRepository actionRepo)
             : base(ioc, actionRepo)
         {
-            this.ioc = ioc;
-            this.npcRepository = npcRepo;
-            this.actionRepo = actionRepo;
+            npcRepository = npcRepo;
+
+            // Any Npc related stuff should be instanced per Session
+            // and should therefor be removed from here.
+            Stats = new NpcStatsProvider();
+            States = new NpcStateProvider();
+            Inventories = new NpcShopInventoryProvider(itemManager);
 
             AddNpcs();
             AddActions(EntityType.NPC);
@@ -30,7 +42,7 @@ namespace RavenfallServer.Providers
 
         private void AddNpcs()
         {
-            var npcs = this.npcRepository.AllNpcs();
+            var npcs = npcRepository.AllNpcs();
 
             foreach (var npc in npcs)
             {

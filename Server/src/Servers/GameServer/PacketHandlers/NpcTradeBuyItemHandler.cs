@@ -1,38 +1,37 @@
-﻿using RavenfallServer.Packets;
+﻿using GameServer.Managers;
+using GameServer.Processors;
+using RavenfallServer.Packets;
 using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class NpcTradeBuyItemHandler : PlayerPacketHandler<NpcTradeBuyItem>
     {
         private readonly ILogger logger;
-        private readonly INpcProvider npcProvider;
-        private readonly INpcShopInventoryProvider shopInventoryProvider;
         private readonly IWorldProcessor worldProcessor;
+        private readonly IGameSessionManager sessionManager;
 
         public NpcTradeBuyItemHandler(
             ILogger logger,
-            INpcProvider npcProvider,
-            INpcShopInventoryProvider shopInventoryProvider,
-            IWorldProcessor worldProcessor)
+            IWorldProcessor worldProcessor,
+            IGameSessionManager sessionManager)
         {
             this.logger = logger;
-            this.npcProvider = npcProvider;
-            this.shopInventoryProvider = shopInventoryProvider;
             this.worldProcessor = worldProcessor;
+            this.sessionManager = sessionManager;
         }
 
         protected override void Handle(NpcTradeBuyItem data, PlayerConnection connection)
         {
             logger.Debug("Player " + connection.Player.Id + " trying to buy item from NPC " + data.NpcServerId + " itemId: " + data.ItemId + " amount " + data.Amount);
-
-            Npc npc = npcProvider.Get(data.NpcServerId);
+            var session = sessionManager.Get(connection.Player);
+            var npc = session.Npcs.Get(data.NpcServerId);
             if (npc == null) return;
 
-            var inventory = shopInventoryProvider.GetInventory(data.NpcServerId);
+            var inventory = session.Npcs.Inventories.GetInventory(data.NpcServerId);
             if (!inventory.HasItem(data.ItemId, data.Amount))
             {
                 return;

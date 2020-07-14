@@ -1,4 +1,5 @@
-﻿using Shinobytes.Ravenfall.RavenNet.Models;
+﻿using GameServer.Managers;
+using Shinobytes.Ravenfall.RavenNet.Models;
 
 namespace RavenfallServer.Providers
 {

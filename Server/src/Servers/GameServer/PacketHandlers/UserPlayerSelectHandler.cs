@@ -1,8 +1,9 @@
-﻿using RavenfallServer.Packets;
-using RavenfallServer.Providers;
+﻿using GameServer.Managers;
+using GameServer.Processors;
+using RavenfallServer.Packets;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class UserPlayerSelectHandler : PlayerPacketHandler<UserPlayerSelect>
     {
@@ -29,16 +30,17 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
             // been selected, since the server wont keep track on a logged in user
             // without a selected player.
 
-            connection.Disconnected -= ClientConnection_Disconnected;
-            connection.Disconnected += ClientConnection_Disconnected;
+            connection.Disconnected -= ClientDisconnected;
+            connection.Disconnected += ClientDisconnected;
             connection.PlayerTag = player;
-            worldProcessor.AddPlayer(connection);
+            connection.SessionKey = data.SessionKey;
+            worldProcessor.AddPlayer(data.SessionKey, connection);
         }
 
-        private void ClientConnection_Disconnected(object sender, System.EventArgs e)
+        private void ClientDisconnected(object sender, System.EventArgs e)
         {
             var connection = sender as PlayerConnection;
-            connection.Disconnected -= ClientConnection_Disconnected;
+            connection.Disconnected -= ClientDisconnected;
 
             if (connection.Player == null)
                 return;

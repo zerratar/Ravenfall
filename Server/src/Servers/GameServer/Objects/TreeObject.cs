@@ -2,9 +2,9 @@
 using System;
 using System.Threading;
 
-namespace RavenfallServer.Objects
+namespace GameServer.Objects
 {
-    public class TreeObject : SceneObject
+    public class TreeObject : Shinobytes.Ravenfall.RavenNet.Models.WorldObject
     {
         internal static TreeObject Create(
             ref int index,

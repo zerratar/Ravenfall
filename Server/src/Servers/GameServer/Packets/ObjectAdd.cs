@@ -9,7 +9,7 @@ namespace RavenfallServer.Packets
         public int ObjectId { get; set; }
         public Vector3 Position { get; set; }
 
-        internal static ObjectAdd Create(SceneObject obj)
+        internal static ObjectAdd Create(WorldObject obj)
         {
             return new ObjectAdd
             {

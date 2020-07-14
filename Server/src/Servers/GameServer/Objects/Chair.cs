@@ -1,9 +1,9 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
 using System.Threading;
 
-namespace RavenfallServer.Objects
+namespace GameServer.Objects
 {
-    public class Chair : SceneObject
+    public class Chair : WorldObject
     {
         internal static Chair Create(
             ref int index,

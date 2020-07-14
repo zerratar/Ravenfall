@@ -7,7 +7,7 @@ namespace RavenfallServer.Packets
         public const short OpCode = 10;
         public int ObjectServerId { get; set; }
 
-        internal static ObjectRemove Create(SceneObject obj)
+        internal static ObjectRemove Create(WorldObject obj)
         {
             return new ObjectRemove
             {

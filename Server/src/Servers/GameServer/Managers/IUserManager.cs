@@ -1,8 +1,8 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
 
-namespace RavenfallServer.Providers
+namespace GameServer.Managers
 {
-    public interface IUserProvider
+    public interface IUserManager
     {
         User Get(string username);
     }

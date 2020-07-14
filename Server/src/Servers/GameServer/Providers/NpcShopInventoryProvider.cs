@@ -1,4 +1,5 @@
 ﻿
+using GameServer.Managers;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using System.Collections.Concurrent;
 
@@ -9,9 +10,9 @@ namespace RavenfallServer.Providers
         private readonly ConcurrentDictionary<int, ShopInventory> inventories
           = new ConcurrentDictionary<int, ShopInventory>();
 
-        private readonly IItemProvider itemProvider;
+        private readonly IItemManager itemProvider;
 
-        public NpcShopInventoryProvider(IItemProvider itemProvider)
+        public NpcShopInventoryProvider(IItemManager itemProvider)
         {
             this.itemProvider = itemProvider;
         }

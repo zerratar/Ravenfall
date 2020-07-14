@@ -7,13 +7,16 @@ using UnityEngine;
 public class InventoryItemTooltip : MonoBehaviour
 {
     [SerializeField] private TMPro.TextMeshProUGUI lblName;
-    [SerializeField] private float offsetX = -50;
+    //[SerializeField] private float offsetX = -50;
     [SerializeField] private float offsetY = -50;
+
     private int showCounter;
+    private float posX;
 
     // Start is called before the first frame update
     void Start()
     {
+        this.posX = this.transform.position.x;
         Hide();
     }
 
@@ -26,7 +29,7 @@ public class InventoryItemTooltip : MonoBehaviour
     {
         ++showCounter;
         gameObject.SetActive(true);
-        transform.position = new UnityEngine.Vector3(source.position.x + offsetX, source.position.y + offsetY, 0);
+        transform.position = new UnityEngine.Vector3(posX, source.position.y + offsetY, 0);
         lblName.text = item.Item.Name;
     }
 

@@ -4,8 +4,8 @@ using System;
 public class AfterActionEventArgs : EventArgs
 {
     public Player Player { get; }
-    public SceneObject Object { get; }
-    public AfterActionEventArgs(Player player, SceneObject obj)
+    public Shinobytes.Ravenfall.RavenNet.Models.WorldObject Object { get; }
+    public AfterActionEventArgs(Player player, Shinobytes.Ravenfall.RavenNet.Models.WorldObject obj)
     {
         this.Player = player;
         this.Object = obj;

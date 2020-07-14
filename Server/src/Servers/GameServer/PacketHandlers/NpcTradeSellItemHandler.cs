@@ -1,35 +1,37 @@
-﻿using RavenfallServer.Packets;
+﻿using GameServer.Managers;
+using GameServer.Processors;
+using RavenfallServer.Packets;
 using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class NpcTradeSellItemHandler : PlayerPacketHandler<NpcTradeSellItem>
     {
         private readonly ILogger logger;
-        private readonly INpcProvider npcProvider;
         private readonly IPlayerInventoryProvider inventoryProvider;
         private readonly IWorldProcessor worldProcessor;
+        private readonly IGameSessionManager sessionManager;
 
         public NpcTradeSellItemHandler(
             ILogger logger,
-            INpcProvider npcProvider,
             IPlayerInventoryProvider inventoryProvider,
-            IWorldProcessor worldProcessor)
+            IWorldProcessor worldProcessor,
+            IGameSessionManager sessionManager)
         {
             this.logger = logger;
-            this.npcProvider = npcProvider;
             this.inventoryProvider = inventoryProvider;
             this.worldProcessor = worldProcessor;
+            this.sessionManager = sessionManager;
         }
 
         protected override void Handle(NpcTradeSellItem data, PlayerConnection connection)
         {
             logger.Debug("Player " + connection.Player.Id + " trying to sell item to NPC " + data.NpcServerId + " itemId: " + data.ItemId + " amount " + data.Amount);
-
-            Npc npc = npcProvider.Get(data.NpcServerId);
+            var session = sessionManager.Get(connection.Player);
+            var npc = session.Npcs.Get(data.NpcServerId);
             if (npc == null) return;
 
             var inventory = inventoryProvider.GetInventory(connection.Player.Id);

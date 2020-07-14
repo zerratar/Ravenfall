@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RavenfallServer.Providers
+namespace GameServer.Managers
 {
-    public class ItemProvider : IItemProvider
+    public class ItemManager : IItemManager
     {
         private readonly List<Item> entities = new List<Item>();
 
-        public ItemProvider()
+        public ItemManager()
         {
             entities.Add(new Item { Id = 0, Name = "Bronze Hatchet", Equippable = true, Type = 1 });
             entities.Add(new Item { Id = 1, Name = "Bronze Pickaxe", Equippable = true, Type = 2 });

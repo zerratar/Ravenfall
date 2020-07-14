@@ -1,9 +1,9 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
 using System.Threading;
 
-namespace RavenfallServer.Objects
+namespace GameServer.Objects
 {
-    public class FishingSpotObject : SceneObject
+    public class FishingSpotObject : WorldObject
     {
         internal static FishingSpotObject Create(
             ref int index,

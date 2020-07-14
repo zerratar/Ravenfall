@@ -1,7 +1,7 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Packets.Client;
 
-namespace RavenfallServer.Services
+namespace GameServer.Services
 {
     public interface IAuthService
     {

@@ -6,9 +6,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RavenfallServer.Providers
+namespace GameServer.Managers
 {
-    public abstract class EntityProvider
+    public abstract class EntityManager
     {
         protected readonly ConcurrentDictionary<int, Lazy<EntityAction>[]> entityActions
             = new ConcurrentDictionary<int, Lazy<EntityAction>[]>();
@@ -23,7 +23,7 @@ namespace RavenfallServer.Providers
         private readonly IoC ioc;
         private readonly IEntityActionsRepository actionRepo;
 
-        public EntityProvider(IoC ioc, IEntityActionsRepository actionRepo)
+        public EntityManager(IoC ioc, IEntityActionsRepository actionRepo)
         {
             this.ioc = ioc;
             this.actionRepo = actionRepo;
@@ -62,7 +62,7 @@ namespace RavenfallServer.Providers
 
         protected void AddActions(EntityType type)
         {
-            var actions = this.actionRepo.GetActions(type);
+            var actions = actionRepo.GetActions(type);
             foreach (var action in actions)
             {
                 Type[] actionTypes = ResolveActionTypes(action.ActionTypes);

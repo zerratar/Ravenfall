@@ -1,8 +1,9 @@
-﻿using RavenfallServer.Packets;
+﻿using GameServer.Processors;
+using RavenfallServer.Packets;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class ChatMessagehandler : PlayerPacketHandler<ChatMessage>
     {
@@ -19,7 +20,7 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
 
         protected override void Handle(ChatMessage data, PlayerConnection connection)
         {
-            this.worldProcessor.SendChatMessage(connection.Player, data.ChannelId, data.Message);
+            worldProcessor.SendChatMessage(connection.Player, data.ChannelId, data.Message);
         }
     }
 }

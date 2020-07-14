@@ -10,6 +10,8 @@ public class VendorItemRow : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI lblAmount;
 
     public ServerItem Item { get; private set; }
+    public int Amount { get; private set; }
+    public int Price { get; private set; }
 
     private NpcTradePanel npcTradePanel;
 
@@ -42,6 +44,9 @@ public class VendorItemRow : MonoBehaviour
     public void SetData(ServerItem item, int price, int amount)
     {
         Item = item;
+        Price = price;
+        Amount = amount; 
+
         imgIcon.sprite = item.Icon;
         lblName.text = item.Name;
         lblPrice.text = price.ToString();

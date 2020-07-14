@@ -1,8 +1,9 @@
-﻿using Shinobytes.Ravenfall.RavenNet.Core;
+﻿using GameServer.Network;
+using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Server;
 using System.Net;
 
-namespace Shinobytes.Ravenfall.GameServer
+namespace GameServer
 {
     internal class Server : IRavenServer
     {
@@ -13,7 +14,7 @@ namespace Shinobytes.Ravenfall.GameServer
 
         public Server(
             ILogger logger,
-            IRavenConnectionProvider connectionProvider)
+            IPlayerConnectionProvider connectionProvider)
         {
             this.logger = logger;
             logger.Write("@whi@GameServer ");

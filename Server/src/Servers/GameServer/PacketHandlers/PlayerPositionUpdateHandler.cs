@@ -1,7 +1,7 @@
 ﻿using RavenfallServer.Packets;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class PlayerPositionUpdateHandler : PlayerPacketHandler<PlayerPositionUpdate>
     {

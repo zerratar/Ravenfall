@@ -46,5 +46,13 @@ namespace RavenfallServer.Providers
         {
             return GetAlignment(player, npc) == NpcAlignment.Enemy;
         }
+
+        public void ExitCombat(Npc npc)
+        {
+        }
+
+        public void EnterCombat(Npc npc, Player player)
+        {
+        }
     }
 }

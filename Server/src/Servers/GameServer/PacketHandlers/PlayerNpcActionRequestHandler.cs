@@ -1,28 +1,26 @@
-﻿using RavenfallServer.Packets;
-using RavenfallServer.Providers;
+﻿using GameServer.Managers;
+using GameServer.Processors;
+using RavenfallServer.Packets;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class PlayerNpcActionRequestHandler : PlayerPacketHandler<PlayerNpcActionRequest>
     {
         private readonly ILogger logger;
-        private readonly INpcProvider npcProvider;
         private readonly IWorldProcessor worldProcessor;
-        private readonly IRavenConnectionProvider connectionProvider;
+        private readonly IGameSessionManager sessionManager;
 
         public PlayerNpcActionRequestHandler(
             ILogger logger,
-            INpcProvider npcProvider,
-            IWorldProcessor worldProcessor,
-            IRavenConnectionProvider connectionProvider)
+            IWorldProcessor worldProcessor, 
+            IGameSessionManager sessionManager)
         {
             this.logger = logger;
-            this.npcProvider = npcProvider;
             this.worldProcessor = worldProcessor;
-            this.connectionProvider = connectionProvider;
+            this.sessionManager = sessionManager;
         }
 
         protected override void Handle(PlayerNpcActionRequest data, PlayerConnection connection)
@@ -34,11 +32,13 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
                 return;
             }
 
+            var session = sessionManager.Get(connection.Player);
+
             logger.Debug("Player " + connection.Player.Id + " interacting with npc: " + data.NpcServerId + " action " + data.ActionId + " parameter " + data.ParameterId);
 
-            Npc npc = npcProvider.Get(data.NpcServerId);
+            var npc = session.Npcs.Get(data.NpcServerId);
             if (npc == null) return;
-            EntityAction action = npcProvider.GetAction(npc, data.ActionId);
+            var action = session.Npcs.GetAction(npc, data.ActionId);
             if (action == null) return;
 
             //// if we are already interacting with this object

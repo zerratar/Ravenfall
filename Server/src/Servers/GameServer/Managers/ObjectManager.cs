@@ -1,5 +1,4 @@
 ﻿using GameServer.Repositories;
-using RavenfallServer.Objects;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using System;
@@ -8,27 +7,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace RavenfallServer.Providers
+namespace GameServer.Managers
 {
-    public class ObjectProvider : EntityProvider, IObjectProvider
+    public class ObjectManager : EntityManager, IObjectManager
     {
         private readonly ConcurrentDictionary<int, ObjectItemDrop[]> objectItemDrops
             = new ConcurrentDictionary<int, ObjectItemDrop[]>();
 
-        private readonly List<SceneObject> entities = new List<SceneObject>();
+        private readonly List<Shinobytes.Ravenfall.RavenNet.Models.WorldObject> entities = new List<Shinobytes.Ravenfall.RavenNet.Models.WorldObject>();
         private readonly object mutex = new object();
         private readonly IoC ioc;
-        private readonly IGameObjectRepository objectRepository;
+        private readonly IWorldObjectRepository objectRepository;
         private readonly IEntityActionsRepository actionRepo;
         private int index = 0;
 
-        public ObjectProvider(
-            IoC ioc, IGameObjectRepository objRepo, IEntityActionsRepository actionRepo)
+        public ObjectManager(
+            IoC ioc, IWorldObjectRepository objRepo, IEntityActionsRepository actionRepo)
             : base(ioc, actionRepo)
 
         {
             this.ioc = ioc;
-            this.objectRepository = objRepo;
+            objectRepository = objRepo;
             this.actionRepo = actionRepo;
 
             AddGameObjects();
@@ -36,7 +35,7 @@ namespace RavenfallServer.Providers
             AddActions(EntityType.Object);
         }
 
-        public ObjectItemDrop[] GetItemDrops(SceneObject obj)
+        public ObjectItemDrop[] GetItemDrops(Shinobytes.Ravenfall.RavenNet.Models.WorldObject obj)
         {
             if (objectItemDrops.TryGetValue(obj.ObjectId, out var drops))
             {
@@ -46,7 +45,7 @@ namespace RavenfallServer.Providers
             return new ObjectItemDrop[0];
         }
 
-        public SceneObject Get(int objectServerId)
+        public Shinobytes.Ravenfall.RavenNet.Models.WorldObject Get(int objectServerId)
         {
             lock (mutex)
             {
@@ -54,7 +53,7 @@ namespace RavenfallServer.Providers
             }
         }
 
-        public EntityAction GetAction(SceneObject obj, int actionId)
+        public EntityAction GetAction(Shinobytes.Ravenfall.RavenNet.Models.WorldObject obj, int actionId)
         {
             if (entityActions.TryGetValue(obj.ObjectId, out var actions))
             {
@@ -63,7 +62,7 @@ namespace RavenfallServer.Providers
             return null;
         }
 
-        public IReadOnlyList<SceneObject> GetAll()
+        public IReadOnlyList<Shinobytes.Ravenfall.RavenNet.Models.WorldObject> GetAll()
         {
             lock (mutex)
             {
@@ -71,7 +70,7 @@ namespace RavenfallServer.Providers
             }
         }
 
-        public SceneObject Replace(int serverObjectId, int newObjectId)
+        public Shinobytes.Ravenfall.RavenNet.Models.WorldObject Replace(int serverObjectId, int newObjectId)
         {
             lock (mutex)
             {
@@ -89,7 +88,7 @@ namespace RavenfallServer.Providers
 
         protected void AddGameObjects()
         {
-            var objects = this.objectRepository.AllObjects();
+            var objects = objectRepository.AllObjects();
 
             foreach (var obj in objects)
             {
@@ -100,7 +99,7 @@ namespace RavenfallServer.Providers
 
         private void AddObjectDrops()
         {
-            var drops = this.objectRepository.GetItemDrops();
+            var drops = objectRepository.GetItemDrops();
             foreach (var drop in drops)
             {
                 RegisterObjectItemDrop(drop.ObjectId, drop.Drops);

@@ -1,27 +1,25 @@
-﻿using RavenfallServer.Packets;
-using RavenfallServer.Providers;
+﻿using GameServer.Managers;
+using GameServer.Processors;
+using RavenfallServer.Packets;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class PlayerObjectActionRequestHandler : PlayerPacketHandler<PlayerObjectActionRequest>
     {
         private readonly ILogger logger;
-        private readonly IObjectProvider objectProvider;
         private readonly IWorldProcessor worldProcessor;
-        private readonly IRavenConnectionProvider connectionProvider;
+        private readonly IGameSessionManager sessionManager;
 
         public PlayerObjectActionRequestHandler(
             ILogger logger,
-            IObjectProvider objectProvider,
             IWorldProcessor worldProcessor,
-            IRavenConnectionProvider connectionProvider)
+            IGameSessionManager sessionManager)
         {
             this.logger = logger;
-            this.objectProvider = objectProvider;
             this.worldProcessor = worldProcessor;
-            this.connectionProvider = connectionProvider;
+            this.sessionManager = sessionManager;
         }
         protected override void Handle(PlayerObjectActionRequest data, PlayerConnection connection)
         {
@@ -34,14 +32,15 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
 
             logger.Debug("Player " + connection.Player.Id + " interacting with object: " + data.ObjectServerId + " action " + data.ActionId + " parameter " + data.ParameterId);
 
-            var serverObject = objectProvider.Get(data.ObjectServerId);
+            var session = sessionManager.Get(connection.Player);
+            var serverObject = session.Objects.Get(data.ObjectServerId);
             if (serverObject == null) return;
-            var action = objectProvider.GetAction(serverObject, data.ActionId);
+            var action = session.Objects.GetAction(serverObject, data.ActionId);
             if (action == null) return;
 
             // if we are already interacting with this object
             // ignore it.
-            if (objectProvider.HasAcquiredLock(serverObject, connection.Player))
+            if (session.Objects.HasAcquiredLock(serverObject, connection.Player))
             {
                 logger.Debug("Player is already interacting with object. Ignore");
                 return;

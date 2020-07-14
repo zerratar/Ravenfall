@@ -1,7 +1,8 @@
-﻿using Shinobytes.Ravenfall.RavenNet.Models;
+﻿using RavenfallServer.Providers;
+using Shinobytes.Ravenfall.RavenNet.Models;
 using System.Collections.Concurrent;
 
-namespace RavenfallServer.Providers
+namespace GameServer.Providers
 {
     public abstract class EntityStateProvider : IEntityStateProvider
     {

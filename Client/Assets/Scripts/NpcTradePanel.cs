@@ -18,7 +18,7 @@ public class NpcTradePanel : MonoBehaviour
     private List<VendorItemRow> itemRows = new List<VendorItemRow>();
     private VendorItemRow selectedRow;
     private int targetNpcId;
-
+    private bool vendorActive;
     void Start()
     {
         if (!itemManager)
@@ -31,8 +31,8 @@ public class NpcTradePanel : MonoBehaviour
             networkClient = FindObjectOfType<NetworkClient>();
 
         gameObject.SetActive(false);
-        btnBuy.interactable = false;
-        btnSell.interactable = false;
+        btnBuy.interactable = CanBuySelectedItem();
+        btnSell.interactable = CanSellSelectedItem();
     }
 
     internal void OnVendorRowClicked(VendorItemRow vendorItemRow)
@@ -45,21 +45,27 @@ public class NpcTradePanel : MonoBehaviour
         selectedRow = vendorItemRow;
         selectedRow.ShowSelection();
 
-        btnBuy.interactable = true;
-        btnSell.interactable = playerManager.Me.Inventory.HasItem(vendorItemRow.Item);
+        btnBuy.interactable = CanBuySelectedItem();
+        btnSell.interactable = CanSellSelectedItem();
     }
 
     internal void Show(int npcId, string npcName, string shopName, int[] itemId, int[] itemPrice, int[] itemStock)
     {
+        vendorActive = true;
+
+        // ensure we update the can buy / can sell states
+        // by clearing out previous state. But keep the last ID so we can re-select it.
+        var previousSelection = ClearSelection();
+
         if (!itemManager)
             itemManager = FindObjectOfType<ItemManager>();
 
         targetNpcId = npcId;
-        
-        if (!string.IsNullOrEmpty(shopName))
-            this.lblShopName.text = shopName;
 
-        this.gameObject.SetActive(true);
+        if (!string.IsNullOrEmpty(shopName))
+            lblShopName.text = shopName;
+
+        gameObject.SetActive(true);
 
         while (itemRows.Count < itemId.Length)
         {
@@ -75,8 +81,17 @@ public class NpcTradePanel : MonoBehaviour
             {
                 var item = itemManager.GetItemById(itemId[i]);
                 itemRows[i].SetData(item, itemPrice[i], itemStock[i]);
+
+                if (previousSelection == itemRows[i].Item.Id)
+                {
+                    selectedRow = itemRows[i];
+                    selectedRow.ShowSelection();
+                }
             }
         }
+
+        btnBuy.interactable = CanBuySelectedItem();
+        btnSell.interactable = CanSellSelectedItem();
     }
 
     public void SellSelectedItem()
@@ -88,19 +103,39 @@ public class NpcTradePanel : MonoBehaviour
     public void BuySelectedItem()
     {
         if (!selectedRow) return;
-        networkClient.SendBuyItem(targetNpcId, selectedRow.Item.Id, 1);       
+        networkClient.SendBuyItem(targetNpcId, selectedRow.Item.Id, 1);
     }
 
     public void Hide()
     {
-        if (selectedRow)
-        {
-            selectedRow.HideSelection();
-            selectedRow = null;
-            btnBuy.interactable = false;
-            btnSell.interactable = false;
-        }
+        vendorActive = false;
+
+        ClearSelection();
 
         this.gameObject.SetActive(false);
+    }
+
+    private int ClearSelection()
+    {
+        var selectedId = -1;
+        if (selectedRow)
+        {
+            selectedId = selectedRow.Item.Id;
+            selectedRow.HideSelection();
+            selectedRow = null;
+            btnBuy.interactable = CanBuySelectedItem();
+            btnSell.interactable = CanSellSelectedItem();
+        }
+        return selectedId;
+    }
+
+    private bool CanBuySelectedItem()
+    {
+        return vendorActive && selectedRow && selectedRow.Price <= playerManager.Me.Inventory.Coins && selectedRow.Amount > 0;
+    }
+
+    private bool CanSellSelectedItem()
+    {
+        return vendorActive && selectedRow && playerManager.Me.Inventory.HasItem(selectedRow.Item);
     }
 }

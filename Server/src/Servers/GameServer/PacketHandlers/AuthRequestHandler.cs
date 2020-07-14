@@ -1,6 +1,7 @@
-﻿using RavenfallServer.Packets;
-using RavenfallServer.Providers;
-using RavenfallServer.Services;
+﻿using GameServer.Managers;
+using GameServer.Network;
+using GameServer.Services;
+using RavenfallServer.Packets;
 using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Packets.Client;
@@ -8,22 +9,22 @@ using Shinobytes.Ravenfall.RavenNet.Server;
 using System;
 using System.Linq;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class AuthRequestHandler : PlayerPacketHandler<AuthRequest>
     {
         private readonly ILogger logger;
         private readonly IPlayerProvider playerProvider;
-        private readonly IUserProvider userProvider;
+        private readonly IUserManager userProvider;
         private readonly IAuthService authService;
-        private readonly IRavenConnectionProvider connectionProvider;
+        private readonly IPlayerConnectionProvider connectionProvider;
 
         public AuthRequestHandler(
             ILogger logger,
             IPlayerProvider playerProvider,
-            IUserProvider userProvider,
+            IUserManager userProvider,
             IAuthService authService,
-            IRavenConnectionProvider connectionProvider)
+            IPlayerConnectionProvider connectionProvider)
         {
             this.logger = logger;
             this.playerProvider = playerProvider;

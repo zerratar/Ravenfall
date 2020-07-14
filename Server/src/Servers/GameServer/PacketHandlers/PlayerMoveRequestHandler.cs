@@ -1,27 +1,29 @@
-﻿using RavenfallServer.Packets;
+﻿using GameServer.Managers;
+using GameServer.Network;
+using RavenfallServer.Packets;
 using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Server;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class PlayerMoveRequestHandler : PlayerPacketHandler<PlayerMoveRequest>
     {
         private readonly ILogger logger;
-        private readonly IObjectProvider objectProvider;
         private readonly IPlayerStateProvider playerState;
-        private readonly IRavenConnectionProvider connectionProvider;
+        private readonly IPlayerConnectionProvider connectionProvider;
+        private readonly IGameSessionManager sessionManager;
 
         public PlayerMoveRequestHandler(
             ILogger logger,
-            IObjectProvider objectProvider,
             IPlayerStateProvider playerState,
-            IRavenConnectionProvider connectionProvider)
+            IPlayerConnectionProvider connectionProvider,
+            IGameSessionManager sessionManager)
         {
             this.logger = logger;
-            this.objectProvider = objectProvider;
             this.playerState = playerState;
             this.connectionProvider = connectionProvider;
+            this.sessionManager = sessionManager;
         }
 
         protected override void Handle(PlayerMoveRequest data, PlayerConnection connection)
@@ -32,13 +34,15 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
             player.Position = data.Position;
             player.Destination = data.Destination;
 
+            var session = sessionManager.Get(player);
+
             // player moves, release any locked objects the player may have.
-            objectProvider.ReleaseLocks(player);
+            session.Objects.ReleaseLocks(player);
 
             // exit combat if we are in one. This will cancel any ongoing attacks.
             playerState.ExitCombat(player);
 
-            foreach (var playerConnection in connectionProvider.GetAll())
+            foreach (var playerConnection in connectionProvider.GetAllActivePlayerConnections(session))
             {
                 playerConnection.Send(new PlayerMoveResponse()
                 {
@@ -46,7 +50,7 @@ namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
                     Destination = data.Destination,
                     Position = player.Position,
                     Running = data.Running
-                }, RavenNet.SendOption.Reliable);
+                }, Shinobytes.Ravenfall.RavenNet.SendOption.Reliable);
             }
         }
     }

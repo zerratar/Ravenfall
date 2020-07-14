@@ -1,29 +1,33 @@
 ﻿using System;
 using Shinobytes.Ravenfall.RavenNet.Models;
 
-internal abstract class EntityTick
+namespace GameServer.Processors
 {
-    internal abstract bool Invoke(TimeSpan deltaTime);
-}
-internal class EntityTick<TObject> : EntityTick where TObject : Entity
-{
-    public EntityTick(Player player, TObject obj, EntityTickHandler<TObject> handleObjectTick)
+    internal abstract class EntityTick
     {
-        this.totalTime = TimeSpan.Zero;
-        this.Player = player;
-        this.Object = obj;
-        this.Action = handleObjectTick;
+        internal abstract bool Invoke(TimeSpan deltaTime);
     }
 
-    private TimeSpan totalTime;
-
-    public Player Player { get; }
-    public TObject Object { get; }
-    public EntityTickHandler<TObject> Action { get; }
-
-    internal override bool Invoke(TimeSpan deltaTime)
+    internal class EntityTick<TObject> : EntityTick where TObject : Entity
     {
-        totalTime = totalTime.Add(deltaTime);
-        return Action.Invoke(Player, Object, totalTime, deltaTime);
+        public EntityTick(Player player, TObject obj, EntityTickHandler<TObject> handleObjectTick)
+        {
+            totalTime = TimeSpan.Zero;
+            Player = player;
+            Object = obj;
+            Action = handleObjectTick;
+        }
+
+        private TimeSpan totalTime;
+
+        public Player Player { get; }
+        public TObject Object { get; }
+        public EntityTickHandler<TObject> Action { get; }
+
+        internal override bool Invoke(TimeSpan deltaTime)
+        {
+            totalTime = totalTime.Add(deltaTime);
+            return Action.Invoke(Player, Object, totalTime, deltaTime);
+        }
     }
 }

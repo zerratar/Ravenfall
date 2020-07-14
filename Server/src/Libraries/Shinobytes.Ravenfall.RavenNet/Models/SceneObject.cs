@@ -2,7 +2,7 @@
 
 namespace Shinobytes.Ravenfall.RavenNet.Models
 {
-    public class SceneObject : WorldEntity
+    public class WorldObject : WorldEntity
     {
         public int ObjectId { get; set; }
         public int DisplayObjectId { get; set; }
@@ -12,7 +12,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Models
         public int RespawnMilliseconds { get; set; }
         public bool Static { get; set; }
     }
-    public class SceneObjectItemDrops
+    public class WorldObjectItemDrops
     {
         public int ObjectId { get; set; }
         public ObjectItemDrop[] Drops { get; set; }

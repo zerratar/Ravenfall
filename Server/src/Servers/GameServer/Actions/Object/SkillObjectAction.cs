@@ -1,4 +1,6 @@
-﻿using RavenfallServer.Providers;
+﻿using GameServer.Managers;
+using GameServer.Processors;
+using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using System;
 
@@ -7,10 +9,10 @@ public abstract class SkillObjectAction : EntityAction
     private readonly string skillName;
     private readonly int actionTime;
     private readonly IWorldProcessor worldProcessor;
-    private readonly IObjectProvider objectProvider;
+    private readonly IGameSessionManager gameSessionManager;
     private readonly IPlayerStatsProvider statsProvider;
     private readonly IPlayerInventoryProvider inventoryProvider;
-    private readonly IItemProvider itemProvider;
+    private readonly IItemManager itemProvider;
     private readonly Random random = new Random();
 
     public event EventHandler<AfterActionEventArgs> AfterAction;
@@ -21,8 +23,8 @@ public abstract class SkillObjectAction : EntityAction
         string skillName,
         int actionTime,
         IWorldProcessor worldProcessor,
-        IItemProvider itemProvider,
-        IObjectProvider objectProvider,
+        IGameSessionManager gameSessionManager,
+        IItemManager itemProvider,
         IPlayerStatsProvider statsProvider,
         IPlayerInventoryProvider inventoryProvider)
         : base(id, name)
@@ -30,27 +32,29 @@ public abstract class SkillObjectAction : EntityAction
         this.skillName = skillName;
         this.actionTime = actionTime;
         this.worldProcessor = worldProcessor;
+        this.gameSessionManager = gameSessionManager;
         this.itemProvider = itemProvider;
-        this.objectProvider = objectProvider;
         this.statsProvider = statsProvider;
         this.inventoryProvider = inventoryProvider;
     }
 
     public override bool Invoke(Player player, Entity entity, int parameterId)
     {
-        if (!(entity is SceneObject obj))
+        if (!(entity is WorldObject obj))
         {
             return false;
         }
+
+        var session = gameSessionManager.Get(player);
 
         // if we are already interacting with this object
         // ignore it.
-        if (objectProvider.HasAcquiredLock(obj, player))
+        if (session.Objects.HasAcquiredLock(obj, player))
         {
             return false;
         }
 
-        if (!objectProvider.AcquireLock(obj, player))
+        if (!session.Objects.AcquireLock(obj, player))
         {
             return false;
         }
@@ -74,9 +78,10 @@ public abstract class SkillObjectAction : EntityAction
         return true;
     }
 
-    protected bool HandleObjectTick(Player player, SceneObject obj, TimeSpan totalTime, TimeSpan deltaTime)
+    protected bool HandleObjectTick(Player player, WorldObject obj, TimeSpan totalTime, TimeSpan deltaTime)
     {
-        if (!objectProvider.HasAcquiredLock(obj, player))
+        var session = gameSessionManager.Get(player);
+        if (!session.Objects.HasAcquiredLock(obj, player))
         {
             StopAnimation(player, obj);
             return true;
@@ -91,7 +96,7 @@ public abstract class SkillObjectAction : EntityAction
         }
 
         var levelsGaiend = skill.AddExperience(obj.Experience);
-        var itemDrops = objectProvider.GetItemDrops(obj);
+        var itemDrops = session.Objects.GetItemDrops(obj);
 
         foreach (var itemDrop in itemDrops)
         {
@@ -116,14 +121,15 @@ public abstract class SkillObjectAction : EntityAction
         return true;
     }
 
-    protected void StartAnimation(Player player, SceneObject obj)
+    protected void StartAnimation(Player player, WorldObject obj)
     {
         worldProcessor.PlayAnimation(player, skillName, true, true);
         worldProcessor.SetEntityTimeout(actionTime, player, obj, HandleObjectTick);
     }
 
-    protected void StopAnimation(Player player, SceneObject obj)
+    protected void StopAnimation(Player player, WorldObject obj)
     {
+        var session = gameSessionManager.Get(player);
         var inventory = inventoryProvider.GetInventory(player.Id);
         var requiredItem = inventory.GetItemOfType(obj.InteractItemType);
         if (requiredItem != null)
@@ -139,6 +145,6 @@ public abstract class SkillObjectAction : EntityAction
             worldProcessor.PlayAnimation(player, skillName, false);
         }
 
-        objectProvider.ReleaseLocks(player);
+        session.Objects.ReleaseLocks(player);
     }
 }

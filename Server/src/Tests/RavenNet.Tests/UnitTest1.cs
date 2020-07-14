@@ -1,6 +1,6 @@
+using GameServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RavenfallServer.Packets;
-using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using Shinobytes.Ravenfall.RavenNet.Serializers;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace RavenfallServer.Providers
+namespace GameServer
 {
     public static class Utility
     {

@@ -1,11 +1,13 @@
-﻿using RavenfallServer.Providers;
+﻿using GameServer.Managers;
+using GameServer.Processors;
+using RavenfallServer.Providers;
 
 public class RockPickAction : SkillObjectAction
 {
     public RockPickAction(
         IWorldProcessor worldProcessor,
-        IItemProvider itemProvider,
-        IObjectProvider objectProvider,
+        IGameSessionManager sessionManager,
+        IItemManager itemProvider,        
         IPlayerStatsProvider statsProvider,
         IPlayerInventoryProvider inventoryProvider)
         : base(2,
@@ -13,8 +15,8 @@ public class RockPickAction : SkillObjectAction
               "Mining",
               2000,
               worldProcessor,
+              sessionManager,
               itemProvider,
-              objectProvider,
               statsProvider,
               inventoryProvider)
     {

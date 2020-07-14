@@ -1,7 +1,9 @@
-﻿using GameServer.Repositories;
-using RavenfallServer.Network;
+﻿using GameServer.Managers;
+using GameServer.Network;
+using GameServer.Processors;
+using GameServer.Repositories;
+using GameServer.Services;
 using RavenfallServer.Providers;
-using RavenfallServer.Services;
 using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Packets;
@@ -11,7 +13,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Shinobytes.Ravenfall.GameServer
+namespace GameServer
 {
     class Program
     {
@@ -30,26 +32,33 @@ namespace Shinobytes.Ravenfall.GameServer
             ioc.RegisterShared<INetworkPacketController, NetworkPacketController>();
 
             // providers
-            ioc.RegisterShared<IUserProvider, UserProvider>();
             ioc.RegisterShared<IPlayerProvider, PlayerProvider>();
-            ioc.RegisterShared<IObjectProvider, ObjectProvider>();
-            ioc.RegisterShared<INpcProvider, NpcProvider>();
-            ioc.RegisterShared<IItemProvider, ItemProvider>();
             ioc.RegisterShared<IPlayerStatsProvider, PlayerStatsProvider>();
             ioc.RegisterShared<IPlayerStateProvider, PlayerStateProvider>();
-            ioc.RegisterShared<INpcStatsProvider, NpcStatsProvider>();
             ioc.RegisterShared<IPlayerInventoryProvider, PlayerInventoryProvider>();
-            ioc.RegisterShared<INpcShopInventoryProvider, NpcShopInventoryProvider>();
-            ioc.RegisterShared<INpcStateProvider, NpcStateProvider>();
+
+
+            // Managers
+            ioc.RegisterShared<IGameSessionManager, GameSessionManager>();
+            ioc.RegisterShared<IUserManager, UserManager>();
+            ioc.RegisterShared<IItemManager, ItemManager>();
+            // IObjectManager and INpcManager should be removed from here
+            // they should be instanced per Session
+            //ioc.RegisterShared<IObjectManager, ObjectManager>();
+            //ioc.RegisterShared<INpcManager, NpcManager>();
 
             // processors
             ioc.RegisterShared<IWorldProcessor, WorldProcessor>();
+            ioc.RegisterShared<IGameSessionProcessor, GameSessionProcessor>();
+            ioc.RegisterShared<IPlayerProcessor, PlayerProcessor>();
+            ioc.RegisterShared<INpcProcessor, NpcProcessor>();
+            ioc.RegisterShared<IObjectProcessor, ObjectProcessor>();
 
             // services
             ioc.RegisterShared<IAuthService, AuthService>();
 
             // repositories
-            ioc.RegisterShared<IGameObjectRepository, JsonBasedGameObjectRepository>();
+            ioc.RegisterShared<IWorldObjectRepository, JsonBasedWorldObjectRepository>();
             ioc.RegisterShared<IItemRepository, JsonBasedItemRepository>();
             ioc.RegisterShared<INpcRepository, JsonBasedNpcRepository>();
             ioc.RegisterShared<IPlayerRepository, JsonBasedPlayerRepository>();
@@ -57,9 +66,10 @@ namespace Shinobytes.Ravenfall.GameServer
 
 
             var logger = ioc.Resolve<ILogger>();
+            var sessionManager = ioc.Resolve<IGameSessionManager>();
             var packetController = ioc.Resolve<INetworkPacketController>();
-            ioc.RegisterCustomShared<IRavenConnectionProvider>(() =>
-                new PlayerConnectionProvider(logger, RegisterPacketHandlers(packetController)));
+            ioc.RegisterCustomShared<IPlayerConnectionProvider>(() =>
+                new PlayerConnectionProvider(logger, sessionManager, RegisterPacketHandlers(packetController)));
 
             return ioc;
         }

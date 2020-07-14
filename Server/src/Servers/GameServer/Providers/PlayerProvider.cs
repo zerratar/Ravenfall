@@ -1,11 +1,11 @@
-﻿
+﻿using RavenfallServer.Providers;
 using Shinobytes.Ravenfall.RavenNet.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace RavenfallServer.Providers
+namespace GameServer.Managers
 {
     public class PlayerProvider : IPlayerProvider
     {
@@ -17,12 +17,6 @@ namespace RavenfallServer.Providers
         public PlayerProvider(IPlayerStatsProvider statsProvider)
         {
             this.statsProvider = statsProvider;
-        }
-
-        public Player Get(string username)
-        {
-#warning SHOULD NOT ADD A PLAYER AUTOMATICALLY
-            return GetOrAddPlayer(username);
         }
 
         public Player Get(int playerId)

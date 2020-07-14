@@ -116,11 +116,12 @@ public class NetworkClient : MonoBehaviour
         }, SendOption.None);
     }
 
-    internal void SendSelectCharacter(int id)
+    internal void SendSelectCharacter(string sessionKey, int id)
     {
         gameClient.Send(new UserPlayerSelect
         {
-            PlayerId = id
+            PlayerId = id,
+            SessionKey = sessionKey
         }, SendOption.Reliable);
     }
 

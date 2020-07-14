@@ -1,9 +1,9 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
 using System.Threading;
 
-namespace RavenfallServer.Objects
+namespace GameServer.Objects
 {
-    public class RockObject : SceneObject
+    public class RockObject : WorldObject
     {
         internal static RockObject Create(
             ref int index,

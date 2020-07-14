@@ -1,10 +1,10 @@
-﻿using RavenfallServer.Packets;
-using RavenfallServer.Providers;
+﻿using GameServer.Managers;
+using RavenfallServer.Packets;
 using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Server;
 using System.Linq;
 
-namespace Shinobytes.Ravenfall.GameServer.PacketHandlers
+namespace GameServer.PacketHandlers
 {
     public class UserPlayerCreateHandler : PlayerPacketHandler<UserPlayerCreate>
     {
