@@ -21,7 +21,7 @@ namespace GameServer.Processors
         private readonly IPlayerConnectionProvider connectionProvider;
         private readonly IPlayerInventoryProvider playerInventoryProvider;
         private readonly IGameSessionProcessor gameSessionProcessor;
-        private readonly IGameSessionManager gameSessionManager;
+        private readonly IGameSessionManager sessions;
         private readonly IItemManager itemProvider;
 
         private readonly object objectUpdateMutex = new object();
@@ -44,14 +44,14 @@ namespace GameServer.Processors
             this.playerInventoryProvider = playerInventoryProvider;
             this.connectionProvider = connectionProvider;
             this.gameSessionProcessor = gameSessionProcessor;
-            this.gameSessionManager = gameSessionManager;
+            this.sessions = gameSessionManager;
             this.itemProvider = itemProvider;
             this.kernel.RegisterTickUpdate(Update, TimeSpan.FromSeconds(1f / 60f));
         }
 
         public void SendChatMessage(Player player, int channelID, string message)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             var connections = connectionProvider.GetConnectedActivePlayerConnections(session);
 
             // var connections = chatHandler.GetChannelPlayers(channelID);
@@ -62,12 +62,21 @@ namespace GameServer.Processors
             }
         }
 
+        public void UpdateObject(WorldObject obj)
+        {
+            var session = sessions.Get(obj);
+            foreach (var playerConnection in connectionProvider.GetAllActivePlayerConnections(session))
+            {
+                playerConnection.Send(ObjectUpdate.Create(obj), SendOption.Reliable);
+            }
+        }
+
         public void AddPlayer(string sessionKey, PlayerConnection myConnection)
         {
             try
             {
                 var selectedPlayer = myConnection.Player;
-                var session = gameSessionManager.Get(sessionKey);
+                var session = sessions.Get(sessionKey);
                 session.AddPlayer(selectedPlayer);
 
                 var allPlayers = session.Players.GetAll();
@@ -130,7 +139,7 @@ namespace GameServer.Processors
 
         public void RemovePlayer(Player player)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
 
             session.RemovePlayer(player);
 
@@ -142,7 +151,7 @@ namespace GameServer.Processors
 
         public void PlayAnimation(Player player, string animation, bool enabled = true, bool trigger = false, int number = 0)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             foreach (var connection in connectionProvider.GetConnectedActivePlayerConnections(session))
             {
                 connection.Send(PlayerAnimationStateUpdate.Create(player, animation, enabled, trigger, number), SendOption.Reliable);
@@ -151,7 +160,7 @@ namespace GameServer.Processors
 
         public void PlayAnimation(Npc npc, string animation, bool enabled = true, bool trigger = false, int number = 0)
         {
-            var session = gameSessionManager.Get(npc);
+            var session = sessions.Get(npc);
             foreach (var connection in connectionProvider.GetConnectedActivePlayerConnections(session))
             {
                 connection.Send(NpcAnimationStateUpdate.Create(npc, animation, enabled, trigger, number), SendOption.Reliable);
@@ -198,7 +207,7 @@ namespace GameServer.Processors
 
         public void PlayerBuyItem(Player player, Npc npc, int itemId, int amount)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             var item = itemProvider.GetItemById(itemId);
             if (item == null) return;
 
@@ -222,7 +231,7 @@ namespace GameServer.Processors
 
         public void PlayerSellItem(Player player, Npc npc, int itemId, int amount)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             var item = itemProvider.GetItemById(itemId);
             if (item == null) return;
 
@@ -261,7 +270,7 @@ namespace GameServer.Processors
 
         public void NpcTradeUpdateStock(Npc npc)
         {
-            var session = gameSessionManager.Get(npc);
+            var session = sessions.Get(npc);
             var shopInventory = session.Npcs.Inventories.GetInventory(npc.Id);
             if (shopInventory == null) return;
 
@@ -293,7 +302,7 @@ namespace GameServer.Processors
 
         public void PlayerStatLevelUp(Player player, EntityStat skill, int levelsGained)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             foreach (var connection in connectionProvider.GetConnectedActivePlayerConnections(session))
             {
                 connection.Send(PlayerLevelUp.Create(player, skill, levelsGained), SendOption.Reliable);
@@ -302,7 +311,7 @@ namespace GameServer.Processors
 
         public void NpcDamage(Player player, Npc npc, int damage, int health, int maxHealth)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             foreach (var connection in connectionProvider.GetConnectedActivePlayerConnections(session))
             {
                 connection.Send(NpcHealthChange.Create(npc, player, -damage, health, maxHealth), SendOption.Reliable);
@@ -311,7 +320,7 @@ namespace GameServer.Processors
 
         public void NpcDeath(Player player, Npc npc)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             foreach (var connection in connectionProvider.GetConnectedActivePlayerConnections(session))
             {
                 connection.Send(RavenfallServer.Packets.NpcDeath.Create(npc, player), SendOption.Reliable);
@@ -320,7 +329,7 @@ namespace GameServer.Processors
 
         public void NpcRespawn(Player player, Npc npc)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             foreach (var connection in connectionProvider.GetConnectedActivePlayerConnections(session))
             {
                 connection.Send(RavenfallServer.Packets.NpcRespawn.Create(npc, player), SendOption.Reliable);
@@ -329,7 +338,7 @@ namespace GameServer.Processors
 
         public void SetItemEquipState(Player player, Item item, bool state)
         {
-            var session = gameSessionManager.Get(player);
+            var session = sessions.Get(player);
             var inventory = playerInventoryProvider.GetInventory(player.Id);
             if (state)
                 inventory.EquipItem(item);
@@ -445,7 +454,7 @@ namespace GameServer.Processors
         private void Update(TimeSpan deltaTime)
         {
             // Server Tick
-            var gameSessions = gameSessionManager.GetAll();
+            var gameSessions = sessions.GetAll();
             foreach (var session in gameSessions)
             {
                 gameSessionProcessor.Update(session, deltaTime);

@@ -32,7 +32,11 @@ namespace Assets.Scripts
             ioc.RegisterShared<IMessageBus, MessageBus>();
             ioc.RegisterShared<IModuleManager, ModuleManager>();
 
-            ioc.RegisterShared<IRavenClient, Client>(); // so we can reference this from packet handlers
+            ioc.RegisterShared<IRavenClient, RavenClient>(); // so we can reference this from packet handlers
+
+            // Twitch stuff
+            ioc.RegisterShared<ITwitchCommandController, TwitchCommandController>();
+
 
             return ioc;
         }

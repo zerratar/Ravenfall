@@ -7,15 +7,16 @@ using System;
 public abstract class SkillObjectAction : EntityAction
 {
     private readonly string skillName;
-    private readonly int actionTime;
-    private readonly IWorldProcessor worldProcessor;
-    private readonly IGameSessionManager gameSessionManager;
+    private readonly int actionTime; 
     private readonly IPlayerStatsProvider statsProvider;
     private readonly IPlayerInventoryProvider inventoryProvider;
     private readonly IItemManager itemProvider;
     private readonly Random random = new Random();
 
-    public event EventHandler<AfterActionEventArgs> AfterAction;
+
+    protected readonly IWorldProcessor World;
+    protected readonly IGameSessionManager Sessions;
+    protected event EventHandler<AfterActionEventArgs> AfterAction;
 
     protected SkillObjectAction(
         int id,
@@ -31,8 +32,8 @@ public abstract class SkillObjectAction : EntityAction
     {
         this.skillName = skillName;
         this.actionTime = actionTime;
-        this.worldProcessor = worldProcessor;
-        this.gameSessionManager = gameSessionManager;
+        this.World = worldProcessor;
+        this.Sessions = gameSessionManager;
         this.itemProvider = itemProvider;
         this.statsProvider = statsProvider;
         this.inventoryProvider = inventoryProvider;
@@ -45,7 +46,7 @@ public abstract class SkillObjectAction : EntityAction
             return false;
         }
 
-        var session = gameSessionManager.Get(player);
+        var session = Sessions.Get(player);
 
         // if we are already interacting with this object
         // ignore it.
@@ -70,7 +71,7 @@ public abstract class SkillObjectAction : EntityAction
 
             if (requiredItem.Item.Equippable)
             {
-                worldProcessor.SetItemEquipState(player, requiredItem.Item, true);
+                World.SetItemEquipState(player, requiredItem.Item, true);
             }
         }
 
@@ -80,7 +81,7 @@ public abstract class SkillObjectAction : EntityAction
 
     protected bool HandleObjectTick(Player player, WorldObject obj, TimeSpan totalTime, TimeSpan deltaTime)
     {
-        var session = gameSessionManager.Get(player);
+        var session = Sessions.Get(player);
         if (!session.Objects.HasAcquiredLock(obj, player))
         {
             StopAnimation(player, obj);
@@ -103,14 +104,14 @@ public abstract class SkillObjectAction : EntityAction
             if (random.NextDouble() > itemDrop.DropChance)
                 continue;
 
-            worldProcessor.AddPlayerItem(player, itemProvider.GetItemById(itemDrop.ItemId));
+            World.AddPlayerItem(player, itemProvider.GetItemById(itemDrop.ItemId));
         }
 
-        worldProcessor.UpdatePlayerStat(player, skill);
+        World.UpdatePlayerStat(player, skill);
 
         if (levelsGaiend > 0)
         {
-            worldProcessor.PlayerStatLevelUp(player, skill, levelsGaiend);
+            World.PlayerStatLevelUp(player, skill, levelsGaiend);
         }
 
         StopAnimation(player, obj);
@@ -123,26 +124,26 @@ public abstract class SkillObjectAction : EntityAction
 
     protected void StartAnimation(Player player, WorldObject obj)
     {
-        worldProcessor.PlayAnimation(player, skillName, true, true);
-        worldProcessor.SetEntityTimeout(actionTime, player, obj, HandleObjectTick);
+        World.PlayAnimation(player, skillName, true, true);
+        World.SetEntityTimeout(actionTime, player, obj, HandleObjectTick);
     }
 
     protected void StopAnimation(Player player, WorldObject obj)
     {
-        var session = gameSessionManager.Get(player);
+        var session = Sessions.Get(player);
         var inventory = inventoryProvider.GetInventory(player.Id);
         var requiredItem = inventory.GetItemOfType(obj.InteractItemType);
         if (requiredItem != null)
         {
             if (requiredItem.Item.Equippable)
             {
-                worldProcessor.SetItemEquipState(player, requiredItem.Item, false);
+                World.SetItemEquipState(player, requiredItem.Item, false);
             }
             if (requiredItem.Item.Consumable)
             {
-                worldProcessor.RemovePlayerItem(player, requiredItem.Item);
+                World.RemovePlayerItem(player, requiredItem.Item);
             }
-            worldProcessor.PlayAnimation(player, skillName, false);
+            World.PlayAnimation(player, skillName, false);
         }
 
         session.Objects.ReleaseLocks(player);

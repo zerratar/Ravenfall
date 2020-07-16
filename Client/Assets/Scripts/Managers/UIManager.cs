@@ -1,4 +1,5 @@
 ﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -20,11 +21,19 @@ public class UIManager : MonoBehaviour
     [SerializeField] private InventoryPanel inventoryPanel;
     [SerializeField] private NpcManager npcManager;
 
+    [SerializeField] private TwitchConfigurationDialogUI twitchConfigDialogUI;
+
     private int uiMask;
 
     public ChatPanel ChatPanel => chatPanel;
     public ContextMenu ContextMenu => contextMenu;
     public InventoryPanel InventoryPanel => inventoryPanel;
+
+    internal void ShowTwitchConfigurationDialog(Settings settings)
+    {
+        if (!twitchConfigDialogUI) return;
+        twitchConfigDialogUI.Show(settings);
+    }
 
     private void Start()
     {
@@ -79,6 +88,14 @@ public class UIManager : MonoBehaviour
         inventoryPanel.gameObject.SetActive(!inventoryPanel.gameObject.activeSelf);
     }
 
+    internal void OnTwitchConnectionLost()
+    {
+    }
+
+    internal void OnTwitchConnectionEstablished()
+    {
+    }
+
     public void ToggleMenu() { }
     public void ToggleStats() { }
     public void TogglePlayerInfo() { }
@@ -115,4 +132,5 @@ public class UIManager : MonoBehaviour
         }, raysastResults);
         return raysastResults;
     }
+
 }

@@ -338,6 +338,84 @@
     <Reference Include="ICSharpCode.NRefactory">
       <HintPath>C:/git/ravenfall/Client/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
+    <Reference Include="TwitchLib.Unity">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/System.Security.Cryptography.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api.Core">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.OpenSsl">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/System.Security.Cryptography.OpenSsl.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.PubSub">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.PubSub.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Client.Enums">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Client.Enums.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Client">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api.V5.Models">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.V5.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Communication">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Communication.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api.V5">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.V5.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Extensions.Logging">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/Serilog.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api.Core.Models">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.Core.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api.Helix.Models">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.Helix.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api.Helix">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.Helix.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api.Core.Enums">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.Core.Enums.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Client.Models">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Client.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="TwitchLib.Api.Core.Interfaces">
+      <HintPath>C:/git/ravenfall/Client/Assets/Libraries/TwitchLib.Api.Core.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>C:/git/ravenfall/Client/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>

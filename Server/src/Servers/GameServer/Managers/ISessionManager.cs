@@ -8,7 +8,7 @@ namespace GameServer.Managers
         IReadOnlyList<IGameSession> GetAll();
         IGameSession Get(Npc npc);
         IGameSession Get(Player player);
+        IGameSession Get(WorldObject obj);
         IGameSession Get(string sessionKey);
-
     }
 }

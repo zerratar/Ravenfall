@@ -29,6 +29,10 @@ namespace Shinobytes.Ravenfall.RavenNet.Core
         {
             typeLookup[tInterface] = new TypeLookup(implementation, false);
         }
+        public void RegisterShared(Type tInterface, Type implementation)
+        {
+            typeLookup[tInterface] = new TypeLookup(implementation, true);
+        }
 
         public void Register<TImplementation>()
         {

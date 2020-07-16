@@ -1,17 +1,13 @@
 using GameServer.Managers;
 using GameServer.Network;
 using GameServer.Processors;
-using RavenfallServer.Packets;
 using RavenfallServer.Providers;
-using Shinobytes.Ravenfall.RavenNet;
 using Shinobytes.Ravenfall.RavenNet.Core;
 using Shinobytes.Ravenfall.RavenNet.Models;
-using Shinobytes.Ravenfall.RavenNet.Server;
 
 public class TreeChopAction : SkillObjectAction
 {
     private readonly IKernel kernel;
-    private readonly IPlayerConnectionProvider connectionProvider;
 
     public TreeChopAction(
         IKernel kernel,
@@ -32,27 +28,19 @@ public class TreeChopAction : SkillObjectAction
               inventoryProvider)
     {
         this.kernel = kernel;
-        this.connectionProvider = connectionProvider;
-        AfterAction += (sender, ev) => MakeTreeStump(ev.Object);
+        AfterAction += (_, ev) => MakeTreeStump(ev.Object);
     }
 
     private void MakeTreeStump(WorldObject tree)
     {
         tree.DisplayObjectId = 0;
-        foreach (var playerConnection in connectionProvider.GetAll())
-        {
-            playerConnection.Send(ObjectUpdate.Create(tree), SendOption.Reliable);
-        }
-
+        World.UpdateObject(tree);
         kernel.SetTimeout(() => RespawnTree(tree), tree.RespawnMilliseconds);
     }
 
     private void RespawnTree(WorldObject tree)
-    {
+    {        
         tree.DisplayObjectId = tree.ObjectId;
-        foreach (var playerConnection in connectionProvider.GetAll())
-        {
-            playerConnection.Send(ObjectUpdate.Create(tree), SendOption.Reliable);
-        }
+        World.UpdateObject(tree);
     }
 }

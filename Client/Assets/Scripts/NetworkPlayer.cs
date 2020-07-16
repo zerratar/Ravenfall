@@ -27,6 +27,8 @@ public class NetworkPlayer : MonoBehaviour
     public int Id { get; set; }
     public EntityNavigation Navigation => movement;
     public EntityInventory Inventory => inventory;
+    public EntityStats Stats => entityStats;
+
     public PlayerManager PlayerManager { get; set; }
 
     public float ObjectInteractionRange => objectInteractionRange;

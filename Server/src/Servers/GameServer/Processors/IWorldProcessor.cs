@@ -27,7 +27,7 @@ namespace GameServer.Processors
         void NpcDamage(Player player, Npc npc, int damage, int health, int maxHealth);
         void NpcDeath(Player player, Npc npc);
         void NpcRespawn(Player player, Npc npc);
-        
+        void UpdateObject(WorldObject obj);
         void SetEntityInterval<TObject>(
             Player player,
             TObject tree,

@@ -17,10 +17,10 @@ namespace GameServer.Managers
         private readonly IWorldObjectRepository objRepo;
 
         public GameSessionManager(
-            IoC ioc, 
-            IItemManager itemManager, 
-            INpcRepository npcRepo, 
-            IWorldObjectRepository objRepo, 
+            IoC ioc,
+            IItemManager itemManager,
+            INpcRepository npcRepo,
+            IWorldObjectRepository objRepo,
             IEntityActionsRepository entityActionsRepo)
         {
             this.ioc = ioc;
@@ -33,6 +33,11 @@ namespace GameServer.Managers
         public IGameSession Get(Npc npc)
         {
             return gameSessions.Values.FirstOrDefault(session => session.Npcs.GetAll().Any(x => x == npc));
+        }
+
+        public IGameSession Get(WorldObject obj)
+        {
+            return gameSessions.Values.FirstOrDefault(session => session.Objects.GetAll().Any(x => x == obj));
         }
 
         public IGameSession Get(Player player)
