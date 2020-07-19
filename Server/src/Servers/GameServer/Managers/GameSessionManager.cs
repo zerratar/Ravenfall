@@ -9,21 +9,26 @@ namespace GameServer.Managers
 {
     public class GameSessionManager : IGameSessionManager
     {
+        private const string OpenWorldGameSessionKey = "$__OPEN_WORLD__$";
         private readonly ConcurrentDictionary<string, IGameSession> gameSessions = new ConcurrentDictionary<string, IGameSession>();
         private readonly IoC ioc;
+        private readonly IStreamBotManager botManager;
         private readonly INpcRepository npcRepo;
         private readonly IItemManager itemManager;
         private readonly IEntityActionsRepository entityActionsRepo;
         private readonly IWorldObjectRepository objRepo;
 
+
         public GameSessionManager(
             IoC ioc,
+            IStreamBotManager botManager,
             IItemManager itemManager,
             INpcRepository npcRepo,
             IWorldObjectRepository objRepo,
             IEntityActionsRepository entityActionsRepo)
         {
             this.ioc = ioc;
+            this.botManager = botManager;
             this.itemManager = itemManager;
             this.npcRepo = npcRepo;
             this.objRepo = objRepo;
@@ -47,24 +52,44 @@ namespace GameServer.Managers
 
         public IGameSession Get(string sessionKey)
         {
+
+            if (string.IsNullOrEmpty(sessionKey))
+            {
+                sessionKey = OpenWorldGameSessionKey;
+            }
+
             if (gameSessions.TryGetValue(sessionKey, out var session))
             {
                 return session;
             }
-
-            return gameSessions[sessionKey] = CreateGameSession();
-        }
-
-        private IGameSession CreateGameSession()
-        {
-            var npcs = new NpcManager(ioc, npcRepo, itemManager, entityActionsRepo);
-            var objects = new ObjectManager(ioc, objRepo, entityActionsRepo);
-            return new GameSession(npcs, objects);
+            var isOpenWorldSession = sessionKey == OpenWorldGameSessionKey;
+            return gameSessions[sessionKey] = CreateGameSession(isOpenWorldSession);
         }
 
         public IReadOnlyList<IGameSession> GetAll()
         {
             return gameSessions.Values.ToList();
+        }
+
+        public IReadOnlyList<IGameSession> GetUnmonitoredSessions()
+        {
+            return gameSessions.Values.Where(x => x.Bot == null).ToList();
+        }
+
+        private IGameSession CreateGameSession(bool isOpenWorldSession)
+        {
+            var npcs = new NpcManager(ioc, npcRepo, itemManager, entityActionsRepo);
+            var objects = new ObjectManager(ioc, objRepo, entityActionsRepo);
+            var gameSession = new GameSession(npcs, objects, isOpenWorldSession);
+            if (!isOpenWorldSession)
+            {
+                var bot = botManager.GetMostAvailable();
+                if (bot != null)
+                {
+                    gameSession.AssignBot(bot);
+                }
+            }
+            return gameSession;
         }
     }
 }

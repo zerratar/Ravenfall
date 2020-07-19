@@ -29,7 +29,7 @@ namespace Shinobytes.Ravenfall.RavenNet
         public Guid InstanceID => Connection.InstanceID;
 
         public object UserTag { get; set; }
-        public object PlayerTag { get; set; }
+        public object Tag { get; set; }
         public string SessionKey { get; set; }
         public ConnectionState State => Connection.State;
         private void Connection_DataReceived(DataReceivedEventArgs obj)

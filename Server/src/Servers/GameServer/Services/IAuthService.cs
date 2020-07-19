@@ -5,6 +5,6 @@ namespace GameServer.Services
 {
     public interface IAuthService
     {
-        AuthResult Authenticate(User user, string password);
+        AuthResult Authenticate(User user, string password);        
     }
 }

@@ -32,7 +32,7 @@ namespace GameServer.PacketHandlers
 
             connection.Disconnected -= ClientDisconnected;
             connection.Disconnected += ClientDisconnected;
-            connection.PlayerTag = player;
+            connection.Tag = player;
             connection.SessionKey = data.SessionKey;
             worldProcessor.AddPlayer(data.SessionKey, connection);
         }

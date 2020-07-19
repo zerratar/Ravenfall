@@ -4,6 +4,7 @@ using System;
 
 namespace Shinobytes.Ravenfall.RavenNet
 {
+    [Obsolete("Do not use")]
     public abstract class RavenNetworkConnection : IRavenNetworkConnection, IDisposable
     {
         private readonly Connection connection;

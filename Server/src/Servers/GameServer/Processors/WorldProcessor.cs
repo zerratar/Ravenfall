@@ -77,7 +77,8 @@ namespace GameServer.Processors
             {
                 var selectedPlayer = myConnection.Player;
                 var session = sessions.Get(sessionKey);
-                session.AddPlayer(selectedPlayer);
+
+                session.AddPlayer(myConnection);
 
                 var allPlayers = session.Players.GetAll();
                 var connections = connectionProvider.GetConnectedActivePlayerConnections(session);

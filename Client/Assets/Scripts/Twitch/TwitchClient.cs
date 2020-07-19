@@ -28,7 +28,7 @@ public class TwitchClient : MonoBehaviour
         commandController = IoCContainer.Instance.Resolve<ITwitchCommandController>();
         if (!uiManager) uiManager = FindObjectOfType<UIManager>();
 
-        LoadSettings();
+        //LoadSettings();
 
         if (CheckForBadSettings())
         {
@@ -64,7 +64,8 @@ public class TwitchClient : MonoBehaviour
 
     private bool SettingsModified(Settings settings, Settings newSettings)
     {
-        return settings.TwitchBotAuthToken != newSettings.TwitchBotAuthToken ||
+        return settings == null || 
+               settings.TwitchBotAuthToken != newSettings.TwitchBotAuthToken ||
                settings.TwitchBotUsername != newSettings.TwitchBotUsername ||
                settings.TwitchChannel != newSettings.TwitchChannel;
     }
@@ -111,6 +112,7 @@ public class TwitchClient : MonoBehaviour
             Disconnect();
         }
 
+        Debug.Log("Connecting to Twitch...");
         //Create Credentials instance
         ConnectionCredentials credentials = new ConnectionCredentials(settings.TwitchBotUsername, settings.TwitchBotAuthToken);
 
@@ -126,9 +128,20 @@ public class TwitchClient : MonoBehaviour
         twitchClient.OnMessageReceived += OnMessageReceived;
         twitchClient.OnChatCommandReceived += OnChatCommandReceived;
         twitchClient.OnDisconnected += OnDisconnected;
-
+        twitchClient.OnConnectionError += TwitchClient_OnConnectionError;
+        twitchClient.OnError += TwitchClient_OnError;
         // Connect
         twitchClient.Connect();
+    }
+
+    private void TwitchClient_OnError(object sender, OnErrorEventArgs e)
+    {
+        Debug.LogError("TwitchLib threw an exception: " + e.Exception);
+    }
+
+    private void TwitchClient_OnConnectionError(object sender, OnConnectionErrorArgs e)
+    {
+        Debug.LogError("Unable to connect to Twitch: " + e.Error + ", bot: " + e.BotUsername);
     }
 
     private void OnDisconnected(object sender, OnDisconnectedEventArgs e)
@@ -166,7 +179,9 @@ public class TwitchClient : MonoBehaviour
             twitchClient.OnJoinedChannel -= OnJoinedChannel;
             twitchClient.OnMessageReceived -= OnMessageReceived;
             twitchClient.OnChatCommandReceived -= OnChatCommandReceived;
-            twitchClient.OnDisconnected += OnDisconnected;
+            twitchClient.OnDisconnected -= OnDisconnected;
+            twitchClient.OnConnectionError -= TwitchClient_OnConnectionError;
+            twitchClient.OnError -= TwitchClient_OnError;
         }
     }
 

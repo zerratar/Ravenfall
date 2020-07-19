@@ -14,6 +14,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Server
         {
         }
 
-        public Player Player => PlayerTag as Player;
+        public Player Player => Tag as Player;
     }
+
 }

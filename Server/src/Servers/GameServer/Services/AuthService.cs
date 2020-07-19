@@ -5,7 +5,6 @@ namespace GameServer.Services
 {
     public class AuthService : IAuthService
     {
-
         public AuthResult Authenticate(User user, string password)
         {
             if (user == null) return AuthResult.InvalidPassword;

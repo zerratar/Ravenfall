@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Twitch;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TwitchConfigurationDialogUI : MonoBehaviour
@@ -10,11 +9,13 @@ public class TwitchConfigurationDialogUI : MonoBehaviour
     [SerializeField] private TMPro.TMP_InputField inputToken;
     [SerializeField] private TwitchClient twitchClient;
 
+    private TwitchOAuthTokenGenerator tokenGenerator = new TwitchOAuthTokenGenerator();
     private Settings tempSettings;
 
     // Start is called before the first frame update
     void Start()
     {
+        tokenGenerator.AccessTokenReceived += TokenGenerator_AccessTokenReceived;
         gameObject.SetActive(false);
     }
 
@@ -25,7 +26,13 @@ public class TwitchConfigurationDialogUI : MonoBehaviour
 
     public void ShowGenerateToken()
     {
-        Application.OpenURL("https://twitchtokengenerator.com/");
+        //Application.OpenURL("https://twitchtokengenerator.com/");
+        StartCoroutine(tokenGenerator.StartAuthenticationProcess());
+    }
+    private void TokenGenerator_AccessTokenReceived(object sender, TwitchOAuthResult e)
+    {
+        inputToken.text = e.AccessToken;
+        inputBot.text = e.User;
     }
 
     internal void Show(Settings settings)
@@ -40,10 +47,25 @@ public class TwitchConfigurationDialogUI : MonoBehaviour
             };
         }
         else tempSettings = new Settings();
+
+        gameObject.SetActive(true);
+
+        StartCoroutine(UpdateInputs(tempSettings));
+    }
+
+    private IEnumerator UpdateInputs(Settings settings)
+    {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);
+
         inputChannel.text = settings.TwitchChannel;
         inputBot.text = settings.TwitchBotUsername;
         inputToken.text = inputToken.text;
-        gameObject.SetActive(true);
+    }
+
+    private void OnDestroy()
+    {
+        tokenGenerator.Dispose();
     }
 
     public void Cancel()

@@ -11,23 +11,29 @@ using System.Linq;
 
 namespace GameServer.PacketHandlers
 {
-    public class BotAuthRequestHandler : PlayerPacketHandler<BotAuthRequest>
+    public class BotAuthRequestHandler : BotPacketHandler<BotAuthRequest>
     {
         private readonly ILogger logger;
         private readonly IUserManager userProvider;
         private readonly IAuthService authService;
+        private readonly IStreamBotFactory botProvider;
+        private readonly IStreamBotManager botManager;
 
         public BotAuthRequestHandler(
             ILogger logger,
             IUserManager userProvider,
-            IAuthService authService)
+            IAuthService authService,
+            IStreamBotFactory botProvider,
+            IStreamBotManager botManager)
         {
             this.logger = logger;
             this.userProvider = userProvider;
             this.authService = authService;
+            this.botProvider = botProvider;
+            this.botManager = botManager;
         }
 
-        protected override void Handle(BotAuthRequest data, PlayerConnection connection)
+        protected override void Handle(BotAuthRequest data, BotConnection connection)
         {
             logger.Debug("Bot Auth Request received. User: " + data.Username + ", Pass: " + data.Password);
             logger.Debug("Sending Auth Response: " + 0);
@@ -39,15 +45,29 @@ namespace GameServer.PacketHandlers
             {
                 SendFailedLoginResult(connection, result);
                 return;
-            }            
+            }
+
+            var bot = botProvider.Create(connection);
+            botManager.Add(bot);
 
             connection.UserTag = user;
+            connection.Tag = bot;
+            connection.Disconnected -= ClientDisconnected;
+            connection.Disconnected += ClientDisconnected;
 
             // authenticated
             // send auth response
             SendSuccessLoginResult(connection);
         }
-        private void SendFailedLoginResult(PlayerConnection connection, AuthResult result)
+
+        private void ClientDisconnected(object sender, EventArgs e)
+        {
+            var connection = sender as BotConnection;
+            connection.Disconnected -= ClientDisconnected;
+            botManager.Remove(connection.Bot);
+        }
+
+        private void SendFailedLoginResult(BotConnection connection, AuthResult result)
         {
             connection.Send(new BotAuthResponse()
             {
@@ -55,7 +75,7 @@ namespace GameServer.PacketHandlers
                 SessionKeys = new byte[0]
             }, SendOption.Reliable);
         }
-        private void SendSuccessLoginResult(PlayerConnection connection)
+        private void SendSuccessLoginResult(BotConnection connection)
         {
             connection.Send(new BotAuthResponse()
             {
