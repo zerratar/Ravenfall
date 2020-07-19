@@ -12,7 +12,6 @@ namespace GameServer.Managers
         private const string OpenWorldGameSessionKey = "$__OPEN_WORLD__$";
         private readonly ConcurrentDictionary<string, IGameSession> gameSessions = new ConcurrentDictionary<string, IGameSession>();
         private readonly IoC ioc;
-        private readonly IStreamBotManager botManager;
         private readonly INpcRepository npcRepo;
         private readonly IItemManager itemManager;
         private readonly IEntityActionsRepository entityActionsRepo;
@@ -21,14 +20,12 @@ namespace GameServer.Managers
 
         public GameSessionManager(
             IoC ioc,
-            IStreamBotManager botManager,
             IItemManager itemManager,
             INpcRepository npcRepo,
             IWorldObjectRepository objRepo,
             IEntityActionsRepository entityActionsRepo)
         {
             this.ioc = ioc;
-            this.botManager = botManager;
             this.itemManager = itemManager;
             this.npcRepo = npcRepo;
             this.objRepo = objRepo;
@@ -81,14 +78,6 @@ namespace GameServer.Managers
             var npcs = new NpcManager(ioc, npcRepo, itemManager, entityActionsRepo);
             var objects = new ObjectManager(ioc, objRepo, entityActionsRepo);
             var gameSession = new GameSession(npcs, objects, isOpenWorldSession);
-            if (!isOpenWorldSession)
-            {
-                var bot = botManager.GetMostAvailable();
-                if (bot != null)
-                {
-                    gameSession.AssignBot(bot);
-                }
-            }
             return gameSession;
         }
     }

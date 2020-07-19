@@ -38,10 +38,14 @@ namespace GameServer
             ioc.RegisterShared<IPlayerInventoryProvider, PlayerInventoryProvider>();
 
 
+            ioc.RegisterShared<IStreamBotFactory, StreamBotFactory>();
+
             // Managers
             ioc.RegisterShared<IGameSessionManager, GameSessionManager>();
             ioc.RegisterShared<IUserManager, UserManager>();
             ioc.RegisterShared<IItemManager, ItemManager>();
+            ioc.RegisterShared<IStreamBotManager, StreamBotManager>();
+
             // IObjectManager and INpcManager should be removed from here
             // they should be instanced per Session
             //ioc.RegisterShared<IObjectManager, ObjectManager>();
@@ -56,6 +60,7 @@ namespace GameServer
 
             // services
             ioc.RegisterShared<IAuthService, AuthService>();
+
 
             // repositories
             ioc.RegisterShared<IWorldObjectRepository, JsonBasedWorldObjectRepository>();

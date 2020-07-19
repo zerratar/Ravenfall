@@ -22,6 +22,7 @@ namespace GameServer.Processors
         private readonly IPlayerInventoryProvider playerInventoryProvider;
         private readonly IGameSessionProcessor gameSessionProcessor;
         private readonly IGameSessionManager sessions;
+        private readonly IStreamBotManager botManager;
         private readonly IItemManager itemProvider;
 
         private readonly object objectUpdateMutex = new object();
@@ -36,7 +37,8 @@ namespace GameServer.Processors
             IPlayerStatsProvider statsProvider,
             IItemManager itemProvider,
             IGameSessionProcessor gameSessionProcessor,
-            IGameSessionManager gameSessionManager)
+            IGameSessionManager gameSessionManager,
+            IStreamBotManager botManager)
         {
             this.logger = logger;
             this.kernel = kernel;
@@ -45,6 +47,7 @@ namespace GameServer.Processors
             this.connectionProvider = connectionProvider;
             this.gameSessionProcessor = gameSessionProcessor;
             this.sessions = gameSessionManager;
+            this.botManager = botManager;
             this.itemProvider = itemProvider;
             this.kernel.RegisterTickUpdate(Update, TimeSpan.FromSeconds(1f / 60f));
         }
@@ -75,9 +78,7 @@ namespace GameServer.Processors
         {
             try
             {
-                var selectedPlayer = myConnection.Player;
-                var session = sessions.Get(sessionKey);
-
+                var session = GetSessionAndEnsureBot(sessionKey);
                 session.AddPlayer(myConnection);
 
                 var allPlayers = session.Players.GetAll();
@@ -136,6 +137,22 @@ namespace GameServer.Processors
             {
                 logger.Error(exc.ToString());
             }
+        }
+
+        private IGameSession GetSessionAndEnsureBot(string sessionKey)
+        {
+            var session = sessions.Get(sessionKey);
+
+            if (!session.IsOpenWorldSession && session.Bot == null)
+            {
+                var bot = botManager.GetMostAvailable();
+                if (bot != null)
+                {
+                    session.AssignBot(bot);
+                }
+            }
+
+            return session;
         }
 
         public void RemovePlayer(Player player)
