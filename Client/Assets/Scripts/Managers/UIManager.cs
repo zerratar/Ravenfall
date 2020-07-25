@@ -27,8 +27,8 @@ public class UIManager : MonoBehaviour
 
     public ChatPanel ChatPanel => chatPanel;
     public ContextMenu ContextMenu => contextMenu;
-    public InventoryPanel InventoryPanel => inventoryPanel;
-
+    public InventoryPanel Inventory => inventoryPanel;
+    public NpcTradePanel Vendor => npcTradePanel;
     internal void ShowTwitchConfigurationDialog(Settings settings)
     {
         if (!twitchConfigDialogUI) return;
@@ -118,7 +118,7 @@ public class UIManager : MonoBehaviour
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
     {
-        return eventSystemRaysastResults.Any(x => x.gameObject.layer == uiMask);
+        return eventSystemRaysastResults.Any(x => x.gameObject.layer == uiMask && !x.gameObject.name.ToLower().Contains("3d"));
     }
 
     ///Gets all event systen raycast results of current mouse or touch position.

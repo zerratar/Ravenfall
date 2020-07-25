@@ -29,14 +29,15 @@ namespace Assets.Scripts.Twitch.Commands
 
         private string GetSkillText(NetworkPlayer player)
         {
-            var stats = player.Stats.Stats;
-            var statsString = "";
-            for (var i = 0; i < stats.Length; ++i)
-            {
-                var stat = stats[i];
-                statsString += $"{stat.Name}: {stat.Level}, ";
-            }
-            return statsString.Trim().Trim(',');
+            return null;
+            //var stats = player.Stats.Stats;
+            //var statsString = "";
+            //for (var i = 0; i < stats.Length; ++i)
+            //{
+            //    var stat = stats[i];
+            //    statsString += $"{stat.Name}: {stat.Level}, ";
+            //}
+            //return statsString.Trim().Trim(',');
         }
     }
 }

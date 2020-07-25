@@ -28,7 +28,6 @@ public class CharacterSelectionPanelUI : MonoBehaviour
 
     private int playerCount = 0;
     private Player selectedPlayer;
-    private string sessionKey = "";
     // Start is called before the first frame update
     void Start()
     {
@@ -69,7 +68,7 @@ public class CharacterSelectionPanelUI : MonoBehaviour
 
     private void OnPlayClicked()
     {
-        networkClient.SendSelectCharacter(sessionKey, selectedPlayer.Id);
+        networkClient.SendSelectCharacter(selectedPlayer.Session.Name, selectedPlayer.Id);
     }
 
     private void OnExitClicked()

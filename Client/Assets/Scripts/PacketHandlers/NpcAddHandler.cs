@@ -28,7 +28,11 @@ namespace Assets.Scripts.PacketHandlers
                 Id = data.ServerId,
                 Position = data.Position,
                 Destination = data.Destination,
-                Rotation = data.Rotation
+                Rotation = data.Rotation,
+                Attributes = data.Attributes,
+                Endurance = data.Endurance,
+                Health = data.Health,
+                Level = data.Level
             };
 
             npcHandler.Add(npc);

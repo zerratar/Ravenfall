@@ -25,7 +25,7 @@ namespace Assets.Scripts.PacketHandlers
             var obj = new SceneObject()
             {
                 Id = data.ObjectServerId,
-                ObjectId = data.ObjectId,
+                Type = data.ObjectId,
                 Position = data.Position,
             };
 

@@ -4,19 +4,9 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
 {
     public class PlayerStatsUpdated : EntityUpdated<Player>
     {
-        public PlayerStatsUpdated(
-             Player entity,
-             decimal[] experience,
-             int[] effectiveLevel)
+        public PlayerStatsUpdated(Player entity)
              : base(entity)
         {
-            EffectiveLevel = effectiveLevel;
-            Experience = experience;
         }
-
-        public int Skill { get; }
-        public int Level { get; }
-        public int[] EffectiveLevel { get; }
-        public decimal[] Experience { get; }
     }
 }

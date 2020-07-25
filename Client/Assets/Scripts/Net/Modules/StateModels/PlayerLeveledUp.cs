@@ -6,7 +6,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
     {
         public PlayerLeveledUp(
             Player entity,
-            int skill,
+            string skill,
             int gainedLevels)
             : base(entity)
         {
@@ -14,7 +14,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             GainedLevels = gainedLevels;
         }
 
-        public int Skill { get; }
+        public string Skill { get; }
         public int GainedLevels { get; }
     }
 }

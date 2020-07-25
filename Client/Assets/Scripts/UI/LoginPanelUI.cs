@@ -45,7 +45,7 @@ public class LoginPanelUI : MonoBehaviour
             yield return null;
         }
 
-        while (!networkClient.IsAuthenticated)
+        if (!networkClient.IsAuthenticated)
         {
             networkClient.Authenticate(username, password);
             yield return null;

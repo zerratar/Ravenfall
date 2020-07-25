@@ -98,12 +98,16 @@ public class NpcTradePanel : MonoBehaviour
     {
         if (!selectedRow) return;
         networkClient.SendSellItem(targetNpcId, selectedRow.Item.Id, 1);
+        btnSell.interactable = false;
+        btnBuy.interactable = false;
     }
 
     public void BuySelectedItem()
     {
         if (!selectedRow) return;
         networkClient.SendBuyItem(targetNpcId, selectedRow.Item.Id, 1);
+        btnSell.interactable = false;
+        btnBuy.interactable = false;
     }
 
     public void Hide()

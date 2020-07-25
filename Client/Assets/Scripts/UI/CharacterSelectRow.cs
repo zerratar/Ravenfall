@@ -39,7 +39,7 @@ public class CharacterSelectRow : MonoBehaviour
         }
 
         lblName.text = player.Name;
-        lblLevel.text = $"lv. {player.CombatLevel}";
+        lblLevel.text = $"lv. {player.Level}";
     }
 
     // Start is called before the first frame update

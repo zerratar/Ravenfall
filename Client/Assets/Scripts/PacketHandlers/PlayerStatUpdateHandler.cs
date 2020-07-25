@@ -20,7 +20,7 @@ namespace Assets.Scripts.PacketHandlers
         public void Handle(PlayerStatUpdate data, IRavenNetworkConnection connection, SendOption sendOption)
         {
             var playerHandler = moduleManager.GetModule<PlayerHandler>();
-            playerHandler.PlayerStatUpdate(data.PlayerId, data.Skill, data.Level, data.EffectiveLevel, data.Experience);
+            playerHandler.PlayerStatUpdate(data.PlayerId, data.Skill, data.Level, data.Experience);
         }
     }
 }

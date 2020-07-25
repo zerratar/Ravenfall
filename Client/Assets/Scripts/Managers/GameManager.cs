@@ -37,6 +37,12 @@ public class GameManager : MonoBehaviour
     {
     }
 
+    public void ClearEntities()
+    {
+        playerManager.Clear();
+        objectManager.Clear();
+    }
+
     private void OnMouseExit(object sender, MouseClickEventArgs e)
     {
         SetCursorIcon(defaultCursor);

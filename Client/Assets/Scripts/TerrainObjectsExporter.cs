@@ -37,7 +37,8 @@ public class TerrainObjectsExporter : MonoBehaviour
 
                 var obj = new SceneObject
                 {
-                    ObjectId = tree.prototypeIndex,
+                    Id = treeIndex,
+                    Type = tree.prototypeIndex,
                     DisplayObjectId = tree.prototypeIndex,
                     Position = pos,
                     Experience = 15,
@@ -52,7 +53,7 @@ public class TerrainObjectsExporter : MonoBehaviour
 
             var data = Newtonsoft.Json.JsonConvert.SerializeObject(objects);
             //var data = JsonUtility.ToJson(trees);
-            System.IO.File.WriteAllText("C:\\git\\ravenfall\\Server\\src\\Servers\\GameServer\\bin\\Debug\\netcoreapp3.1\\repositories\\Shinobytes.Ravenfall.RavenNet.Models.SceneObject.json", data.ToString());
+            System.IO.File.WriteAllText(@"C:\git\Ravenfall-Server\src\Tools\DataImporter\bin\Debug\net5.0\repositories\Shinobytes.Ravenfall.RavenNet.Models.ExtendedGameObject.json", data.ToString());
         }
     }
 
@@ -62,7 +63,7 @@ public class TerrainObjectsExporter : MonoBehaviour
     public class SceneObject
     {
         public int Id { get; set; }
-        public int ObjectId { get; set; }
+        public int Type { get; set; }
         public int DisplayObjectId { get; set; }
         public Shinobytes.Ravenfall.RavenNet.Models.Vector3 Position { get; set; }
         public decimal Experience { get; set; }

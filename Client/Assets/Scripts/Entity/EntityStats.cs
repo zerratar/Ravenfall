@@ -1,30 +1,19 @@
-﻿using System;
-using System.Linq;
+﻿using Shinobytes.Ravenfall.RavenNet.Models;
+using System;
+using System.Collections.Concurrent;
 using UnityEngine;
 public class EntityStats : MonoBehaviour
 {
     [SerializeField] private GameObject levelUpEffectPrefab;
 
-    public readonly PlayerStat[] Stats = new PlayerStat[]
-    {
-        PlayerStat.Create("Attack"),
-        PlayerStat.Create("Defense"),
-        PlayerStat.Create("Strength"),
-        PlayerStat.Create("Health", 10, 1000),
-        PlayerStat.Create("Ranged"),
-        PlayerStat.Create("Magic"),
-        PlayerStat.Create("Woodcutting"),
-        PlayerStat.Create("Mining"),
-        PlayerStat.Create("Fishing"),
-        PlayerStat.Create("Cooking"),
-    };
+    public Attributes Attributes { get; private set; }
+    public Professions Professions { get; private set; }
 
-    internal PlayerStat GetStatByName(string name)
-    {
-        return Stats.FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-    }
+    public int Health { get; set; }
 
-    internal PlayerStat PlayLevelUpAnimation(int skill, int gainedLevels)
+    public int MaxHealth { get; set; }
+
+    internal void PlayLevelUpAnimation(string skill, int gainedLevels)
     {
         if (levelUpEffectPrefab)
         {
@@ -32,31 +21,24 @@ public class EntityStats : MonoBehaviour
 
             levelupEffect.AddComponent<AutoDestroyPS>();
         }
-
-        var playerSkill = Stats[skill];
-        if (playerSkill == null) return null;
-
-        return playerSkill;
     }
 
-    internal void UpdateStat(int skill, int level, int effectiveLevel, decimal experience)
+    internal void UpdateStat(string skill, int level, decimal experience)
     {
-        var playerSkill = Stats[skill];
-        if (playerSkill == null) return;
-
-        playerSkill.Level = level;
-        playerSkill.EffectiveLevel = effectiveLevel;
-        playerSkill.Experience = experience;
+        this.SetLevel(skill, level);
+        this.SetExperience(skill, experience);
     }
 
-    internal void SetStats(decimal[] experience, int[] effectiveLevel)
+    internal void SetHealth(int health, int maxHealth)
     {
-        Debug.Log("Got stats from server: " + experience.Length + ", " + effectiveLevel.Length);
-        for (var i = 0; i < experience.Length; ++i)
-        {
-            Stats[i].Experience = experience[i];
-            Stats[i].EffectiveLevel = effectiveLevel[i];
-            Stats[i].Level = GameMath.ExperienceToLevel(experience[i]);
-        }
+        Health = health;
+        MaxHealth = maxHealth;
+    }
+
+    internal void SetStats(Attributes attributes, Professions professions)
+    {
+        Debug.Log("Got stats from server.");
+        Attributes = attributes;
+        Professions = professions;
     }
 }

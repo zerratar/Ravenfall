@@ -20,6 +20,6 @@ public class NetworkNpc : MonoBehaviour
 
     internal void SetHealth(int health, int maxHealth)
     {
-        entityStats.GetStatByName("health").Set(health, maxHealth);
+        entityStats.SetHealth(health, maxHealth);
     }
 }

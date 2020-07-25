@@ -118,6 +118,11 @@ public class NetworkClient : MonoBehaviour
 
     internal void SendSelectCharacter(string sessionKey, int id)
     {
+        if (string.IsNullOrEmpty(sessionKey))
+        {
+            sessionKey = Auth.Username;
+        }
+
         gameClient.Send(new UserPlayerSelect
         {
             PlayerId = id,
@@ -264,11 +269,11 @@ public class NetworkClient : MonoBehaviour
                 break;
 
             case PlayerStatUpdated statsUpdated:
-                playerManager.OnPlayerStatUpdated(statsUpdated.Entity, statsUpdated.Skill, statsUpdated.Level, statsUpdated.EffectiveLevel, statsUpdated.Experience);
+                playerManager.OnPlayerStatUpdated(statsUpdated.Entity, statsUpdated.Skill, statsUpdated.Level, statsUpdated.Experience);
                 break;
 
             case PlayerStatsUpdated allStats:
-                playerManager.OnPlayerStatsUpdated(allStats.Entity, allStats.Experience, allStats.EffectiveLevel);
+                playerManager.OnPlayerStatsUpdated(allStats.Entity);
                 break;
 
             case PlayerLeveledUp levelUp:

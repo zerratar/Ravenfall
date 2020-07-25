@@ -24,9 +24,10 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public const short OpCode = 2;
         public int PlayerId { get; set; }
         public string Name { get; set; }
-        public int CombatLevel { get; set; }
+        public int Level { get; set; }
         public int Health { get; set; }
-        public int MaxHealth { get; set; }
+        public int Endurance { get; set; }
+        public Attributes Attributes { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Destination { get; set; }
         public Appearance Appearance { get; set; }
@@ -124,9 +125,8 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
     {
         public const short OpCode = 14;
         public int PlayerId { get; set; }
-        public int Skill { get; set; }
+        public string Skill { get; set; }
         public int Level { get; set; }
-        public int EffectiveLevel { get; set; }
         public decimal Experience { get; set; }
     }
 
@@ -134,7 +134,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
     {
         public const short OpCode = 15;
         public int PlayerId { get; set; }
-        public int Skill { get; set; }
+        public string Skill { get; set; }
         public int GainedLevels { get; set; }
     }
 
@@ -143,10 +143,13 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public const short OpCode = 16;
         public int PlayerId { get; set; }
         public string Name { get; set; }
-        public int CombatLevel { get; set; }
+        public int Level { get; set; }
+        public decimal Experience { get; set; }
+        public int Health { get; set; }
+        public int Endurance { get; set; }
         public Vector3 Position { get; set; }
-        public int[] EffectiveLevel { get; set; }
-        public decimal[] Experience { get; set; }
+        public Professions Professions { get; set; }
+        public Attributes Attributes { get; set; }
         public Appearance Appearance { get; set; }
         public int[] InventoryItemId { get; set; }
         public long[] InventoryItemAmount { get; set; }
@@ -192,28 +195,34 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
     public class UserPlayerList
     {
         public const short OpCode = 22;
-        public int[] Id { get; set; }
-        public string[] Name { get; set; }
-        public int[] CombatLevel { get; set; }
-        public Appearance[] Appearance { get; set; }
+        public SelectablePlayer[] Players { get; set; }
 
         public Player[] GetPlayers()
         {
-            if (Id == null || Id.Length == 0)
+            if (Players == null || Players.Length == 0)
                 return new Player[0];
 
-            var players = new Player[Id.Length];
-            for (var i = 0; i < Id.Length; ++i)
+            var players = new Player[Players.Length];
+            for (var i = 0; i < Players.Length; ++i)
             {
                 players[i] = new Player
                 {
-                    Id = Id[i],
-                    Name = Name[i],
-                    CombatLevel = CombatLevel[i],
-                    Appearance = Appearance[i]
+                    Id = Players[i].Id,
+                    Name = Players[i].Name,
+                    Level = Players[i].Level,
+                    Appearance = Players[i].Appearance,
+                    Session = Players[i].Session
                 };
             }
             return players;
+        }
+        public class SelectablePlayer
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public int Level { get; set; }
+            public Appearance Appearance { get; set; }
+            public SessionInfo Session { get; set; }
         }
     }
 
@@ -247,8 +256,10 @@ namespace Shinobytes.Ravenfall.RavenNet.Packets.Client
         public const short OpCode = 27;
         public int ServerId { get; set; }
         public int NpcId { get; set; }
+        public int Level { get; set; }
         public int Health { get; set; }
-        public int MaxHealth { get; set; }
+        public int Endurance { get; set; }
+        public Attributes Attributes { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Rotation { get; set; }
         public Vector3 Destination { get; set; }

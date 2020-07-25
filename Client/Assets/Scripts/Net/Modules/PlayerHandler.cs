@@ -51,12 +51,14 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             }
         }
 
-        internal void PlayerStatsUpdate(int playerId, decimal[] experience, int[] effectiveLevel)
+        internal void PlayerStatsUpdate(int playerId, Attributes attributes, Professions professions)
         {
             var targetPlayer = GetPlayer(playerId);
             if (targetPlayer != null)
             {
-                Changes.Enqueue(new PlayerStatsUpdated(targetPlayer, experience, effectiveLevel));
+                targetPlayer.Attributes = attributes;
+                targetPlayer.Professions = professions;
+                Changes.Enqueue(new PlayerStatsUpdated(targetPlayer));
                 return;
             }
         }
@@ -80,16 +82,16 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             }
         }
 
-        internal void PlayerStatUpdate(int playerId, int skill, int level, int effectiveLevel, decimal experience)
+        internal void PlayerStatUpdate(int playerId, string skill, int level, decimal experience)
         {
             var targetPlayer = GetPlayer(playerId);
             if (targetPlayer != null)
             {
-                Changes.Enqueue(new PlayerStatUpdated(targetPlayer, skill, level, effectiveLevel, experience));
+                Changes.Enqueue(new PlayerStatUpdated(targetPlayer, skill, level, experience));
             }
         }
 
-        internal void PlayerLevelUp(int playerId, int skill, int gainedLevels)
+        internal void PlayerLevelUp(int playerId, string skill, int gainedLevels)
         {
             var targetPlayer = GetPlayer(playerId);
             if (targetPlayer != null)

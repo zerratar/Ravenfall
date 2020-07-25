@@ -62,9 +62,9 @@ public class ChatPanel : MonoBehaviour
         AddActionMessage("", $"{amount}x {item.Name} was removed from your inventory.");
     }
 
-    internal void OnLevelUp(PlayerStat stat, int gainedLevels)
+    internal void OnLevelUp(string stat, int gainedLevels)
     {
-        AddActionMessage("", "<color=#00ff00>Congratulations, you've gained " + gainedLevels + " " + stat.Name + " level(s)!</color>");
+        AddActionMessage("", "<color=#00ff00>Congratulations, you've gained " + gainedLevels + " " + stat + " level(s)!</color>");
     }
 
     public void AddActionMessage(string action, string message, string senderColor = "#ff0000")

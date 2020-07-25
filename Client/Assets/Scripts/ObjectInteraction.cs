@@ -6,7 +6,7 @@ public class ObjectInteraction
     public NetworkObject NetworkObject { get; set; }
     public StaticObject StaticObject { get; set; }
     public ServerObject ObjectData => NetworkObject ? NetworkObject.Data : StaticObject.ObjectData;
-    public int ServerId => NetworkObject ? NetworkObject.ServerId : StaticObject.Instance + 1;
+    public int ServerId => NetworkObject ? NetworkObject.ServerId : StaticObject.Instance;
     public UnityEngine.Vector3 Position => NetworkObject ? NetworkObject.transform.position : StaticObject.Position;
     public int ActionId { get; set; }
 

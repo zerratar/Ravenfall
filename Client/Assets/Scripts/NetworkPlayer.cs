@@ -25,6 +25,7 @@ public class NetworkPlayer : MonoBehaviour
 
     public bool IsMe { get; set; }
     public int Id { get; set; }
+    public Player Player { get; set; }
     public EntityNavigation Navigation => movement;
     public EntityInventory Inventory => inventory;
     public EntityStats Stats => entityStats;
@@ -137,7 +138,7 @@ public class NetworkPlayer : MonoBehaviour
 
     internal void SetHealth(int health, int maxHealth)
     {
-        entityStats.GetStatByName("health").Set(health, maxHealth);
+        entityStats.SetHealth(health, maxHealth);
     }
 
     private void SendPosition()
@@ -208,21 +209,21 @@ public class NetworkPlayer : MonoBehaviour
         equipmentHandler.SetEquipmentState(itemId, equipped);
     }
 
-    internal void SetStats(decimal[] experience, int[] effectiveLevel)
+    internal void SetStats(Attributes attributes, Professions professions)
     {
         if (!entityStats) return;
-        entityStats.SetStats(experience, effectiveLevel);
+        entityStats.SetStats(attributes, professions);
     }
 
-    public void UpdateStat(int skill, int level, int effectiveLevel, decimal experience)
+    public void UpdateStat(string skill, int level, decimal experience)
     {
-        entityStats.UpdateStat(skill, level, effectiveLevel, experience);
+        entityStats.UpdateStat(skill, level, experience);
     }
 
-    public void PlayLevelUpAnimation(int skill, int gainedLevels)
+    public void PlayLevelUpAnimation(string skill, int gainedLevels)
     {
-        var stat = entityStats.PlayLevelUpAnimation(skill, gainedLevels);
-        uiManager.ChatPanel.OnLevelUp(stat, gainedLevels);
+        entityStats.PlayLevelUpAnimation(skill, gainedLevels);
+        uiManager.ChatPanel.OnLevelUp(skill, gainedLevels);
     }
 
     public void MoveTo(UnityEngine.Vector3 destination, bool running)

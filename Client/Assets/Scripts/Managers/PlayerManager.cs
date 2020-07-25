@@ -16,10 +16,18 @@ public class PlayerManager : MonoBehaviour
 
     private ServerPlayerAlignmentActions[] alignmentActions;
     public NetworkPlayer Me { get; private set; }
-    
+
     private void Awake()
     {
         alignmentActions = Resources.LoadAll<ServerPlayerAlignmentActions>("Data/Players");
+    }
+
+    public void Clear()
+    {
+        foreach (var player in players.ToList())
+        {
+            RemovePlayer(player);
+        }
     }
 
     public NetworkPlayer GetPlayerById(int playerId)
@@ -49,6 +57,7 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("OnPlayerAdded");
         var networkPlayerObject = Instantiate(playerPrefab);
         var networkPlayer = networkPlayerObject.GetComponent<NetworkPlayer>();
+        networkPlayer.Player = player;
         networkPlayer.PlayerManager = this;
         networkPlayer.IsMe = player.IsMe;
         networkPlayer.Id = player.Id;
@@ -73,7 +82,6 @@ public class PlayerManager : MonoBehaviour
         players.Add(networkPlayer);
 
         nametagManager.AddNameTag(networkPlayer);
-
     }
 
     public void OnPlayerRemoved(Player player)
@@ -87,6 +95,11 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
+        RemovePlayer(targetPlayer);
+    }
+
+    private void RemovePlayer(NetworkPlayer targetPlayer)
+    {
         nametagManager.RemoveNameTag(targetPlayer);
 
         if (players.Remove(targetPlayer))
@@ -108,7 +121,7 @@ public class PlayerManager : MonoBehaviour
         targetPlayer.SetAnimationState(animationState, enabled, trigger, action);
     }
 
-    internal void OnPlayerStatsUpdated(Player entity, decimal[] experience, int[] effectiveLevel)
+    internal void OnPlayerStatsUpdated(Player entity)
     {
         Debug.Log("OnPlayerStatsUpdated");
         var targetPlayer = players.FirstOrDefault(x => x.Id == entity.Id);
@@ -118,10 +131,10 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        targetPlayer.SetStats(experience, effectiveLevel);
+        targetPlayer.SetStats(entity.Attributes, entity.Professions);
     }
 
-    internal void OnPlayerStatUpdated(Player entity, int skill, int level, int effectiveLevel, decimal experience)
+    internal void OnPlayerStatUpdated(Player entity, string skill, int level, decimal experience)
     {
         Debug.Log("OnPlayerStatUpdated");
         var targetPlayer = players.FirstOrDefault(x => x.Id == entity.Id);
@@ -131,10 +144,10 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        targetPlayer.UpdateStat(skill, level, effectiveLevel, experience);
+        targetPlayer.UpdateStat(skill, level, experience);
     }
 
-    internal void OnPlayerLevelUp(Player entity, int skill, int gainedLevels)
+    internal void OnPlayerLevelUp(Player entity, string skill, int gainedLevels)
     {
         Debug.Log("OnPlayerLevelUp");
         var targetPlayer = players.FirstOrDefault(x => x.Id == entity.Id);

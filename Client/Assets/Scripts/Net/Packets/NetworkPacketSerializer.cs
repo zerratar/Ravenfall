@@ -1,4 +1,5 @@
-﻿using Shinobytes.Ravenfall.RavenNet.Serializers;
+﻿using Shinobytes.Ravenfall.RavenNet.Packets.Client;
+using Shinobytes.Ravenfall.RavenNet.Serializers;
 using System;
 using System.IO;
 using System.Text;
@@ -27,12 +28,14 @@ namespace Shinobytes.Ravenfall.RavenNet
                 try
                 {
                     packet.Data = binarySerializer.Deserialize(payload, targetType);
+
+                    return packet;
                 }
                 catch (Exception exc)
                 {
                     var hoverOverMe = GenerateDebugCode(payload, targetType);
+                    throw;
                 }
-                return packet;
             }
 
             throw new Exception($"Unable to deserialize packet. No type lookups registered for packet ID ({packet.Id}).");

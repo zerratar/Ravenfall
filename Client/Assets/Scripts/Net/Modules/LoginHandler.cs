@@ -7,7 +7,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
     {
         public string Name => "Login";
 
-        public Player[] Players { get; private set; }
+        public Player[] Players { get; private set; } = new Player[0];
 
         internal void SetCharacterList(Player[] players)
         {

@@ -22,6 +22,7 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
         }
 
         public string Name => "Auth";
+        public string Username { get; private set; }
         public bool Authenticated { get; set; }
         public bool Authenticating => Volatile.Read(ref activeAuthRequest) > 0;
 
@@ -31,6 +32,8 @@ namespace Shinobytes.Ravenfall.RavenNet.Modules
             {
                 return;
             }
+
+            Username = username;
 
             this.connection.Send(new AuthRequest()
             {

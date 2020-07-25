@@ -26,6 +26,12 @@ public class ObjectManager : MonoBehaviour
         LoadStaticObjectColliders();
     }
 
+    public void Clear()
+    {
+        // since we only have static objects right now
+        // no need to clear anything. but this needs to be updated later.
+    }
+
     private void OnApplicationExit()
     {
         CleanupStaticObjects();
@@ -72,7 +78,7 @@ public class ObjectManager : MonoBehaviour
         networkObject.name = networkObject.Data.Name;
         networkObject.transform.position = entity.Position;
 
-        if (entity.ObjectId != oldObjectId)
+        if (entity.Type != oldObjectId)
         {
             var model = networkObject.transform.GetChild(0);
             Destroy(model.gameObject);
@@ -133,7 +139,7 @@ public class ObjectManager : MonoBehaviour
 
             if (thisTreeDist < 0.2f)
             {
-                tree.prototypeIndex = entity.ObjectId;
+                tree.prototypeIndex = entity.Type;
 
                 var objCollider = staticObjectColliders[i];
                 if (objCollider)
@@ -176,7 +182,7 @@ public class ObjectManager : MonoBehaviour
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ServerObject GetObjectData(SceneObject entity)
     {
-        return spawnableObjects.FirstOrDefault(x => x.Id == entity.ObjectId);
+        return spawnableObjects.FirstOrDefault(x => x.Id == entity.Type);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

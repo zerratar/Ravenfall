@@ -33,7 +33,7 @@ public class EntityInventory : MonoBehaviour
             AddItem(id, amount, false);
         }
 
-        uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
+        uiManager.Inventory.SetInventoryItems(this.inventoryItems.ToArray());
     }
 
     internal ServerItem AddItem(int itemId, long amount, bool updateInventory = true)
@@ -75,7 +75,7 @@ public class EntityInventory : MonoBehaviour
         {
             if (updateInventory)
             {
-                uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
+                uiManager.Inventory.SetInventoryItems(this.inventoryItems.ToArray());
             }
         }
     }
@@ -127,14 +127,14 @@ public class EntityInventory : MonoBehaviour
         }
         finally
         {
-            uiManager.InventoryPanel.SetInventoryItems(this.inventoryItems.ToArray());
+            uiManager.Inventory.SetInventoryItems(this.inventoryItems.ToArray());
         }
     }
 
     internal void SetCoins(long amount)
     {
         Coins = amount;
-        uiManager.InventoryPanel.SetCoins(amount);
+        uiManager.Inventory.SetCoins(amount);
     }
 }
 

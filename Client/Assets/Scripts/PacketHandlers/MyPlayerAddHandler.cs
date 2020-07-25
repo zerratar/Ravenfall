@@ -31,10 +31,15 @@ namespace Assets.Scripts.PacketHandlers
                 Name = data.Name,
                 Position = data.Position,
                 Appearance = data.Appearance,
+                Attributes = data.Attributes,
+                Professions = data.Professions,
+                Experience = data.Experience,
+                Level = data.Level,
+                Health = data.Health,
             };
 
             playerHandler.Add(player);
-            playerHandler.PlayerStatsUpdate(player.Id, data.Experience, data.EffectiveLevel);
+            playerHandler.PlayerStatsUpdate(player.Id, data.Attributes, data.Professions);
             playerHandler.SetPlayerInventory(player.Id, data.Coins, data.InventoryItemId, data.InventoryItemAmount);
 
         }

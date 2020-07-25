@@ -23,7 +23,7 @@ public class SubSceneManager : MonoBehaviour
     {
         SubSceneIndex = subSceneIndex;
         for (var i = 0; i < subScenes.Length; ++i)
-        {            
+        {
             SetActiveFast(subScenes[i].gameObject, i == subSceneIndex);
         }
     }
@@ -33,6 +33,7 @@ public class SubSceneManager : MonoBehaviour
     {
         if (!networkClient.IsConnected || !networkClient.IsAuthenticated)
         {
+            gameManager.ClearEntities();
             SetActiveSubScene(0);
             return;
         }
